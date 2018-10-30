@@ -1,0 +1,17 @@
+{
+  "name": "m4k_database_tool",
+  "description": "Miracles for Kids database tool",
+  "main": "index.js",
+  "authors": [
+    "Kevin Pranoto <kevinpranoto97@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/kevinpranoto/m4k_database_tool",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

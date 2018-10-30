@@ -4,6 +4,7 @@
   "description": "Miracles for Kids database tool",
   "main": "index.js",
   "dependencies": {
+    "bower": "^1.8.4",
     "mysql": "^2.16.0"
   },
   "devDependencies": {},
