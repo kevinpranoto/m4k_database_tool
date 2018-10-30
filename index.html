@@ -2,37 +2,18 @@
 <html>
 <head>
 <title>Miracles for Kids Database Login</title>
+    <meta charset="utf-8">
+    <title>My HTML File</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="test_script.js"></script>
 </head>
 
 <body>
-    <?php
-        $servername = "m4k-database.c947krbzy1fm.us-west-1.rds.amazonaws.com";
-        $username = "databois";
-        $password = "databoisroxx";
-        $dbname = "miracles";
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        } 
-
-        $sql = "SELECT * FROM DONORS;";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            // output data of each row
-            while($row = $result->fetch_assoc()) {
-                echo "<br> user_id: ". $row["user_id"]. " - Name: ". $row["firstname"]."<br>";
-            }
-        } else {
-            echo "0 results";
-        }
-
-        $conn->close();
-    ?> 
-    
+    <div ng-app = "">
+        <p>Enter your Name: <input type = "text" ng-model = "name"></p>
+        <p>Hello <span ng-bind = "name"></span>!</p>
+    </div>
     <button type="button">SHOW DONORS</button>
 </body>
 
