@@ -15,7 +15,7 @@ PRIMARY KEY (supporter_id)
 DROP TABLE IF EXISTS `Address`;
 CREATE TABLE `Address` (
 `supporter_id` CHAR(10),
-`type` ENUM('business', 'home', 'information'),
+`address_type` ENUM('business', 'home', 'information'),
 `address_line_1` VARCHAR(30),
 `address_line_2` VARCHAR(30),
 `city` VARCHAR(30),
@@ -44,8 +44,8 @@ FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS `Staff`;
 CREATE TABLE `Staff` (
 `supporter_id` CHAR(10),
-`type` ENUM('Volunteer', 'Employee'),
-`status` ENUM('Active', 'Inactive'),
+`staff_type` ENUM('Volunteer', 'Employee'),
+`staff_status` ENUM('Active', 'Inactive'),
 PRIMARY KEY(supporter_id),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
