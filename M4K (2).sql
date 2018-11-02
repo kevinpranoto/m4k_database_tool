@@ -35,8 +35,8 @@ FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS `Phone`;
 CREATE TABLE `Phone` (
 `supporter_id` CHAR(10),
-`type` ENUM('business', 'home', 'mobile'),
-`phone_number` INTEGER,
+`phone_type` ENUM('business', 'home', 'mobile'),
+`phone_number` VARCHAR(15),
 PRIMARY KEY (supporter_id, phone_number),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
