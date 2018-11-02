@@ -5,8 +5,8 @@ VALUES (1, 'Gates', 'William', 'Mr.', 'Bill');
 INSERT INTO Supporter (supporter_id, last_name, first_name, salutation, alias)
 VALUES (2, 'Gamarra', 'Eric', 'Mr.', 'Jim');
 
-INSERT INTO Address(supporter_id, type, address_line_1, city, state,  zip_code)
-VALUES (2, 'work', '140 N Berendo St', 'Los Angeles', 'CA', '90004');
+INSERT INTO Address(supporter_id, address_type, address_line_1, city, state,  zip_code)
+VALUES (2, 'business', '140 N Berendo St', 'Los Angeles', 'CA', '90004');
 
 INSERT INTO Email(supporter_id, email_address)
 VALUES(1, 'bgates@gmail.com');
@@ -25,5 +25,18 @@ VALUES(1, 'mobile', '213 386 7562');
 
 INSERT INTO Phone(supporter_id, phone_type, phone_number)
 VALUES(2, 'mobile', '925 428 4577');
+
+INSERT INTO Staff(supporter_id, staff_type, staff_status)
+VALUES(2, 'Employee', 'Active');
+
+INSERT INTO Donor(supporter_id, donor_type, last_donation, donor_status)
+VALUES(1, 'Individual', '2018-11-01', 'Active');
+
+/*
+`supporter_id` CHAR(10),
+`donor_type` ENUM('Individual', 'Company', 'Household'),
+`last_donation` DATE,
+`donor_status` ENUM('Active', 'Lax', 'Lost'),
+*/
 
 
