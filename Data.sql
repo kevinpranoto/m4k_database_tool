@@ -32,12 +32,27 @@ VALUES(2, 'Employee', 'Active');
 INSERT INTO Donor(supporter_id, donor_type, last_donation, donor_status)
 VALUES(1, 'Individual', '2018-11-01', 'Active');
 
-INSERT INTO Campaign(campaign_id, campaign_name, is_event, campaign_date, theme)
-VALUES(1, '');
+INSERT INTO CampaignType(campaign_type_id, campaign_type_name)
+VALUES(1, 'Golf Invitational');
 
-Contribution
+INSERT INTO Campaign(campaign_id, campaign_name, campaign_type_id, is_event, campaign_date, theme)
+VALUES(1, 'Make America Great Again Fundraiser', 1, true, '2016-11-8', '2016 Presidential Election');
+
+INSERT INTO Contribution(contrib_id, item_name, is_event_item, contrib_type, amount, pay_method, destination, notes, appeal, thanked)
+VALUES(1, '', true, 'Money', 1000000, 'Stock', 'General', 'Jeff Bezos is richer than me now.', 'Sponsorship' , true);
 
 /*
+`contrib_id` CHAR(10),
+`item_name` VARCHAR(20),
+`is_event_item` BOOL,
+`type` ENUM('Goods', 'Services', 'Money'),
+`amount` INTEGER,
+`pay_method` ENUM('Cash', 'Credit Card', 'Check', 'Stock'),
+`destination` ENUM('General', 'Mirale Manor', 'Bsaket of Miracles', 'Grant Program', 'Health & Wellness'),
+`notes` VARCHAR(1000),
+`appeal` ENUM('Direct Mail', 'Email Campaign', 'Radio Ad', 'Sponsorship', 'Fund-a-Need', 'Opportunity Ticket', 'Silent Auction', 'Live Auction'), 
+`thanked`
+
 `campaign_id` CHAR(10),
 `campaign_name` VARCHAR(20),
 `is_event` BOOL,
