@@ -81,14 +81,23 @@ CREATE TABLE `Needs` (
 FOREIGN KEY (patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS `CampaignType`;
+CREATE TABLE `CampaignType` (
+`campaign_type_id` CHAR(10),
+`campaign_type_name` VARCHAR(50),
+PRIMARY KEY (campaign_type_id)
+);
+
 DROP TABLE IF EXISTS `Campaign`;
 CREATE TABLE `Campaign` (
 `campaign_id` CHAR(10),
-`campaign_name` VARCHAR(20),
+`campaign_name` VARCHAR(50),
+`campaign_type_id` CHAR(10),
 `is_event` BOOL,
 `date` DATE,
 `theme` VARCHAR(20),
-PRIMARY KEY(campaign_id)
+PRIMARY KEY(campaign_id),
+FOREIGN KEY(campaign_type_id) REFERENCES CampaignType(campaign_type_id) ON DELETE CASCADE
 );
 
 #ask about appeal and campaign

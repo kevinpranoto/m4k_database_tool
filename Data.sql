@@ -32,7 +32,18 @@ VALUES(2, 'Employee', 'Active');
 INSERT INTO Donor(supporter_id, donor_type, last_donation, donor_status)
 VALUES(1, 'Individual', '2018-11-01', 'Active');
 
+INSERT INTO Campaign(campaign_id, campaign_name, is_event, campaign_date, theme)
+VALUES(1, '');
+
+Contribution
+
 /*
+`campaign_id` CHAR(10),
+`campaign_name` VARCHAR(20),
+`is_event` BOOL,
+`date` DATE,
+`theme` VARCHAR(20),
+
 `supporter_id` CHAR(10),
 `donor_type` ENUM('Individual', 'Company', 'Household'),
 `last_donation` DATE,
