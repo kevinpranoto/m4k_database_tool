@@ -95,7 +95,7 @@ CREATE TABLE `Campaign` (
 `campaign_type_id` CHAR(10),
 `is_event` BOOL,
 `campaign_date` DATE,
-`theme` VARCHAR(20),
+`theme` VARCHAR(50),
 PRIMARY KEY(campaign_id),
 FOREIGN KEY(campaign_type_id) REFERENCES CampaignType(campaign_type_id) ON DELETE CASCADE
 );
@@ -134,7 +134,7 @@ CREATE TABLE `Installments` (
 `donor_id` CHAR(10),
 `patient_id` CHAR(10),
 `amount` DECIMAL,
-`date` DATE,
+`installment_date` DATE,
 PRIMARY KEY (installment_id),
 FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
 FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
@@ -177,8 +177,8 @@ FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
 FOREIGN KEY(campaign_id) REFERENCES Campaign(campaign_id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS `Presented_At`;
-CREATE TABLE `Presented_At` (
+DROP TABLE IF EXISTS `PresentedAt`;
+CREATE TABLE `PresentedAt` (
 `contrib_id` CHAR(10),
 `campaign_id` CHAR(10),
 PRIMARY KEY(contrib_id, campaign_id),
