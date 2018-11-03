@@ -1,0 +1,51 @@
+main view queries:
+1. query all donors
+3. query all staffs
+4. query all patients
+5. query all requests
+6. query all pledges
+7. query all events
+8. query all contributions
+9. query all donors "with keyword"
+10. query all staffs "with keyword"
+11. query all patients "with keyword"
+12. query all pledges "with keyword"
+13. query all requests "with keyword"
+14. query all events "with keyword"
+15. query all contributions "with keyword"
+
+
+Donor view:
+0. query all attributes tied to donor_id
+1. query all contribution with donor_id
+2. query all pledges tied with donor_id
+3. query all events tied with donor_id
+4. query all pledges tied with donor_id
+
+Staff view:
+0. query all attributes tied to staff_id
+1. query all events tied with staff_id
+
+Patients view:
+0. query all attributes tied to patient_id
+1. query all requests tied to patient_id
+2. query all pledges tied to patient_id
+
+Events view:
+0. query all attributes tied to event_id
+1. query all contributions tied to event_id
+2. query all staff tied to event_id
+3. query all donors tied to event_id [who attends]
+
+Contribution view:
+0. query patient, donor, event tied to contribution_id
+
+Pledge view:
+0. query patient, donor tied to pledge_id
+
+Request view:
+0. query patient, contribution tied to request_id
+
+
+
+
