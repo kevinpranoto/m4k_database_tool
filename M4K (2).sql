@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS `m4k_database`;
+CREATE DATABASE `m4k_database`;
+USE `m4k_database`;
+
 DROP TABLE IF EXISTS `Supporter`;
 CREATE TABLE `Supporter` (
 `supporter_id` CHAR(10),
@@ -11,7 +15,7 @@ PRIMARY KEY (supporter_id)
 DROP TABLE IF EXISTS `Address`;
 CREATE TABLE `Address` (
 `supporter_id` CHAR(10),
-`type` ENUM('business', 'home', 'information'),
+`address_type` ENUM('business', 'home', 'information'),
 `address_line_1` VARCHAR(30),
 `address_line_2` VARCHAR(30),
 `city` VARCHAR(30),
@@ -24,32 +28,35 @@ DROP TABLE IF EXISTS `Email`;
 CREATE TABLE `Email` (
 `supporter_id` CHAR(10),
 `email_address` VARCHAR(30),
+PRIMARY KEY (supporter_id, email_address),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Phone`;
 CREATE TABLE `Phone` (
 `supporter_id` CHAR(10),
-`type` ENUM('business', 'home', 'mobile'),
-`phone_number` INTEGER,
+`phone_type` ENUM('business', 'home', 'mobile'),
+`phone_number` VARCHAR(15),
+PRIMARY KEY (supporter_id, phone_number),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Staff`;
 CREATE TABLE `Staff` (
 `supporter_id` CHAR(10),
-`type` ENUM('Volunteer', 'Employee'),
-`status` ENUM('Active', 'Inactive'),
+`staff_type` ENUM('Volunteer', 'Employee'),
+`staff_status` ENUM('Active', 'Inactive'),
 PRIMARY KEY(supporter_id),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
 
+
 DROP TABLE IF EXISTS `Donor`;
 CREATE TABLE `Donor` (
 `supporter_id` CHAR(10),
-`type` ENUM('Individual', 'Company', 'Household'),
+`donor_type` ENUM('Individual', 'Company', 'Household'),
 `last_donation` DATE,
-`status` ENUM('Active', 'Lax', 'Lost'),
+`donor_status` ENUM('Active', 'Lax', 'Lost'),
 PRIMARY KEY(supporter_id),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
@@ -57,15 +64,13 @@ FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS `Company`;
 CREATE TABLE `Company` (
 `supporter_id` CHAR(10),
-`company_name` VARCHAR(30),
+`company_name` VARCHAR(30) ,
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Patient`;
 CREATE TABLE `Patient` (
 `patient_id` CHAR(10),
-`first_name` VARCHAR(20),
-`last_name` VARCHAR(20),
 PRIMARY KEY(patient_id)
 );
 
@@ -76,13 +81,23 @@ CREATE TABLE `Needs` (
 FOREIGN KEY (patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS `Events`;
-CREATE TABLE `Events` (
-`event_id` CHAR(10),
-`event_name` VARCHAR(20),
-`date` DATE,
-`theme` VARCHAR(20),
-PRIMARY KEY(event_id)
+DROP TABLE IF EXISTS `CampaignType`;
+CREATE TABLE `CampaignType` (
+`campaign_type_id` CHAR(10),
+`campaign_type_name` VARCHAR(50),
+PRIMARY KEY (campaign_type_id)
+);
+
+DROP TABLE IF EXISTS `Campaign`;
+CREATE TABLE `Campaign` (
+`campaign_id` CHAR(10),
+`campaign_name` VARCHAR(50),
+`campaign_type_id` CHAR(10),
+`is_event` BOOL,
+`campaign_date` DATE,
+`theme` VARCHAR(50),
+PRIMARY KEY(campaign_id),
+FOREIGN KEY(campaign_type_id) REFERENCES CampaignType(campaign_type_id) ON DELETE CASCADE
 );
 
 #ask about appeal and campaign
@@ -91,24 +106,37 @@ CREATE TABLE `Contribution` (
 `contrib_id` CHAR(10),
 `item_name` VARCHAR(20),
 `is_event_item` BOOL,
-`type` ENUM('Goods', 'Services', 'Money'),
+`contrib_type` ENUM('Goods', 'Services', 'Money'),
 `amount` INTEGER,
 `pay_method` ENUM('Cash', 'Credit Card', 'Check', 'Stock'),
-`destination` ENUM('General', 'Mirale Manor', 'Bsaket of Miracles', 'Grant Program', 'Health & Wellness'),
+`destination` ENUM('General', 'Miracle Manor', 'Basket of Miracles', 'Grant Program', 'Health & Wellness'),
 `notes` VARCHAR(1000),
-#`appeal` ENUM('Direct Mail', 'Email Campaign', 'Radio Ad', 'Sponsorship', 'Fund-a-Need', 'Opportunity Ticket', 'Silent Auction', 'Live Auction'), 
+`appeal` ENUM('Direct Mail', 'Email Campaign', 'Radio Ad', 'Sponsorship', 'Fund-a-Need', 'Opportunity Ticket', 'Silent Auction', 'Live Auction'), 
+`thanked` BOOL,
 PRIMARY KEY(contrib_id)
 );
 
-#ask about implementing installments
 DROP TABLE IF EXISTS `Pledges`;
 CREATE TABLE `Pledges` (
 `donor_id` CHAR(10),
 `patient_id` CHAR(10),
 `pledge_date` DATE,
 `target_amount` DECIMAL,
+`is_behind` BOOL,
 PRIMARY KEY(donor_id, patient_id),
-FOREIGN KEY(donor_id) REFERENCES Donor(sid) ON DELETE CASCADE,
+FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
+FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS `Installments`;
+CREATE TABLE `Installments` (
+`installment_id` CHAR(10),
+`donor_id` CHAR(10),
+`patient_id` CHAR(10),
+`amount` DECIMAL,
+`installment_date` DATE,
+PRIMARY KEY (installment_id),
+FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
 FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 );
 
@@ -118,7 +146,7 @@ CREATE TABLE `Contributes` (
 `contrib_id` CHAR(10),
 `contrib_date` DATE,
 PRIMARY KEY(donor_id, contrib_id),
-FOREIGN KEY(donor_id) REFERENCES Donor(sid) ON DELETE CASCADE,
+FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
 FOREIGN KEY(contrib_id) REFERENCES Contribution(contrib_id) ON DELETE CASCADE
 );
 
@@ -134,26 +162,26 @@ FOREIGN KEY(contrib_id) REFERENCES Contribution(contrib_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS `Works`;
 CREATE TABLE `Works` (
 `staff_id` CHAR(10),
-`event_id` CHAR(10),
-PRIMARY KEY(staff_id, event_id),
-FOREIGN KEY(staff_id) REFERENCES Staff(sid) ON DELETE CASCADE,
-FOREIGN KEY(event_id) REFERENCES Event(event_id) ON DELETE CASCADE
+`campaign_id` CHAR(10),
+PRIMARY KEY(staff_id, campaign_id),
+FOREIGN KEY(staff_id) REFERENCES Staff(supporter_id) ON DELETE CASCADE,
+FOREIGN KEY(campaign_id) REFERENCES Campaign(campaign_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Attends`;
 CREATE TABLE `Attends` (
 `donor_id` CHAR(10),
-`event_id` CHAR(10),
-PRIMARY KEY(donor_id, event_id),
-FOREIGN KEY(donor_id) REFERENCES Donor(sid) ON DELETE CASCADE,
-FOREIGN KEY(event_id) REFERENCES Event(event_id) ON DELETE CASCADE
+`campaign_id` CHAR(10),
+PRIMARY KEY(donor_id, campaign_id),
+FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
+FOREIGN KEY(campaign_id) REFERENCES Campaign(campaign_id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS `Presented_At`;
-CREATE TABLE `Presented_At` (
+DROP TABLE IF EXISTS `PresentedAt`;
+CREATE TABLE `PresentedAt` (
 `contrib_id` CHAR(10),
-`event_id` CHAR(10),
-PRIMARY KEY(contrib_id, event_id),
+`campaign_id` CHAR(10),
+PRIMARY KEY(contrib_id, campaign_id),
 FOREIGN KEY(contrib_id) REFERENCES Contribution(contrib_id) ON DELETE CASCADE,
-FOREIGN KEY(event_id) REFERENCES Event(event_id) ON DELETE CASCADE
+FOREIGN KEY(campaign_id) REFERENCES Campaign(campaign_id) ON DELETE CASCADE
 );
