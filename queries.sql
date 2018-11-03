@@ -1,4 +1,4 @@
-#main view queries:
+#Main View/Donor View queries
 
 #1. query all donors
 SELECT *
@@ -19,30 +19,44 @@ SELECT *
 FROM Requests, Contribution
 WHERE Requests.contrib_id = Contribution.contrib_id;
 
-#6. query all pledges
+#5. query all pledges
 SELECT *
 FROM Pledges, Supporter
 WHERE Pledges.donor_id = Supporter.supporter_id;
 
-#7. query all events
+#6. query all events
 SELECT *
 FROM Campaign
 WHERE Campaign.is_event=1;
 
-#8. query all contributions
+#7. query all contributions
 SELECT *
 FROM Contribution;
+
+SET @keyword = 'bgates@yahoo.com';
+
+#8. query all donors "with keyword"
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
+FROM Donor, Supporter, Email, Phone
+WHERE Supporter.last_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Phone.supporter_id = Supporter.supporter_id
+UNION
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
+FROM Donor, Supporter, Email, Phone
+WHERE Supporter.first_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id  AND Phone.supporter_id = Supporter.supporter_id
+UNION
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
+FROM Donor, Supporter, Email, Phone
+WHERE Email.email_address = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id  AND Phone.supporter_id = Supporter.supporter_id
+UNION
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
+FROM Donor, Supporter, Email, Phone
+WHERE Phone.phone_number = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id  AND Phone.supporter_id = Supporter.supporter_id;
+
+/*SELECT *
+FROM Donor, Supporter, Phone
+WHERE Phone.phone_number = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Phone.supporter_id = Supporter.supporter_id;
+
 /*
-#9. query all donors "with keyword"
-SELECT *
-FROM Donor, Supporter
-WHERE Donor.[attrib] = [keyword] or Supporter.[attrib] = [keyword];
-
-#10. query all staffs "with keyword"
-SELECT *
-FROM Staff, Supporter
-WHERE Staff.[attrib] = [keyword] or Supporter.[attrib] = [keyword];
-
 #11. query all patients "with keyword"
 SELECT *
 FROM Needs
@@ -87,7 +101,10 @@ WHERE Contribution.[attrib] = [keyword];
 
 #Staff view:
 #1. query all attributes tied to staff_id
-
+#10. query all staffs "with keyword"
+/*SELECT *
+FROM Staff, Supporter
+WHERE Staff.[attrib] = [keyword] or Supporter.[attrib] = [keyword];
 
 #2. query all events tied with staff_id
 
