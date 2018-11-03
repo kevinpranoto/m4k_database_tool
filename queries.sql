@@ -33,28 +33,37 @@ WHERE Campaign.is_event=1;
 SELECT *
 FROM Contribution;
 
-SET @keyword = 'bgates@yahoo.com';
+SET @keyword = 'Google';
 
 #8. query all donors "with keyword"
-SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
-FROM Donor, Supporter, Email, Phone
-WHERE Supporter.last_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Phone.supporter_id = Supporter.supporter_id
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
+FROM Donor, Supporter, Email, Phone, Company
+WHERE Supporter.last_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
 UNION
-SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
-FROM Donor, Supporter, Email, Phone
-WHERE Supporter.first_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id  AND Phone.supporter_id = Supporter.supporter_id
-UNION
-SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
-FROM Donor, Supporter, Email, Phone
-WHERE Email.email_address = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id  AND Phone.supporter_id = Supporter.supporter_id
-UNION
-SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number
-FROM Donor, Supporter, Email, Phone
-WHERE Phone.phone_number = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id  AND Phone.supporter_id = Supporter.supporter_id;
 
-/*SELECT *
-FROM Donor, Supporter, Phone
-WHERE Phone.phone_number = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Phone.supporter_id = Supporter.supporter_id;
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
+FROM Donor, Supporter, Email, Phone, Company
+WHERE Supporter.first_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+UNION
+
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
+FROM Donor, Supporter, Email, Phone, Company
+WHERE Email.email_address = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+UNION
+
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
+FROM Donor, Supporter, Email, Phone, Company
+WHERE Phone.phone_number = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+UNION
+
+SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
+FROM Donor, Supporter, Email, Phone, Company
+WHERE Company.company_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
 
 /*
 #11. query all patients "with keyword"
