@@ -1,29 +1,32 @@
 #MAIN VIEW
 #1. query all donors
-SELECT Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name
+SELECT DISTINCT(Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Company.company_name, Email.email_address, Phone.phone_number)
 FROM Supporter, Donor, Email, Phone, Company
 WHERE Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
 AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
 /*
 #2. query all staffs
-SELECT *
-FROM Supporter, Staff
-WHERE Staff.supporter_id = Supporter.supporter_id;
+SELECT Supporter.last_name, Supporter.first_name, Staff.staff_type, Staff.staff_status, Email.email_address, Phone.phone_number
+FROM Supporter, Staff, Email, Phone
+WHERE Staff.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id;
 
 #3. query all patients
-SELECT *
-from Patient;
+SELECT Patient.patient_id, Needs.item
+FROM Patient, Needs
+WHERE Patient.patient_id = Needs.patient_id;
 
 #4. query all requests
-SELECT *
-FROM Requests, Contribution
-WHERE Requests.contrib_id = Contribution.contrib_id;
+SELECT Patient.patient_id, Contribution.item_name 
+FROM Requests, Patient, Contribution
+WHERE Requests.contrib_id = Contribution.contrib_id AND Requests.patient_id = Patient.patient_id;
 
 #5. query all pledges
 SELECT *
 FROM Supporter, Pledges
 WHERE Pledges.donor_id = Supporter.supporter_id;
 
+/*
 #6. query all events
 SELECT *
 FROM Campaign
