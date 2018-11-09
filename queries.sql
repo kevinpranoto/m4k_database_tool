@@ -1,6 +1,6 @@
 #MAIN VIEW
 #1. query all donors
-SELECT DISTINCT(Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Company.company_name, Email.email_address, Phone.phone_number)
+SELECT Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Company.company_name, Email.email_address, Phone.phone_number
 FROM Supporter, Donor, Email, Phone, Company
 WHERE Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
 AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
@@ -10,7 +10,7 @@ SELECT Supporter.last_name, Supporter.first_name, Staff.staff_type, Staff.staff_
 FROM Supporter, Staff, Email, Phone
 WHERE Staff.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
 AND Phone.supporter_id = Supporter.supporter_id;
-
+/*
 #3. query all patients
 SELECT Patient.patient_id, Needs.item
 FROM Patient, Needs
