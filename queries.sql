@@ -1,43 +1,43 @@
 #MAIN VIEW
 #1. query all donors
-SELECT Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Company.company_name, Email.email_address, Phone.phone_number
+SELECT Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
-WHERE Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
-/*
+WHERE Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
+AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE;
+
 #2. query all staffs
 SELECT Supporter.last_name, Supporter.first_name, Staff.staff_type, Staff.staff_status, Email.email_address, Phone.phone_number
 FROM Supporter, Staff, Email, Phone
-WHERE Staff.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id;
+WHERE Staff.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
+AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary;
 /*
 #3. query all patients
 SELECT Patient.patient_id, Needs.item
 FROM Patient, Needs
 WHERE Patient.patient_id = Needs.patient_id;
-
+*/
 #4. query all requests
 SELECT Patient.patient_id, Contribution.item_name 
 FROM Requests, Patient, Contribution
 WHERE Requests.contrib_id = Contribution.contrib_id AND Requests.patient_id = Patient.patient_id;
 
 #5. query all pledges
-SELECT *
-FROM Supporter, Pledges
-WHERE Pledges.donor_id = Supporter.supporter_id;
+SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
+FROM Supporter, Patient, Pledges
+WHERE Pledges.donor_id = Supporter.supporter_id AND Pledges.patient_id = Patient.patient_id;
 
-/*
 #6. query all events
-SELECT *
+SELECT Campaign.campaign_name, Campaign.campaign_date, Campaign.theme
 FROM Campaign
 WHERE Campaign.is_event=1;
 
 #7. query all contributions
-SELECT *
-FROM Contribution;
+SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
+FROM Supporter, Donor, Contribution, Contributes
+WHERE Supporter.supporter_id = Donor.supporter_id AND Contributes.donor_id = Supporter.supporter_id AND Contributes.contrib_id = Contribution.contrib_id;
 
-
-#DONORS VIEW
+SET @keyword = 'Gates';
+#DONORS VIEW SEARCH BAR
 #Query all donors with keyword
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
@@ -68,7 +68,7 @@ FROM Supporter, Donor, Email, Phone, Company
 WHERE Company.company_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
 AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
 
-
+/*
 #PATIENTS VIEW
 #Query all patients with keyword
 SELECT Patient.patient_id, Needs.item
