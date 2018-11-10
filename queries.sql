@@ -10,14 +10,14 @@ SELECT Supporter.last_name, Supporter.first_name, Staff.staff_type, Staff.staff_
 FROM Supporter, Staff, Email, Phone
 WHERE Staff.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
 AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary;
-/*
+
 #3. query all patients
 SELECT Patient.patient_id, Needs.item
 FROM Patient, Needs
 WHERE Patient.patient_id = Needs.patient_id;
-*/
+
 #4. query all requests
-SELECT Patient.patient_id, Contribution.item_name 
+SELECT Patient.patient_id, Contribution.item_name
 FROM Requests, Patient, Contribution
 WHERE Requests.contrib_id = Contribution.contrib_id AND Requests.patient_id = Patient.patient_id;
 
@@ -29,153 +29,147 @@ WHERE Pledges.donor_id = Supporter.supporter_id AND Pledges.patient_id = Patient
 #6. query all events
 SELECT Campaign.campaign_name, Campaign.campaign_date, Campaign.theme
 FROM Campaign
-WHERE Campaign.is_event=1;
+WHERE Campaign.is_event = 1;
 
 #7. query all contributions
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
 WHERE Supporter.supporter_id = Donor.supporter_id AND Contributes.donor_id = Supporter.supporter_id AND Contributes.contrib_id = Contribution.contrib_id;
 
-SET @keyword = 'Gates';
 #DONORS VIEW SEARCH BAR
 #Query all donors with keyword
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
-WHERE Supporter.last_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+WHERE Supporter.last_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
+AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
-WHERE Supporter.first_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+WHERE Supporter.first_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
+AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
-WHERE Email.email_address = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+WHERE Email.email_address LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
+AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
-WHERE Phone.phone_number = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id
+WHERE Phone.phone_number LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
+AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
-WHERE Company.company_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
+WHERE Company.company_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
+AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id;
 
-/*
 #PATIENTS VIEW
 #Query all patients with keyword
 SELECT Patient.patient_id, Needs.item
 FROM Patient, Needs
-WHERE Patient.patient_id = @keyword AND Needs.patient_id = Patient.patient_id
+WHERE Patient.patient_id LIKE @keyword AND Needs.patient_id = Patient.patient_id
 UNION
 SELECT Patient.patient_id, Needs.item
 FROM Patient, Needs
-WHERE Needs.item = @keyword AND Needs.patient_id = Patient.patient_id;
-
+WHERE Needs.item LIKE @keyword AND Needs.patient_id = Patient.patient_id;
 
 #PLEDGES VIEW
 #Query all pledges with keyword
 SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
 FROM Supporter, Donor, Patient, Pledges
-WHERE Supporter.last_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
+WHERE Supporter.last_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
 AND Pledges.donor_id = Donor.supporter_id AND Pledges.patient_id = Patient.patient_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
 FROM Supporter, Donor, Patient, Pledges
-WHERE Supporter.first_name = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
+WHERE Supporter.first_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
 AND Pledges.donor_id = Donor.supporter_id AND Pledges.patient_id = Patient.patient_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
 FROM Supporter, Donor, Patient, Pledges
-WHERE Patient.patient_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
+WHERE Patient.patient_id LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
 AND Pledges.donor_id = Donor.supporter_id AND Pledges.patient_id = Patient.patient_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
 FROM Supporter, Donor, Patient, Pledges
-WHERE Pledges.target_amount = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
+WHERE Pledges.target_amount LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
 AND Pledges.donor_id = Donor.supporter_id AND Pledges.patient_id = Patient.patient_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
 FROM Supporter, Donor, Patient, Pledges
-WHERE Pledges.pledge_date = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
+WHERE Pledges.pledge_date LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id AND Pledges.donor_id = Supporter.supporter_id
 AND Pledges.donor_id = Donor.supporter_id AND Pledges.patient_id = Patient.patient_id;
-
 
 #REQUESTS VIEW
 #Query all requests "with keyword"
 SELECT Patient.patient_id, Contribution.item_name
 FROM Patient, Contribution, Requests
-WHERE Patient.patient_id = @keyword AND Requests.patient_id = Patient.patient_id AND Requests.contrib_id = Contribution.contrib_id
+WHERE Patient.patient_id LIKE @keyword AND Requests.patient_id = Patient.patient_id AND Requests.contrib_id = Contribution.contrib_id
 UNION
 
 SELECT Patient.patient_id, Contribution.item_name
 FROM Patient, Contribution, Requests
-WHERE Contribution.item_name = @keyword AND Requests.patient_id = Patient.patient_id AND Requests.contrib_id = Contribution.contrib_id;
-
+WHERE Contribution.item_name LIKE @keyword AND Requests.patient_id = Patient.patient_id AND Requests.contrib_id = Contribution.contrib_id;
 
 #EVENTS VIEW
 #Query all events with keyword
 SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.campaign_date
 FROM Campaign, CampaignType
-WHERE Campaign.campaign_name = @keyword AND CampaignType.campaign_type_id = Campaign.campaign_type_id
+WHERE Campaign.campaign_name LIKE @keyword AND CampaignType.campaign_type_id = Campaign.campaign_type_id
 UNION
 
 SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.campaign_date
 FROM Campaign, CampaignType
-WHERE Campaign.campaign_date = @keyword AND CampaignType.campaign_type_id = Campaign.campaign_type_id;
+WHERE Campaign.campaign_date LIKE @keyword AND CampaignType.campaign_type_id = Campaign.campaign_type_id;
 
-/*
 #CONTRIBUTIONS VIEW
 #Query all contributions with keyword
-SET @keyword = 'Puppet Show';
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
-WHERE Supporter.last_name = @keyword AND Donor.supporter_id = Supporter.supporter_id
+WHERE Supporter.last_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
-WHERE Supporter.first_name = @keyword AND Donor.supporter_id = Supporter.supporter_id
+WHERE Supporter.first_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
-WHERE Contribution.item_name = @keyword AND Donor.supporter_id = Supporter.supporter_id
+WHERE Contribution.item_name LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
-WHERE Contribution.contrib_type = @keyword AND Donor.supporter_id = Supporter.supporter_id
+WHERE Contribution.contrib_type LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
-WHERE Contribution.appeal = @keyword AND Donor.supporter_id = Supporter.supporter_id
+WHERE Contribution.appeal LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id
 UNION
 
 SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes
 FROM Supporter, Donor, Contribution, Contributes
-WHERE Contribution.notes = @keyword AND Donor.supporter_id = Supporter.supporter_id
+WHERE Contribution.notes LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id;
-*/
+
+#EVERYTHING BEFORE THIS WORKS
+SET @keyword = '%RIP%';
 /*
-SET @keyword = '1';
 #INDIVIDUAL DONOR VIEW
 #Query all attributes tied to donor_id
 SELECT Supporter.supporter_id, Supporter.salutation, Supporter.last_name, Supporter.first_name, Supporter.alias, Donor.donor_type, Donor.last_donation, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name
