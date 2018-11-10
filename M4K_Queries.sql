@@ -1,3 +1,4 @@
+/*
 #MAIN VIEW
 #1. query all donors
 SELECT Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name
@@ -166,30 +167,51 @@ SELECT Supporter.last_name, Supporter.first_name, Contribution.item_name, Contri
 FROM Supporter, Donor, Contribution, Contributes
 WHERE Contribution.notes LIKE @keyword AND Donor.supporter_id = Supporter.supporter_id
 AND Contributes.donor_id = Supporter.supporter_id AND Contribution.contrib_id = Contributes.contrib_id;
-
+*/
+#############################
 #EVERYTHING BEFORE THIS WORKS
-SET @keyword = '%RIP%';
-/*
-#INDIVIDUAL DONOR VIEW
-#Query all attributes tied to donor_id
-SELECT Supporter.supporter_id, Supporter.salutation, Supporter.last_name, Supporter.first_name, Supporter.alias, Donor.donor_type, Donor.last_donation, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name
-FROM Supporter, Donor, Email, Phone, Company
-WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
-/*
-#2. query all contribution with donor_id
-SELECT Contribution.item_name, Contribution.is_event_item
-FROM Supporter, Donor, Email, Phone, Company
-WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id
-AND Phone.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
+#############################
+SET @keyword = '7';
+#INDIVIDUAL DONOR VIEW (Separate queries for separate parts of view)
+#Query non-repeating elements
+SELECT Supporter.supporter_id, Supporter.salutation, Supporter.last_name, Supporter.first_name, Supporter.alias, Donor.donor_type, Donor.last_donation, Donor.donor_status
+FROM Supporter, Donor
+WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id;
+
+#Query all emails tied to donor_id
+SELECT Email.email_address
+FROM Supporter, Donor, Email
+WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id;
+
+#Query all phone numbers tied to donor_id
+SELECT Phone.phone_number
+FROM Supporter, Donor, Phone
+WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Phone.supporter_id = Supporter.supporter_id;
+
+#Query all addresses tied to donor_id
+SELECT Address.address_type, Address.address_line_1, Address.address_line_2, Address.city, Address.state, Address.zip_code
+FROM Supporter, Donor, Address
+WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Address.supporter_id = Supporter.supporter_id;
+
+#Query all companies tied to donor_id
+SELECT Company.company_name
+FROM Supporter, Donor, Company
+WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id AND Company.supporter_id = Supporter.supporter_id;
+
+#Query all contributions tied to donor_id
+SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Contributes.contrib_date
+FROM Contribution, Contributes
+WHERE Contributes.donor_id = @keyword AND Contribution.contrib_id = Contributes.contrib_id;
 
 #3. query all pledges tied with donor_id
-
+SELECT Pledges.patient_id, Pledges.pledge_date, Pledges.target_amount, Pledges.is_behind
+FROM Pledges
+WHERE Pledges.donor_id = @keyword;
 
 #4. query all events tied with donor_id
-
-
-#5. query all pledges tied with donor_id
+SELECT Campaign.campaign_name, Campaign.campaign_date
+FROM Campaign, Attends
+WHERE Attends.donor_id = @keyword AND Campaign.campaign_id = Attends.campaign_id;
 
 /*
 #Staff view:
