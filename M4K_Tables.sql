@@ -119,14 +119,15 @@ CREATE TABLE `Contribution` (
 PRIMARY KEY(contrib_id)
 );
 
-DROP TABLE IF EXISTS `Pledges`;
-CREATE TABLE `Pledges` (
+DROP TABLE IF EXISTS `Pledge`;
+CREATE TABLE `Pledge` (
+`pledge_id` CHAR(10),
 `donor_id` CHAR(10),
 `patient_id` CHAR(10),
 `pledge_date` DATE,
 `target_amount` DECIMAL,
 `is_behind` BOOL,
-PRIMARY KEY(donor_id, patient_id),
+PRIMARY KEY(pledge_id),
 FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
 FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 );
@@ -134,13 +135,11 @@ FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS `Installments`;
 CREATE TABLE `Installments` (
 `installment_id` CHAR(10),
-`donor_id` CHAR(10),
-`patient_id` CHAR(10),
+`pledge_id` CHAR(10),
 `amount` DECIMAL,
 `installment_date` DATE,
 PRIMARY KEY (installment_id),
-FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
-FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
+FOREIGN KEY(pledge_id) REFERENCES Pledge(pledge_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `Contributes`;

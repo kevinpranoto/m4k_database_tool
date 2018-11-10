@@ -23,9 +23,9 @@ FROM Requests, Patient, Contribution
 WHERE Requests.contrib_id = Contribution.contrib_id AND Requests.patient_id = Patient.patient_id;
 
 #5. query all pledges
-SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledges.target_amount, Pledges.pledge_date
-FROM Supporter, Patient, Pledges
-WHERE Pledges.donor_id = Supporter.supporter_id AND Pledges.patient_id = Patient.patient_id;
+SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter, Patient, Pledge
+WHERE Pledge.donor_id = Supporter.supporter_id AND Pledge.patient_id = Patient.patient_id;
 
 #6. query all events
 SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
@@ -80,29 +80,29 @@ WHERE Needs.item LIKE @keyword AND Needs.patient_id = Patient.patient_id;
 
 #PLEDGES VIEW
 #Query all pledges with keyword
-SELECT Supporter.last_name, Supporter.first_name, Pledges.patient_id, Pledges.target_amount, Pledges.pledge_date
-FROM Supporter,  Pledges
-WHERE Supporter.last_name LIKE @keyword AND Pledges.donor_id = Supporter.supporter_id
+SELECT Supporter.last_name, Supporter.first_name, Pledge.patient_id, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter,  Pledge
+WHERE Supporter.last_name LIKE @keyword AND Pledge.donor_id = Supporter.supporter_id
 UNION
 
-SELECT Supporter.last_name, Supporter.first_name, Pledges.patient_id, Pledges.target_amount, Pledges.pledge_date
-FROM Supporter, Pledges
-WHERE Supporter.first_name LIKE @keyword AND Pledges.donor_id = Supporter.supporter_id
+SELECT Supporter.last_name, Supporter.first_name, Pledge.patient_id, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter, Pledge
+WHERE Supporter.first_name LIKE @keyword AND Pledge.donor_id = Supporter.supporter_id
 UNION
 
-SELECT Supporter.last_name, Supporter.first_name, Pledges.patient_id, Pledges.target_amount, Pledges.pledge_date
-FROM Supporter, Pledges
-WHERE Pledges.patient_id LIKE @keyword AND Supporter.supporter_id = Pledges.donor_id
+SELECT Supporter.last_name, Supporter.first_name, Pledge.patient_id, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter, Pledge
+WHERE Pledge.patient_id LIKE @keyword AND Supporter.supporter_id = Pledge.donor_id
 UNION
 
-SELECT Supporter.last_name, Supporter.first_name, Pledges.patient_id, Pledges.target_amount, Pledges.pledge_date
-FROM Supporter, Pledges
-WHERE Pledges.target_amount LIKE @keyword AND Supporter.supporter_id = Pledges.donor_id
+SELECT Supporter.last_name, Supporter.first_name, Pledge.patient_id, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter, Pledge
+WHERE Pledge.target_amount LIKE @keyword AND Supporter.supporter_id = Pledge.donor_id
 UNION
 
-SELECT Supporter.last_name, Supporter.first_name, Pledges.patient_id, Pledges.target_amount, Pledges.pledge_date
-FROM Supporter, Pledges
-WHERE Pledges.pledge_date LIKE @keyword AND Supporter.supporter_id = Pledges.donor_id;
+SELECT Supporter.last_name, Supporter.first_name, Pledge.patient_id, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter, Pledge
+WHERE Pledge.pledge_date LIKE @keyword AND Supporter.supporter_id = Pledge.donor_id;
 
 #REQUESTS VIEW
 #Query all requests "with keyword"
@@ -199,9 +199,9 @@ FROM Contribution, Contributes
 WHERE Contributes.donor_id = @keyword AND Contribution.contrib_id = Contributes.contrib_id;
 
 #3. query all pledges tied with donor id
-SELECT Pledges.patient_id, Pledges.pledge_date, Pledges.target_amount, Pledges.is_behind
-FROM Pledges
-WHERE Pledges.donor_id = @keyword;
+SELECT Pledge.patient_id, Pledge.pledge_date, Pledge.target_amount, Pledge.is_behind
+FROM Pledge
+WHERE Pledge.donor_id = @keyword;
 
 #4. query all events tied with donor id
 SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
@@ -235,11 +235,6 @@ FROM CampaignType, Campaign, Works
 WHERE Works.staff_id = @keyword AND Works.campaign_id = Campaign.campaign_id
 AND CampaignType.campaign_type_id = Campaign.campaign_type_id;
 
-#############################
-#EVERYTHING BEFORE THIS WORKS
-#############################
-*/
-SET @keyword = '1';
 #INDIVIDUAL PATIENT VIEW (Separate queries for separate parts of view)
 #Query non-repeating elements
 SELECT Patient.patient_id
@@ -248,25 +243,68 @@ WHERE Patient.patient_id = @keyword;
 
 #Query all needs tied to patient_id
 SELECT Needs.item
-FROM Patient, Needs
+FROM Needs
 WHERE Needs.patient_id = @keyword; 
 
 #Query all requests tied to patient_id
-SELECT Requests.item_name, Requests.
+SELECT Contribution.item_name
 FROM Requests, Contribution
-WHERE Requests.patient_id = @keyword;
+WHERE Requests.patient_id = @keyword AND Contribution.contrib_id = Requests.contrib_id;
 
 #Query all pledges tied to patient_id
+SELECT Supporter.last_name, Supporter.first_name, Pledge.target_amount, Pledge.pledge_date
+FROM Supporter, Pledge
+WHERE Pledge.patient_id = @keyword AND Supporter.supporter_id = Pledge.donor_id;
 
+#INDIVIDUAL EVENT VIEW (Separate queries for separate parts of view)
+#Query all attributes tied to event_id
+SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
+FROM Campaign, CampaignType
+WHERE Campaign.campaign_id = @keyword AND Campaign.campaign_type_id = CampaignType.campaign_type_id;
 
-#Events view:
-0. query all attributes tied to event_id
-1. query all contributions tied to event_id
-2. query all staff tied to event_id
-3. query all donors tied to event_id [who attends]
-#Contribution view:
-0. query patient, donor, event tied to contribution_id
-#Pledge view:
-#1. query patient, donor tied to pledge_id
-#Request view:
-0. query patient, contribution tied to request_id
+#Query all contributions tied to event_id
+SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount
+FROM Contribution, PresentedAt
+WHERE PresentedAt.campaign_id = @keyword AND Contribution.contrib_id = PresentedAt.contrib_id;
+
+#Query all staff tied to event_id
+SELECT Supporter.last_name, Supporter.first_name, Staff.staff_type
+FROM Supporter, Staff, Works
+WHERE Works.campaign_id = @keyword AND Supporter.supporter_id = Works.staff_id AND Supporter.supporter_id = Staff.supporter_id;
+
+#Query all donors tied to event_id
+SELECT Supporter.last_name, Supporter.first_name
+FROM Supporter, Attends
+WHERE Attends.campaign_id = @keyword AND Supporter.supporter_id = Attends.donor_id;
+
+#INDIVIDUAL CONTRIBUTION VIEW (Separate queries for separate parts of view)
+#Query all patients tied to contribution_id
+SELECT Requests.patient_id
+FROM Requests
+WHERE Requests.contrib_id = @keyword;
+
+#Query all donors tied to contribution_id
+SELECT Supporter.last_name, Supporter.first_name, Contributes.contrib_date
+FROM Supporter, Contributes
+WHERE Contributes.contrib_id = @keyword AND Contributes.donor_id = Supporter.supporter_id;
+
+#Query all events tied to contribution_id
+SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.campaign_date
+FROM Campaign, CampaignType, PresentedAt
+WHERE PresentedAt.contrib_id = @keyword AND PresentedAt.campaign_id = Campaign.campaign_id AND CampaignType.campaign_type_id = Campaign.campaign_type_id;
+
+#INDIVIDUAL PLEDGE VIEW (Separate queries for separate parts of view)
+#Query all patients tied to pledge_id
+SELECT Pledge.patient_id
+FROM Pledge
+WHERE Pledge.pledge_id = @keyword;
+
+#Query all donors tied to pledge_id
+SELECT Supporter.last_name, Supporter.first_name, Supporter.alias
+FROM Supporter, Pledge
+WHERE Pledge.pledge_id = @keyword AND Supporter.supporter_id = Pledge.donor_id;
+
+#Query all installments tied to pledge_id
+SELECT Installments.amount, Installments.installment_date
+FROM Installments
+WHERE Installments.pledge_id = @keyword;

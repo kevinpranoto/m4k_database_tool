@@ -214,24 +214,26 @@ INSERT INTO Needs
         (3,		'Medicine'),
         (4,		'Refrigerator');
 
-INSERT INTO Pledges
-	(donor_id,	patient_id,	pledge_date,	target_amount,	is_behind	) VALUES #how does is_behind work?!!!?
-	(1,		1,		'2018-01-01',	9000,		false		),
-	(6,		2,		'2017-10-25',	100000,		true		),
-        (7,		3,		'2016-11-05',	500,		true		),
-        (8,		4,		'2018-02-03',	31000,		true		),
-        (9,		5,		'2017-03-15',	100000,		false		),
-        (10,		1,		'2018-11-23',	55000,		true		),
-        (11,		2,		'2018-05-25',	40000,		true		),
-        (12,		3,		'2017-03-13',	240000,		false		),
-        (13,		4,		'2018-07-17',	1800,		true		),
-        (14,		5,		'2016-08-02',	10,		false		),
-        (15,		1,		'2018-12-04',	5000,		false		),
-        (16,		2,		'2015-09-05',	2500,		true		);
+INSERT INTO Pledge
+	(pledge_id,		donor_id,	patient_id,	pledge_date,	target_amount,	is_behind	) VALUES #how does is_behind work?!!!?
+	(1,		1,		1,		'2018-01-01',	9000,		false		),
+	(2,		6,		2,		'2017-10-25',	100000,		true		),
+        (3,		7,		3,		'2016-11-05',	500,		true		),
+        (4,		8,		4,		'2018-02-03',	31000,		true		),
+        (5,		9,		5,		'2017-03-15',	100000,		false		),
+        (6,		10,		1,		'2018-11-23',	55000,		true		),
+        (7,		11,		2,		'2018-05-25',	40000,		true		),
+        (8,		12,		3,		'2017-03-13',	240000,		false		),
+        (9,		13,		4,		'2018-07-17',	1800,		true		),
+        (10,	14,		5,		'2016-08-02',	10,		false		),
+        (11,	15,		1,		'2018-12-04',	5000,		false		),
+        (15,	16,		2,		'2015-09-05',	2500,		true		);
 
 INSERT INTO Installments
-	(installment_id,	donor_id,	patient_id,	amount,	installment_date	) VALUES
-	(1,			1,		1,		1000,	'2018-01-01'		);
+	(installment_id,	pledge_id,	amount,	installment_date	) VALUES
+	(1,			1,		1000,	'2018-01-01'		),
+    (2,			1,		15000,	'2018-09-10'		),
+    (3,			3,		400,	'2016-04-23'		);
 
 INSERT INTO Contributes
 	(donor_id,	contrib_id,	contrib_date) VALUES
