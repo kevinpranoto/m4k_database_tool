@@ -1,5 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="allDonors" ng-init=
+    "donors = [
+    {name : 'Brian Gomez', company : '' , last_contribution_date : 'Nov 6 2017', phone : '(449) 443 2334', email : 'brian@bb.com'},
+    {name : 'Lu Zhao', company : 'MediaTek' , last_contribution_date : 'Nov 13 2018', phone : '(422) 643 2314', email : 'lu@tek.com'},
+    {name : 'Gina Weasley', company : 'Hogwarts' , last_contribution_date : 'Jan 8 2018', phone : '(221) 443 8897', email : 'ginaw@hogwarts.com'},
+    {name : 'Winston Beard', company : '' , last_contribution_date : 'Jul 4 2018', phone : '(889) 111 1111', email : 'winstonb@ab.com'},
+    {name : 'Mikel Zed', company : 'BBC' , last_contribution_date : 'Aug 3 2017', phone : '(221) 990 3322', email : 'mzed@ab.com'} 
+    ]"
+
+>
 
 <head>
 
@@ -10,7 +19,11 @@
     <meta name="author" content="">
 
     <title>Main View</title>
-
+    <style>
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none;
+        }
+    </style>
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -35,7 +48,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 </head>
 
 <body>
@@ -118,28 +130,36 @@
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
+            <div class="row" style="padding-bottom: 20px" >
+                <div class="col-xs-1">
+                    <button type="button" class="btn btn-success">Add Entry</button>
+                </div>
+                <div class="col-xs-1">
+                    <button type="button" class="btn btn-danger">Remove Entry</button>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
+                       <!-- /.panel-heading -->
+                        <div class="panel-body" ng-controller="donorsTable">
                             <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Rendering engine</th>
-                                        <th>Browser</th>
-                                        <th>Platform(s)</th>
-                                        <th>Engine version</th>
-                                        <th>CSS grade</th>
+                                        <th>Name</th>
+                                        <th>Affiliation</th>
+                                        <th>Last contribution date</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="odd gradeX">
-                                        <td><a href="donor_basic_info.html">Trident</a></td>
-                                        <td>Internet Explorer 4.0</td>
-                                        <td>Win 95+</td>
-                                        <td class="center">4</td>
-                                        <td class="center">X</td>
+                                    <tr ng-repeat="donor in donors" ng-click="goToDonor()">
+                                        <td>{{donor.name}}</td>
+                                        <td>{{donor.company}}</td>
+                                        <td>{{donor.last_contribution_date}}</td>
+                                        <td>{{donor.phone}}</td>
+                                        <td>{{donor.email}}</td>
                                     </tr>
                                     
                                 </tbody>
@@ -183,7 +203,8 @@
         });
     });
     </script>
-
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/m4ktest.js"></script>
 </body>
 
 </html>
