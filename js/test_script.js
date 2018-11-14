@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var app = express();
 
 var con = mysql.createConnection({
     host: "m4k-database.c947krbzy1fm.us-west-1.rds.amazonaws.com",
@@ -14,4 +15,10 @@ con.connect(function(err) {
         console.log(result);
     });
 });
+
+app.get('/dowork',function(res,req){
+    console.log(req.params.msg);
+  /... code to do your work .../
+});
+
 
