@@ -1,0 +1,36 @@
+Supporter (supporter_id, last_name, first_name, salutation, alias)
+{
+	Address (supporter_id, address_type, address_line_1, city, state,  zip_code)
+	
+	Email (supporter_id, email_address)
+	
+	Phone(supporter_id, phone_type, phone_number)
+}
+
+Donor(supporter_id, donor_type, last_donation, donor_status)
+{
+	Company(supporter_id, company_name)
+	
+	Pledges(donor_id, patient_id, pledge_date, target_amount, is_behind)
+	->Installments(installment_id, donor_id, patient_id, amount, installment_date)
+	
+	Contributes(donor_id, contrib_id, contrib_date)
+
+	Attends(donor_id, campaign_id)
+}
+
+Contribution(contrib_id, item_name, is_event_item, contrib_type, amount, pay_method, destination, notes, appeal, thanked)
+->PresentedAt(contrib_id, campaign_id)
+
+Staff(supporter_id, staff_type, staff_status)
+->Works(staff_id, campaign_id)
+
+Campaign(campaign_id, campaign_name, campaign_type_id, is_event, campaign_date, theme)
+->CampaignType(campaign_type_id, campaign_type_name)
+
+Patient(patient_id)
+{
+	Needs(patient_id, item)
+
+	Requests(patient_id, contrib_id)
+}
