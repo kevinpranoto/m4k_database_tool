@@ -432,3 +432,10 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+/* Custom CSS Settings for Staff Pages */
+.selected {
+  background-color: cornflowerblue;
+  color: white;
+  font-weight:bold;
+}
