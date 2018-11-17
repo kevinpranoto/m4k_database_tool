@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="donorEntry">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>New Donor Entry Form</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/m4ktest.js"></script>
+</head>
+
+<body>
+
+<div id="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="all_donors.html">Back</a>
+        </div>
+        <!-- /.navbar-header -->
+
+        <ul class="nav navbar-top-links navbar-right">
+            <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
+                    <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
+    </nav>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">New Donor Entry Form</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Donor Information
+                    </div>
+                    <div class="panel-body" ng-controller="donorForm">
+                        <div class="row">
+                            <form role="form">
+                                <div class="col-lg-6">
+                                    <div class="form-group" style="padding-top: 1em">
+                                        <!-- Dropdown menu for choosing a salutation for a donor; option to add more available -->
+                                        <label>Salutations</label>
+                                        <select class="form-control" ng-model="salutation">
+                                            <option ng-repeat="salutation in salutations">{{salutation}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>First name / Middle name</label>
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Last name</label>
+                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nickname</label>
+                                        <input class="form-control" placeholder="Enter last name here" ng-model="alias">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>E-mail *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
+                                        <input class="form-control" placeholder="Enter e-mail address here" ng-model="email">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Phone *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
+                                        <table class="radio">
+                                            <tr>
+                                                <!-- NOTE: Each object should be named differently to prevent custom settings like default checked button
+                                                            from overlapping other buttons. (e.g. if two radio buttons are named the same, it applies the
+                                                            formatting effects of the last instance of the object with same name -->
+                                                <td style="padding-right: 1em" ng-repeat="phoneType in phoneTypes">
+                                                    <label> <input type="radio" name="donorPhoneTypeRadio" ng-value="phoneType" checked="checked"> {{phoneType}}</label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <input class="form-control" placeholder="Enter phone number here" ng-value="phoneNumber">
+                                    </div>
+
+                                    <div class="form-group" >
+                                        <label>Donor Status</label>
+                                        <select class="form-control">
+                                            <option ng-repeat="status in statuses">{{status}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+                                    <div class="form-group" style="padding-top: 1em">
+                                        <label>Address Type *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
+                                        <table class="radio">
+                                            <tr>
+                                                <td ng-repeat="addressType in addressTypes" style="padding-right: 1em">
+                                                    <label> <input type="radio" name="donorAddressRadio" checked="checked">{{addressType}}</label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Address 1</label>
+                                        <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="streetAddress1">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Address 2</label>
+                                        <input class="form-control" placeholder="(e.g. Apt 123 / Suite 456)" ng-model="streetAddress2">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input class="form-control" placeholder="Enter city here" ng-model="city">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input class="form-control" placeholder="Enter state here" ng-model="state">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Zip Code</label>
+                                        <input class="form-control" placeholder="Enter zip code here" ng-model="zip">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Additional Notes</label>
+                                        <textarea class="form-control" rows="3" ng-model="notes"></textarea>
+                                    </div>
+
+                                    <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
+                                         to default to the right side of the page -->
+                                    <div class="form-group" style="position: relative; float: right">
+                                        <button type="reset" class="btn btn-warning">Reset</button>
+                                        <button type="submit" class="btn btn-success" ng-click="submitDonor()">Save</button>
+                                        <button type="submit" class="btn btn-primary">Save & New</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- jQuery -->
+<script src="../vendor/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="../dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

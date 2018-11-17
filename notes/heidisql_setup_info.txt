@@ -1,0 +1,12 @@
+Network type: 	MySQL (TCP/IP)
+Hostname/IP:	m4k-database.c947krbzy1fm.us-west-1.rds.amazonaws.com
+[x] Prompt for credentials
+
+user:		databois
+password:	databoisroxx
+
+port:		3306
+Databases:	[leave empty]
+Comment:	[Miracles for Kids]
+
+
