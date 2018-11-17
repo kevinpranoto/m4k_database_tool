@@ -43,3 +43,38 @@ entitySpecific.controller('entityData', function($scope) {
     $scope.entityName = name;
     console.log(id);
 });
+
+var donorEntry = angular.module('donorEntry', []);
+
+donorEntry.controller('donorForm', function($scope) {
+    $scope.salutations = [
+        'Mr.', 'Ms.', 'Mrs.', 'Dr.', 
+        'Prof.', 'Rev.', 'Lady', 'Sir'
+    ];
+
+    $scope.phoneTypes = [
+        'Home', 'Work', 'Mobile'
+    ];
+
+    $scope.statuses = [
+        'Active', 'Lax', 'Lost'
+    ];
+
+    $scope.addressTypes = [
+        'Residential', 'Business'
+    ];
+
+    $scope.submitDonor = function() {
+        var name = $scope.salutation + " " + $scope.firstName + 
+            " " + $scope.lastName + "\nAlso known as " + $scope.alias;
+        console.log(name);
+    };
+});
+
+var eventEntry = angular.module('eventEntry', []);
+eventEntry.controller('eventForm', function($scope) {
+    $scope.submitEvent = function() {
+        console.log($scope.date);
+        console.log("tada");
+    };
+});
