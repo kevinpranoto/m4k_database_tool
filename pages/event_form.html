@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" ng-app="eventEntry">
 
 <head>
 
@@ -31,6 +31,8 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/m4ktest.js"></script>
 </head>
 
 <body>
@@ -85,29 +87,29 @@
                     <div class="panel-heading">
                         Event Information
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" ng-controller="eventForm">
                         <div class="row">
                             <form role="form">
                                 <div class="col-xs-5" style="position:center">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Campaign name *** Preferably a dropdown list of all the campaigns ***</label>
-                                        <input class="form-control" placeholder="Enter campaign name here" required>
+                                        <input class="form-control" placeholder="Enter campaign name here" ng-model="campaign" required>
                                     </div>
-
-                                    <div class="form-group" style="padding-top: 1em">
-                                        <label>Event date *** Preferably a calendar function </label>
-                                        <input class="form-control" placeholder="Enter event date here" required>
+                                    
+                                    <div class="form-group">
+                                        <label class="col-2 col-form-label">Date</label>
+                                        <input class="form-control" type="date" value="2011-08-19" ng-model="date" required>
                                     </div>
 
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Event theme</label>
-                                        <input class="form-control" placeholder="Enter event theme here" required>
+                                        <input class="form-control" placeholder="Enter event theme here" ng-modoel="theme" required>
                                     </div>
 
                                     <div style="padding-top: 1em">
                                         <div class="form-group" style="position: relative; padding-right: auto; float: right">
                                             <button type="reset" class="btn btn-warning">Reset</button>
-                                            <button type="submit" class="btn btn-success">Save</button>
+                                            <button type="submit" class="btn btn-success" ng-click="submitEvent()">Save</button>
                                             <button type="submit" class="btn btn-primary">Save & New</button>
                                         </div>
                                     </div>

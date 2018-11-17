@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="donorEntry">
 
 <head>
 
@@ -29,7 +29,8 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/m4ktest.js"></script>
 </head>
 
 <body>
@@ -84,42 +85,35 @@
                     <div class="panel-heading">
                         Donor Information
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" ng-controller="donorForm">
                         <div class="row">
                             <form role="form">
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <!-- Dropdown menu for choosing a salutation for a donor; option to add more available -->
                                         <label>Salutations</label>
-                                        <select class="form-control">
-                                            <option>Mr.</option>
-                                            <option>Ms.</option>
-                                            <option>Mrs.</option>
-                                            <option>Dr.</option>
-                                            <option>Prof.</option>
-                                            <option>Rev.</option>
-                                            <option>Lady</option>
-                                            <option>Sir</option>
+                                        <select class="form-control" ng-model="salutation">
+                                            <option ng-repeat="salutation in salutations">{{salutation}}</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>First name</label>
-                                        <input class="form-control" placeholder="Enter first name here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Middle name</label>
-                                        <input class="form-control" placeholder="Enter middle name here">
+                                        <label>First name / Middle name</label>
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Last name</label>
-                                        <input class="form-control" placeholder="Enter last name here">
+                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nickname</label>
+                                        <input class="form-control" placeholder="Enter last name here" ng-model="alias">
                                     </div>
 
                                     <div class="form-group">
                                         <label>E-mail *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
-                                        <input class="form-control" placeholder="Enter e-mail address here">
+                                        <input class="form-control" placeholder="Enter e-mail address here" ng-model="email">
                                     </div>
 
                                     <div class="form-group">
@@ -129,26 +123,18 @@
                                                 <!-- NOTE: Each object should be named differently to prevent custom settings like default checked button
                                                             from overlapping other buttons. (e.g. if two radio buttons are named the same, it applies the
                                                             formatting effects of the last instance of the object with same name -->
-                                                <td>
-                                                    <label> <input type="radio" name="donorPhoneRadio1" id="HomePhone" value="Home" checked="checked"> Home </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="donorPhoneRadio2" id="WorkPhone" value="Work"> Work </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="donorPhoneRadio3" id="MobilePhone" value="Mobile"> Mobile </label>
+                                                <td style="padding-right: 1em" ng-repeat="phoneType in phoneTypes">
+                                                    <label> <input type="radio" name="donorPhoneTypeRadio" ng-value="phoneType" checked="checked"> {{phoneType}}</label>
                                                 </td>
                                             </tr>
                                         </table>
-                                        <input class="form-control" placeholder="Enter phone number here">
+                                        <input class="form-control" placeholder="Enter phone number here" ng-value="phoneNumber">
                                     </div>
 
                                     <div class="form-group" >
                                         <label>Donor Status</label>
                                         <select class="form-control">
-                                            <option>Active</option>
-                                            <option>Lax</option>
-                                            <option>Lost</option>
+                                            <option ng-repeat="status in statuses">{{status}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -158,11 +144,8 @@
                                         <label>Address Type *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
                                         <table class="radio">
                                             <tr>
-                                                <td>
-                                                    <label> <input type="radio" name="donorAddressRadio1" id="Residential" value="ResidentialAddress" checked="checked"> Residential </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="donorAddressRadio2" id="Business" value="BusinessAddress"> Business </label>
+                                                <td ng-repeat="addressType in addressTypes" style="padding-right: 1em">
+                                                    <label> <input type="radio" name="donorAddressRadio" checked="checked">{{addressType}}</label>
                                                 </td>
                                             </tr>
                                         </table>
@@ -170,39 +153,39 @@
 
                                     <div class="form-group">
                                         <label>Address 1</label>
-                                        <input class="form-control" placeholder="(e.g. 1234 Biz Street)">
+                                        <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="streetAddress1">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Address 2</label>
-                                        <input class="form-control" placeholder="(e.g. Apt 123 / Suite 456)">
+                                        <input class="form-control" placeholder="(e.g. Apt 123 / Suite 456)" ng-model="streetAddress2">
                                     </div>
 
                                     <div class="form-group">
                                         <label>City</label>
-                                        <input class="form-control" placeholder="Enter city here">
+                                        <input class="form-control" placeholder="Enter city here" ng-model="city">
                                     </div>
 
                                     <div class="form-group">
                                         <label>State</label>
-                                        <input class="form-control" placeholder="Enter state here">
+                                        <input class="form-control" placeholder="Enter state here" ng-model="state">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Zip Code</label>
-                                        <input class="form-control" placeholder="Enter zip code here">
+                                        <input class="form-control" placeholder="Enter zip code here" ng-model="zip">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Additional Notes</label>
-                                        <textarea class="form-control" rows="3"></textarea>
+                                        <textarea class="form-control" rows="3" ng-model="notes"></textarea>
                                     </div>
 
                                     <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
                                          to default to the right side of the page -->
                                     <div class="form-group" style="position: relative; float: right">
                                         <button type="reset" class="btn btn-warning">Reset</button>
-                                        <button type="submit" class="btn btn-success">Save</button>
+                                        <button type="submit" class="btn btn-success" ng-click="submitDonor()">Save</button>
                                         <button type="submit" class="btn btn-primary">Save & New</button>
                                     </div>
                                 </div>
