@@ -2,22 +2,36 @@
 
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const queries = require('./m4kQueryScripts.js');
 
+//Deal with CORS issues
+var originsWhiteList = ['http://127.0.0.1:8080'];
+var corsOptions = {
+	origin: function(origin, callback)
+	{
+		var isWhiteListed = originsWhiteList.indexOf(origin) !== -1;
+		callback(null, isWhiteListed);
+	},
+	credentials: true
+}
+app.use(cors(corsOptions));
+
+//Handle requests
 app.get('/', (req, res) =>
 {
 	console.log('Connected to DB');
 	res.send('Express/Node Demo');
 });
 
-app.get('/donors', (req, res) =>
+app.route('/donors').get((req, res) =>
 {
 	queries.getData(0, (err, data) =>
 	{
 		if (err)
 			throw err;
 		console.log('Retrieved all donors');
-		res.send(data);
+		res.json(data);
 	});
 });
 
