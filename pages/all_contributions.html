@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="allContributions">
 
 <head>
 
@@ -35,10 +35,12 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/ContributionController.js"></script>
 
 </head>
 
-<body>
+<body ng-controller="ContributionController" class="ng-cloak">
 
     <div id="wrapper">
 
@@ -117,12 +119,21 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <div class="row" style="padding-bottom: 2ex" >
-                <div class="col-xs-1">
-                    <button type="button" class="btn btn-success">Add Entry</button>
+            <div class="row">
+                <div class="col-xs-1" style="padding-bottom: 2em; position:relative; float:left">
+                    <table>
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-success" ng-click="redirectToContributionForm()">Add Entry</button>
+                            </td>
+                            <td style="padding-left:1em">
+                                <button type="button" class="btn btn-danger" ng-click="removeRow($index)">Remove Entry</button>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="col-xs-1">
-                    <button type="button" class="btn btn-danger">Remove Entry</button>
+
                 </div>
             </div>
             <!-- /.row -->
@@ -131,7 +142,7 @@
                     <div class="panel panel-default">
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <table width="100%" class="table table-bordered" id="dataTables-example">
                                 <thead>
                                     <tr>
                                         <th>Rendering engine</th>
@@ -142,14 +153,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="odd gradeX">
-                                        <td><a href="contribution_basic_info.html">Trident</a></td>
-                                        <td>Internet Explorer 4.0</td>
-                                        <td>Win 95+</td>
-                                        <td class="center">4</td>
-                                        <td class="center">X</td>
+                                    <!-- NOTE: If indices don't fill in missing rows post-delete, try this:
+                                    <tr data-ng-repeat="staff in staff_members track by $index"> -->
+                                    <tr data-ng-repeat="item in contributions track by $index"
+                                        ng-class="{'selected':$index == selectedRow}"
+                                        ng-click="setClickedRow($index)" ng-dblclick="goToContribution(item)">
+
+                                        <td>{{item.donor_name}}</td>
+                                        <td>{{item.cont_name}}</td>
+                                        <td>{{item.cont_type}}</td>
+                                        <td>{{item.appeal}}</td>
+                                        <td>{{item.notes}}</td>
                                     </tr>
-                                    
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->
