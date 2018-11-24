@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="allContributions">
+<html lang="en" ng-app="allPledges">
 
 <head>
 
@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>New Contribution Entry Form</title>
+    <title>New Pledge Entry Form</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -30,11 +30,11 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../js/ContributionController.js"></script>
+    <script src="../js/PledgeController.js"></script>
 
 </head>
 
-<body class="ng-cloak">
+<body class="ng-cloak" ng-controller="PledgeController">
 
 <div id="wrapper">
     <!-- Navigation -->
@@ -46,7 +46,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="all_contributions.html">Back</a>
+            <a class="navbar-brand" href="all_pledges.html">Back</a>
         </div>
         <!-- /.navbar-header -->
 
@@ -75,101 +75,51 @@
     <div id="page-wrapper" >
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">New Contribution Entry Form</h1>
+                <h1 class="page-header">New Pledge Entry Form</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
         <!-- /.row -->
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12" style="">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Contribution Information
+                        Pledge Information
                     </div>
                     <div class="panel-body">
                         <div class="row">
                             <form role="form">
                                 <!-- Using ContributionController here to modify display in entry form based on Contribution Type selected -->
-                                <div class="col-lg-6" ng-controller="ContributionController">
+                                <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
-                                        <label>Contribution name</label>
-                                        <input class="form-control" placeholder="Enter first name here">
+                                        <label>Donor name</label>
+                                        <input class="form-control" placeholder="Enter donor's full name here" required>
                                     </div>
-                                    <table>
-                                        <!-- When the contribution type "Money" is chosen, the view will only then display the fields
-                                             for specifying the amount and payment method the money contribution was for. -->
-                                        <tr>
-                                            <td style="padding-top:auto">
-                                                <label>Type</label>
-                                                <select name="contributionType" ng-model="TypeValue" ng-change="ContributionTypeChanged()" class="form-control" >
-                                                    <option value="goods" ng-selected> Goods </option>
-                                                    <option value="service"> Service </option>
-                                                    <option value="money"> Money </option>
-                                                </select>
-                                            </td>
-                                        </tr>
 
-                                        <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
-                                        <tr ng-hide="typeStatus != 'money'">
-                                            <td style="padding-top:1ex">
-                                                <label>Enter amount</label>
-                                                <input class="form-control" placeholder="Enter amount (e.g. 400.00)">
-                                            </td>
-                                        </tr>
-                                        <tr ng-hide="typeStatus != 'money'">
-                                            <td style="padding-top:1ex">
-                                                <label>Select payment method</label>
-                                                <select class="form-control">
-                                                    <option value="cash">Cash</option>
-                                                    <option value="creditCard">Credit Card</option>
-                                                    <option value="check">Check</option>
-                                                    <option value="stock">Stock</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    <div class="form-group">
+                                        <label>Patient ID</label>
+                                        <input class="form-control" placeholder="Enter patient's ID here" required>
+                                    </div>
+
+                                    <div>
+                                        <label>Pledge date</label>
+                                        <input type="date" ng-model="dateOfPledge" placeholder="mm/dd/yyyy" class="form-control" required>
+                                    </div>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
-                                        <label>Appeal</label>
-                                        <select class="form-control">
-                                            <option>Direct Mail</option>
-                                            <option>Email Campaign</option>
-                                            <option>Radio Advertisement</option>
-                                            <option>Sponsorship</option>
-                                            <option>Fund-a-Need</option>
-                                            <option>Opportunity Ticket</option>
-                                            <option>Silent Auction</option>
-                                            <option>Live Auction</option>
+                                        <label>Target amount</label>
+                                        <input class="form-control" placeholder="Enter pledge target here (e.g. 1,000.00)" required>
+                                    </div>
+
+                                    <!-- NOTE: ng-init will invoke a function as soon as the page is initialized -->
+                                    <div class="form-group">
+                                        <label>Target year</label>
+                                        <select class="form-control" ng-model="pledgeYear" ng-init="calendarList()" required>
+                                            <option ng-repeat="year in list_of_years">{{year}}</option>
                                         </select>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label>Destination</label>
-                                        <select class="form-control">
-                                            <option>General</option>
-                                            <option>Miracle Manor</option>
-                                            <option>Basket of Miracles</option>
-                                            <option>Grant Program</option>
-                                            <option>Health & Wellness</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Is this an event item?</label>
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked"> Yes </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False"> No </label>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-
                                     <div class="form-group">
                                         <label>Additional Notes</label>
                                         <textarea class="form-control" rows="3"></textarea>
