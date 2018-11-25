@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="staffEntry">
 
 <head>
 
@@ -12,7 +12,7 @@
     <title>New Staff Entry Form</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
     <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
@@ -29,7 +29,8 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/staffEntry.js"></script>
 </head>
 
 <body>
@@ -73,7 +74,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">New Staff Entry Form</h1>
+                <h1 class="page-header">New Staff Entry</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -84,131 +85,91 @@
                     <div class="panel-heading">
                         Staff Information
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" ng-controller="staffForm">
                         <div class="row">
                             <form role="form">
                                 <div class="col-lg-6">
-                                    <div class="form-group" style="padding-top: 1em">
-                                        <label>First name</label>
-                                        <input class="form-control" placeholder="Enter first name here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Middle name</label>
-                                        <input class="form-control" placeholder="Enter middle name here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Last name</label>
-                                        <input class="form-control" placeholder="Enter last name here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>E-mail *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
-                                        <input class="form-control" placeholder="Enter e-mail address here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Phone *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
-                                        <table class="radio">
-                                            <tr>
-                                                <!-- NOTE: Each object should be named differently to prevent custom settings like default checked button
-                                                from overlapping other buttons. (e.g. if two radio buttons are named the same, it applies the
-                                                formatting effects of the last instance of the object with same name -->
-                                                <td>
-                                                    <label> <input type="radio" name="staffPhoneRadio1" id="HomePhone" value="Home" checked="checked"> Home </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="staffPhoneRadio1" id="WorkPhone" value="Work"> Work </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="staffPhoneRadio1" id="MobilePhone" value="Mobile"> Mobile </label>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <input class="form-control" placeholder="Enter phone number here">
-                                    </div>
-
                                     <div class="form-group" >
-                                        <label>Staff Status</label>
-                                        <select class="form-control">
-                                            <option>Active</option>
-                                            <option>Inactive</option>
+                                        <label>Status</label>
+                                        <select class="form-control" ng-model="state">
+                                            <option ng-repeat="status in statuses" selected="Active">{{status}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Staff Type</label>
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <label><input type="checkbox" checked="true"> Staff </label>
-                                                </td>
-                                                <td style="padding-left:1em">
-                                                    <label><input type="checkbox"> Donor </label>
-                                                </td>
-                                            </tr>
-                                        </table>
-
-
+                                        <label>First name / Middle name</label>
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName">
                                     </div>
+
+                                    <div class="form-group">
+                                        <label>Last name</label>
+                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName">
+                                    </div>
+
+                                    <div class="form-group">
+                                    <div class="form-group email-group" ng-repeat="email in emails">
+                                        <label>E-mail {{$index + 1}}</label>
+                                        <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.address">
+                                        <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
+                                    </div>
+                                    <button type="button" ng-click="addEmail()">Add email</button>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="form-group" ng-repeat="phone in phones">
+                                            <label>Phone {{$index + 1}}</label>
+                                            <div class="dropdown">
+                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.type">
+                                                    <option ng-repeat="type in phoneTypes">{{type}}</option>
+                                                </select>
+                                            </div>
+                                            <input class="form-control" placeholder="Enter phone number here" ng-model="phone.number">
+                                            <button ng-click="phones.splice($index, 1)" aria-label="Remove">Remove phone</button>
+                                        </div>
+                                        <button type="button" ng-click="addPhone()">Add Phone</button>
+                                    </div>
+
+
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
-                                    <div class="form-group" style="padding-top: 1em">
-                                        <label>Address Type *** NEED TO ALLOW FOR ADDING MULTIPLE ***</label>
-                                        <table class="radio">
-                                            <tr>
-                                                <td>
-                                                    <label> <input type="radio" name="staffAddressRadio2" id="Residential" value="ResidentialAddress" checked="checked"> Residential </label>
-                                                </td>
-                                                <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="staffAddressRadio2" id="Business" value="BusinessAddress"> Business </label>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-
                                     <div class="form-group">
-                                        <label>Address 1</label>
-                                        <input class="form-control" placeholder="(e.g. 1234 Biz Street)">
+                                        <div class="form-group" style="padding-top: 1em">
+                                            <label style="padding-right: 1em">Address Type:   </label>
+                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.type" ng-value="addressType">{{addressType}}</label>
+                                        </div>
+                                            <div class="form-group">
+                                            <label>Street</label>
+                                            <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="address.street">
+                                        </div>
+                                            <div class="form-group">
+                                            <label>City</label>
+                                            <input class="form-control" placeholder="Enter city here" ng-model="address.city">
+                                        </div>
+                                            <div class="form-group">
+                                            <label>State</label>
+                                            <input class="form-control" placeholder="Enter state here" ng-model="address.state">
+                                        </div>
+                                            <div class="form-group">
+                                            <label>Zip Code</label>
+                                            <input class="form-control" placeholder="Enter zip code here" ng-model="address.zip">
+                                        </div>
                                     </div>
-
+                                    
                                     <div class="form-group">
-                                        <label>Address 2</label>
-                                        <input class="form-control" placeholder="(e.g. Apt 123 / Suite 456)">
+                                            <label>Additional Notes</label>
+                                            <textarea class="form-control" rows="3" ng-model="notes"></textarea>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label>City</label>
-                                        <input class="form-control" placeholder="Enter city here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>State</label>
-                                        <input class="form-control" placeholder="Enter state here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Zip Code</label>
-                                        <input class="form-control" placeholder="Enter zip code here">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Additional Notes</label>
-                                        <textarea class="form-control" rows="3"></textarea>
-                                    </div>
-
-                                    <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
+                                          <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
                                          to default to the right side of the page -->
-                                    <div class="form-group" style="position: relative; float: right">
-                                        <button type="reset" class="btn btn-warning">Reset</button>
-                                        <button type="submit" class="btn btn-success">Save</button>
-                                        <button type="submit" class="btn btn-primary">Save & New</button>
-                                    </div>
                                 </div>
                             </form>
                             <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <div class="form-group" style="position: relative; float: right">
+                            <button type="reset" class="btn btn-warning">Reset</button>
+                            <button type="submit" class="btn btn-success" ng-click="submitStaff()">Save</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitStaff()">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>
