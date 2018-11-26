@@ -95,7 +95,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Contribution name</label>
-                                        <input class="form-control" placeholder="Enter first name here" ng-model="contName">
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="contName" required>
                                     </div>
                                     <table>
                                         <!-- When the contribution type "Money" is chosen, the view will only then display the fields
@@ -103,7 +103,7 @@
                                         <tr>
                                             <td style="padding-top:auto">
                                                 <label>Type</label>
-                                                <select name="contributionType" ng-change="ContributionTypeChanged()" class="form-control" ng-model="contribType">
+                                                <select name="contributionType" ng-change="ContributionTypeChanged()" class="form-control" ng-model="contribType" required>
                                                     <option value="goods" ng-selected> Goods </option>
                                                     <option value="service"> Service </option>
                                                     <option value="money"> Money </option>
@@ -115,13 +115,13 @@
                                         <tr ng-hide="typeStatus != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Enter amount</label>
-                                                <input class="form-control" placeholder="Enter amount (e.g. 400.00)" ng-model="contribAmount">
+                                                <input class="form-control" type="number" placeholder="Enter amount (e.g. 400.00)" ng-model="contribAmount" required>
                                             </td>
                                         </tr>
                                         <tr ng-hide="typeStatus != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Select payment method</label>
-                                                <select class="form-control" ng-model="contribPaymentMethod">
+                                                <select class="form-control" ng-model="contribPaymentMethod" required>
                                                     <option value="cash">Cash</option>
                                                     <option value="creditCard">Credit Card</option>
                                                     <option value="check">Check</option>
@@ -135,7 +135,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
                                         <label>Appeal</label>
-                                        <select class="form-control" ng-model="contribAppeal">
+                                        <select class="form-control" ng-model="contribAppeal" required>
                                             <option>Direct Mail</option>
                                             <option>Email Campaign</option>
                                             <option>Radio Advertisement</option>
@@ -149,7 +149,7 @@
 
                                     <div class="form-group">
                                         <label>Destination</label>
-                                        <select class="form-control" ng-model="contribDestination">
+                                        <select class="form-control" ng-model="contribDestination" required>
                                             <option>General</option>
                                             <option>Miracle Manor</option>
                                             <option>Basket of Miracles</option>
@@ -163,10 +163,10 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="isEventChoice.Yes"> Yes </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="isEvent.Choice"> Yes </label>
                                                 </td>
                                                 <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="isEventChoice.No"> No </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="isEvent.Choice"> No </label>
                                                 </td>
                                             </tr>
                                         </table>
@@ -174,7 +174,7 @@
 
                                     <div class="form-group">
                                         <label>Additional Notes</label>
-                                        <textarea class="form-control" rows="3"></textarea>
+                                        <textarea class="form-control" rows="3" ng-model="contribNotes"></textarea>
                                     </div>
 
                                     <!-- Final Submit and Reset buttons for the overall entry form; edited with float style

@@ -1,7 +1,7 @@
 (function(){
     let allContributions = angular.module("contributionEntry", []);
 
-    allContributions.controller("ContributionController", function($scope, $location, $window) {
+    allContributions.controller("ContributionController", function($scope, $location, $window, $filter) {
 
         $scope.contributions = [
             {id : '1', donor_name : 'Jack Stefanski', cont_name : 'Donation from Jack', cont_type : 'Cash', appeal: 'Radio', notes: 'Paid in Prussian Francs'},
@@ -18,7 +18,7 @@
         };
 
         $scope.ContributionTypeChanged = function() {
-            $scope.typeStatus = $scope.TypeValue;
+            $scope.typeStatus = $scope.contribType;
         };
 
         $scope.redirectToContributionForm = function() {
@@ -77,27 +77,21 @@
          * Function to submit the data from a form page to be packaged into JSON format for back-end to store the data.
          * Initializes all the fields with the fields that a new pledge should have when entering the data into the database.
          */
-        //let contributionEntry = angular.module('contributionEntry', []);
-        //contributionEntry.controller('contributionForm', function($scope){
-
         $scope.submitContribution = function() {
             let newContribution = {
                 itemName: $scope.contribName,
                 type: $scope.contribType,
-                amount: $scope.contribAmount,
+                amount: $filter('number')($scope.contribAmount, 2),         // Auto-filters amount to two decimal places
                 paymentMethod: $scope.contribPaymentMethod,
                 appeal: $scope.contribAppeal,
                 destination: $scope.contribDestination,
-                isEvent: $scope.isEventChoice,
+                isEvent: $scope.isEvent.Choice,
                 notes: $scope.contribNotes
             };
 
             // Send the JSON data to back-end server, and confirms the data output in console
             console.log(JSON.stringify(newContribution));
         };
-
-        //});
-
     });
 }());
 
