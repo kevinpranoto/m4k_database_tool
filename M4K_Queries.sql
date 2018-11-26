@@ -31,7 +31,7 @@ FROM Supporter, Patient, Pledge
 WHERE Pledge.donor_id = Supporter.supporter_id AND Pledge.patient_id = Patient.patient_id;
 
 #6. query all events
-SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
+SELECT Campaign.campaign_id, Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
 FROM Campaign, CampaignType
 WHERE Campaign.is_event = 1 AND CampaignType.campaign_type_id = Campaign.campaign_type_id;
 
@@ -115,7 +115,7 @@ WHERE Address.supporter_id = @keyword;
 SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
 FROM CampaignType, Campaign, Works
 WHERE Works.staff_id = @keyword AND Works.campaign_id = Campaign.campaign_id
-AND CampaignType.campaign_type_id = Campaign.campaign_type_id;
+AND CampaignType.campaign_type_id = Campaign.campaign_type_id AND Campaign.is_event = 1;
 
 #INDIVIDUAL PATIENT VIEW (Separate queries for separate parts of view)
 #Query non-repeating elements
@@ -158,7 +158,7 @@ WHERE Works.campaign_id = @keyword AND Supporter.supporter_id = Works.staff_id A
 SELECT Supporter.last_name, Supporter.first_name
 FROM Supporter, Attends
 WHERE Attends.campaign_id = @keyword AND Supporter.supporter_id = Attends.donor_id;
-
+/*
 #INDIVIDUAL CONTRIBUTION VIEW (Separate queries for separate parts of view)
 #Query all patients tied to contribution_id
 SELECT Requests.patient_id

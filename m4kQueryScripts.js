@@ -16,7 +16,7 @@ var queries = [
 /*queryNum = 2: All Patients*/ "SELECT Patient.patient_id, Needs.item FROM Patient, Needs WHERE Patient.patient_id = Needs.patient_id",
 /*queryNum = 3: All Requests*/ "SELECT Patient.patient_id, Contribution.item_name FROM Requests, Patient, Contribution WHERE Requests.contrib_id = Contribution.contrib_id AND Requests.patient_id = Patient.patient_id",
 /*queryNum = 4: All Pledges*/ "SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledge.target_amount, Pledge.pledge_date FROM Supporter, Patient, Pledge WHERE Pledge.donor_id = Supporter.supporter_id AND Pledge.patient_id = Patient.patient_id",
-/*queryNum = 5: All Events*/ "SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date FROM Campaign, CampaignType WHERE Campaign.is_event = 1 AND CampaignType.campaign_type_id = Campaign.campaign_type_id",
+/*queryNum = 5: All Events*/ "SELECT Campaign.campaign_id, Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date FROM Campaign, CampaignType WHERE Campaign.is_event = 1 AND CampaignType.campaign_type_id = Campaign.campaign_type_id",
 /*queryNum = 6: All Event Items*/ "SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes FROM Supporter, Contribution, Contributes WHERE Contributes.donor_id = Supporter.supporter_id AND Contributes.contrib_id = Contribution.contrib_id AND Contribution.is_event_item = 1",
 /*queryNum = 7: All Contributions*/ "SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contribution.item_name, Contribution.contrib_type, Contribution.appeal, Contribution.notes FROM Supporter, Donor, Contribution, Contributes WHERE Supporter.supporter_id = Donor.supporter_id AND Contributes.donor_id = Supporter.supporter_id AND Contributes.contrib_id = Contribution.contrib_id",
 /*queryNum = 8: Donor basic info w/ ID*/ "SELECT Supporter.supporter_id, Supporter.salutation, Supporter.last_name, Supporter.first_name, Supporter.alias, Donor.donor_type, Donor.last_donation, Donor.donor_status FROM Supporter, Donor WHERE Donor.supporter_id = @keyword AND Donor.supporter_id = Supporter.supporter_id",
@@ -26,8 +26,22 @@ var queries = [
 /*queryNum = 12: Donor companies w/ ID*/ "SELECT Company.company_name FROM Company WHERE Company.supporter_id = @keyword",
 /*queryNum = 13: Donor contributions w/ ID*/ "SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Contributes.contrib_date FROM Contribution, Contributes WHERE Contributes.donor_id = @keyword AND Contribution.contrib_id = Contributes.contrib_id",
 /*queryNum = 14: Donor pledges w/ ID*/ "SELECT Pledge.patient_id, Pledge.pledge_date, Pledge.target_amount, Pledge.is_behind FROM Pledge WHERE Pledge.donor_id = @keyword",
-/*queryNum = 15: Donor events w/ ID*/ "SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date FROM Campaign, CampaignType, Attends WHERE Attends.donor_id = @keyword AND Campaign.campaign_id = Attends.campaign_id AND CampaignType.campaign_type_id = Campaign.campaign_type_id"
+/*queryNum = 15: Donor events w/ ID*/ "SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date FROM Campaign, CampaignType, Attends WHERE Attends.donor_id = @keyword AND Campaign.campaign_id = Attends.campaign_id AND CampaignType.campaign_type_id = Campaign.campaign_type_id",
+/*queryNum = 16: Staff basic info w/ ID*/ "SELECT Supporter.supporter_id, Supporter.salutation, Supporter.last_name, Supporter.first_name, Supporter.alias, Staff.staff_type, Staff.staff_status FROM Supporter, Staff WHERE Staff.supporter_id = @keyword AND Staff.supporter_id = Supporter.supporter_id",
+/*queryNum = 17: Staff emails w/ ID*/ "SELECT Email.email_address FROM Email WHERE Email.supporter_id = @keyword",
+/*queryNum = 18: Staff phones w/ ID*/ "SELECT Phone.phone_number FROM Phone WHERE Phone.supporter_id = @keyword",
+/*queryNum = 19: Staff addresses w/ ID*/ "SELECT Address.address_type, Address.address_line_1, Address.address_line_2, Address.city, Address.state, Address.zip_code FROM Address WHERE Address.supporter_id = @keyword",
+/*queryNum = 20: Staff events w/ ID*/ "SELECT Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date FROM CampaignType, Campaign, Works WHERE Works.staff_id = @keyword AND Works.campaign_id = Campaign.campaign_id AND CampaignType.campaign_type_id = Campaign.campaign_type_id AND Campaign.is_event = 1",
+/*queryNum = 21: Patient needs w/ ID*/ "SELECT Needs.item FROM Needs WHERE Needs.patient_id = @keyword",
+/*queryNum = 22: Patient requests w/ ID*/ "SELECT Contribution.item_name FROM Requests, Contribution WHERE Requests.patient_id = @keyword AND Contribution.contrib_id = Requests.contrib_id",
+/*queryNum = 23: Patient pledges w/ ID*/ "SELECT Supporter.last_name, Supporter.first_name, Pledge.target_amount, Pledge.pledge_date FROM Supporter, Pledge WHERE Pledge.patient_id = @keyword AND Supporter.supporter_id = Pledge.donor_id",
+/*queryNum = 24: Event basic info w/ ID*/ "SELECT Campaign.campaign_id, Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date FROM Campaign, CampaignType WHERE Campaign.campaign_id = @keyword AND Campaign.campaign_type_id = CampaignType.campaign_type_id",
+/*queryNum = 25: Event contributions w/ ID*/ "SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount FROM Contribution, PresentedAt WHERE PresentedAt.campaign_id = @keyword AND Contribution.contrib_id = PresentedAt.contrib_id",
+/*queryNum = 26: Event staff w/ ID*/ "SELECT Supporter.last_name, Supporter.first_name, Staff.staff_type FROM Supporter, Staff, Works WHERE Works.campaign_id = @keyword AND Supporter.supporter_id = Works.staff_id AND Supporter.supporter_id = Staff.supporter_id",
+/*queryNum = 27: Event donors w/ ID*/ "SELECT Supporter.last_name, Supporter.first_name FROM Supporter, Attends WHERE Attends.campaign_id = @keyword AND Supporter.supporter_id = Attends.donor_id",
 ];
+
+
 
 
 //Get data from relevant table based on queryNum
@@ -39,7 +53,7 @@ var getData = function(queryNum, callback)
 	});
 }
 
-function getIndividualDonorInfo(id, queryNum)
+function getIndividualInfo(id, queryNum)
 {
 	return new Promise((resolve, reject) =>
 	{
@@ -57,36 +71,36 @@ function getIndividualDonorInfo(id, queryNum)
 var getIndividualDonor = function(id, callback)
 {
 	var donor = {};
-	//Get all basic elements from a donor
-	getIndividualDonorInfo(id, 8).then((donorBasicInfo) =>
+	//Get all basic info from a donor
+	getIndividualInfo(id, 8).then((donorBasicInfo) =>
 	{
 		donor.basic = donorBasicInfo;
 		//Get all emails tied to donor
-		getIndividualDonorInfo(id, 9).then((donorEmails) =>
+		getIndividualInfo(id, 9).then((donorEmails) =>
 		{
 			donor.emails = donorEmails;
-			//Get all phones tied to donor
-			getIndividualDonorInfo(id, 10).then((donorPhones) =>
+			//Get all phone numberss tied to donor
+			getIndividualInfo(id, 10).then((donorPhones) =>
 			{
 				donor.phones = donorPhones;
 				//Get all addresses tied to donor
-				getIndividualDonorInfo(id, 11).then((donorAddresses) =>
+				getIndividualInfo(id, 11).then((donorAddresses) =>
 				{
 					donor.addresses = donorAddresses;
 					//Get all companies tied to donor
-					getIndividualDonorInfo(id, 12).then((donorCompanies) =>
+					getIndividualInfo(id, 12).then((donorCompanies) =>
 					{
 						donor.companies = donorCompanies;
 						//Get all contributions tied to donor
-						getIndividualDonorInfo(id, 13).then((donorContributions) =>
+						getIndividualInfo(id, 13).then((donorContributions) =>
 						{
 							donor.contributions = donorContributions;
 							//Get all pledges tied to donor
-							getIndividualDonorInfo(id, 14).then((donorPledges) =>
+							getIndividualInfo(id, 14).then((donorPledges) =>
 							{
 								donor.pledges = donorPledges;
 								//Get all events teid to donor
-								getIndividualDonorInfo(id, 15).then((donorEvents) =>
+								getIndividualInfo(id, 15).then((donorEvents) =>
 								{
 									donor.events = donorEvents;
 									//Return aggregate donor info object 
@@ -101,6 +115,92 @@ var getIndividualDonor = function(id, callback)
 	});
 }
 
+var getIndividualStaff = function(id, callback)
+{
+	var staff = {};
+	//Get all basic info from a staff member
+	getIndividualInfo(id, 16).then((staffBasicInfo) =>
+	{
+		staff.basic = staffBasicInfo;
+		//Get all emails tied to staff member
+		getIndividualInfo(id, 17).then((staffEmails) =>
+		{
+			staff.emails = staffEmails;
+			//Get all phone numbers tied to staff member
+			getIndividualInfo(id, 18).then((staffPhones) =>
+			{
+				staff.phones = staffPhones;
+				//Get all addresses tied to staff member
+				getIndividualInfo(id, 19).then((staffAddresses) =>
+				{
+					staff.addresses = staffAddresses;
+					//Get all events tied to staff member
+					getIndividualInfo(id, 20).then((staffEvents) =>
+					{
+						staff.events = staffEvents;
+						//Return aggregate staff info object 			
+						callback(staff);
+					});
+				});
+			});
+		});
+	});
+}
+
+var getIndividualPatient = function(id, callback)
+{
+	var patient = {};
+	//Get all basic info from a patient
+	patient.pid = id;
+	//Get all needs tied to patient
+	getIndividualInfo(id, 21).then((patientNeeds) =>
+	{
+		patient.needs = patientNeeds;
+		//Get all requests tied to patient
+		getIndividualInfo(id, 22).then((patientRequests) =>
+		{
+			patient.requests = patientRequests;
+			//Get all pledges tied to patient
+			getIndividualInfo(id, 23).then((patientPledges) =>
+			{
+				patient.pledges = patientPledges;
+				//Return aggregate patient info object
+				callback(patient);
+			})
+		})
+	})
+}
+
+var getIndividualEvent = function(id, callback)
+{
+	var event = {};
+	//Get all basic info from an event
+	getIndividualInfo(id, 24).then((eventBasicInfo) =>
+	{
+		event.basic = eventBasicInfo;
+		//Get all contributions tied to event
+		getIndividualInfo(id, 25).then((eventContributions) =>
+		{
+			event.contributions = eventContributions;
+			//Get all staff tied to event
+			getIndividualInfo(id, 26).then((eventStaff) =>
+			{
+				event.staff = eventStaff;
+				//Get all donors tied to event
+				getIndividualInfo(id, 27).then((eventDonors) =>
+				{
+					event.donors = eventDonors;
+					//Return aggregate event info object
+					callback(event);
+				})
+			});
+		});
+	});
+}
+
 exports.getData = getData;
 exports.getIndividualDonor = getIndividualDonor;
+exports.getIndividualStaff = getIndividualStaff;
+exports.getIndividualPatient = getIndividualPatient;
+exports.getIndividualEvent = getIndividualEvent;
 //exports.deleteData = deleteData;
