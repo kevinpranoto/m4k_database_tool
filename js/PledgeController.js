@@ -2,7 +2,7 @@
 
     let allPledges = angular.module('allPledges', []);
 
-    allPledges.controller('PledgeController', function($scope, $location, $window) {
+    allPledges.controller('PledgeController', function($scope, $location, $window, $filter) {
 
         $scope.pledges = [
             {id : '1', donor_name : 'Jack Stefanski', patient_id : '7134', target_amount : '100,000.00', target_year: '2040', pledge_date: '11/24/2018'},
@@ -49,6 +49,10 @@
             this.isOpen = false;
         };
 
+        $scope.saveEntry = function(){
+
+        };
+
         $scope.removeRow = function(index, pledge){
             // Prompt user to confirm deletion; clicking OK returns true, Cancel returns false.
             let deleteRow = $window.confirm("Are you sure you want to delete this entry?");
@@ -76,8 +80,26 @@
             sessionStorage.setItem('entityName', pledge_name)
             console.log("click " + sessionStorage.getItem('entityID'));
         };
+
+        /**
+         * Function(s) related to gathering data from form pages and packaging them into JSON format
+         */
+        $scope.submitPledge = function() {
+            let newPledge = {
+                donorName: $scope.pledgeDonorName,
+                patientID: $scope.pledgePatientID,
+                date: $filter('date')($scope.pledgeDate, "MM-dd-yyyy"),     // Date is filtered to remove clock time
+                targetAmount: $scope.pledgeTargetAmount,
+                targetYear: $scope.pledgeTargetYear,
+                notes: $scope.pledgeNotes
+            }
+
+            console.log(JSON.stringify(newPledge));
+            //send donor here to server
+        };
     });
 }());
+
 
 angular.module('app', [])
     .controller("Ctrl",

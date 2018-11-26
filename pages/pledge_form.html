@@ -31,6 +31,7 @@
     <![endif]-->
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../js/PledgeController.js"></script>
+    <script src="../js/pledgeEntry.js"></script>
 
 </head>
 
@@ -93,44 +94,44 @@
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Donor name</label>
-                                        <input class="form-control" placeholder="Enter donor's full name here" required>
+                                        <input class="form-control" ng-model="pledgeDonorName" placeholder="Enter donor's full name here" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Patient ID</label>
-                                        <input class="form-control" placeholder="Enter patient's ID here" required>
+                                        <input class="form-control" ng-model="pledgePatientID" placeholder="Enter patient's ID here" required>
                                     </div>
 
                                     <div>
                                         <label>Pledge date</label>
-                                        <input type="date" ng-model="dateOfPledge" placeholder="mm/dd/yyyy" class="form-control" required>
+                                        <input type="date" ng-model="pledgeDate" placeholder="mm/dd/yyyy" class="form-control" required>
                                     </div>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
                                         <label>Target amount</label>
-                                        <input class="form-control" placeholder="Enter pledge target here (e.g. 1,000.00)" required>
+                                        <input class="form-control" ng-model="pledgeTargetAmount" placeholder="Enter pledge target here (e.g. 1,000.00)" required>
                                     </div>
 
                                     <!-- NOTE: ng-init will invoke a function as soon as the page is initialized -->
                                     <div class="form-group">
                                         <label>Target year</label>
-                                        <select class="form-control" ng-model="pledgeYear" ng-init="calendarList()" required>
+                                        <select class="form-control" ng-model="pledgeTargetYear" ng-init="calendarList()" required>
                                             <option ng-repeat="year in list_of_years">{{year}}</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label>Additional Notes</label>
-                                        <textarea class="form-control" rows="3"></textarea>
+                                        <textarea class="form-control" ng-model="pledgeNotes" rows="3"></textarea>
                                     </div>
 
                                     <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
                                          to default to the right side of the page -->
                                     <div class="form-group" style="position: relative; float: right">
                                         <button type="reset" class="btn btn-warning">Reset</button>
-                                        <button type="submit" class="btn btn-success">Save</button>
-                                        <button type="submit" class="btn btn-primary">Save & New</button>
+                                        <button type="submit" class="btn btn-success" ng-click="submitPledge()">Save</button>
+                                        <button type="submit" class="btn btn-primary" ng-click="submitPledge()">Save & New</button>
                                     </div>
                                 </div>
                             </form>

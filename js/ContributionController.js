@@ -1,5 +1,5 @@
 (function(){
-    let allContributions = angular.module("allContributions", []);
+    let allContributions = angular.module("contributionEntry", []);
 
     allContributions.controller("ContributionController", function($scope, $location, $window) {
 
@@ -44,9 +44,60 @@
             window.location.href = '../pages/contribution_basic_info.html';
             sessionStorage.setItem('entityID', contribution.id);
             let cont_name = contribution.cont_name;
-            sessionStorage.setItem('entityName', cont_name)
+            sessionStorage.setItem('entityName', cont_name);
             console.log("click " + sessionStorage.getItem('entityID'));
         };
+
+        /**
+         * Fields and function specific to retrieving data from the input form fields to be packaged into JSON format
+         */
+        $scope.contribTypes = [
+            'Goods', 'Services', 'Money'
+        ];
+
+        // Field is optional, but only needed if the contribution type is "Money"
+        $scope.contribPaymentMethods = [
+            'Cash', 'Credit Card', 'Check', 'Stock'
+        ];
+
+        $scope.contribAppeals = [
+            'Direct Mail', 'Email Campaign', 'Radio Advertisement', 'Sponsorship',
+            'Fund-a-Need', 'Opportunity Ticket', 'Silent Auction', 'Live Auction'
+        ];
+
+        $scope.contribDestinations = [
+            'General', 'Miracle Manor', 'Basket of Miracles', 'Grant Program', 'Health & Wellness'
+        ];
+
+        $scope.contribIsEventChoices = [
+            'Yes', 'No'
+        ];
+
+        /**
+         * Function to submit the data from a form page to be packaged into JSON format for back-end to store the data.
+         * Initializes all the fields with the fields that a new pledge should have when entering the data into the database.
+         */
+        //let contributionEntry = angular.module('contributionEntry', []);
+        //contributionEntry.controller('contributionForm', function($scope){
+
+        $scope.submitContribution = function() {
+            let newContribution = {
+                itemName: $scope.contribName,
+                type: $scope.contribType,
+                amount: $scope.contribAmount,
+                paymentMethod: $scope.contribPaymentMethod,
+                appeal: $scope.contribAppeal,
+                destination: $scope.contribDestination,
+                isEvent: $scope.isEventChoice,
+                notes: $scope.contribNotes
+            };
+
+            // Send the JSON data to back-end server, and confirms the data output in console
+            console.log(JSON.stringify(newContribution));
+        };
+
+        //});
+
     });
 }());
 
