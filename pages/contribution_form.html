@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="contributionEntry">
 
 <head>
 
@@ -29,10 +29,12 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/ContributionController.js"></script>
 
 </head>
 
-<body>
+<body class="ng-cloak">
 
 <div id="wrapper">
     <!-- Navigation -->
@@ -44,7 +46,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="all_donors.html">Back</a>
+            <a class="navbar-brand" href="all_contributions.html">Back</a>
         </div>
         <!-- /.navbar-header -->
 
@@ -70,10 +72,10 @@
         <!-- /.navbar-top-links -->
     </nav>
 
-    <div id="page-wrapper">
+    <div id="page-wrapper" >
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">New Contribution Entry Form</h1>
+                <h1 class="page-header">New Contribution Entry</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -84,44 +86,56 @@
                     <div class="panel-heading">
                         Contribution Information
                     </div>
-                    <div class="panel-body">
+
+                    <!-- Contribution Controller added here -->
+                    <div class="panel-body" ng-controller="ContributionController">
                         <div class="row">
                             <form role="form">
+                                <!-- Using ContributionController here to modify display in entry form based on Contribution Type selected -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Contribution name</label>
-                                        <input class="form-control" placeholder="Enter first name here">
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="contName">
                                     </div>
+                                    <table>
+                                        <!-- When the contribution type "Money" is chosen, the view will only then display the fields
+                                             for specifying the amount and payment method the money contribution was for. -->
+                                        <tr>
+                                            <td style="padding-top:auto">
+                                                <label>Type</label>
+                                                <select name="contributionType" ng-change="ContributionTypeChanged()" class="form-control" ng-model="contribType">
+                                                    <option value="goods" ng-selected> Goods </option>
+                                                    <option value="service"> Service </option>
+                                                    <option value="money"> Money </option>
+                                                </select>
+                                            </td>
+                                        </tr>
 
-                                    <div class="form-group">
-                                        <label>Type</label>
-                                        <select class="form-control">
-                                            <option>Goods</option>
-                                            <option>Service</option>
-                                            <option>Money</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>If "Money", enter amount</label>
-                                        <input class="form-control" placeholder="Enter amount here (e.g. 400.00)">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>If "Money", enter payment method</label>
-                                        <select class="form-control">
-                                            <option>Cash</option>
-                                            <option>Credit Card</option>
-                                            <option>Check</option>
-                                            <option>Stock</option>
-                                        </select>
-                                    </div>
+                                        <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
+                                        <tr ng-hide="typeStatus != 'money'">
+                                            <td style="padding-top:1ex">
+                                                <label>Enter amount</label>
+                                                <input class="form-control" placeholder="Enter amount (e.g. 400.00)" ng-model="contribAmount">
+                                            </td>
+                                        </tr>
+                                        <tr ng-hide="typeStatus != 'money'">
+                                            <td style="padding-top:1ex">
+                                                <label>Select payment method</label>
+                                                <select class="form-control" ng-model="contribPaymentMethod">
+                                                    <option value="cash">Cash</option>
+                                                    <option value="creditCard">Credit Card</option>
+                                                    <option value="check">Check</option>
+                                                    <option value="stock">Stock</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
                                         <label>Appeal</label>
-                                        <select class="form-control">
+                                        <select class="form-control" ng-model="contribAppeal">
                                             <option>Direct Mail</option>
                                             <option>Email Campaign</option>
                                             <option>Radio Advertisement</option>
@@ -135,7 +149,7 @@
 
                                     <div class="form-group">
                                         <label>Destination</label>
-                                        <select class="form-control">
+                                        <select class="form-control" ng-model="contribDestination">
                                             <option>General</option>
                                             <option>Miracle Manor</option>
                                             <option>Basket of Miracles</option>
@@ -149,10 +163,10 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked"> Yes </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="isEventChoice.Yes"> Yes </label>
                                                 </td>
                                                 <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="eventItemRadio2" id="No" value="False"> No </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="isEventChoice.No"> No </label>
                                                 </td>
                                             </tr>
                                         </table>
@@ -167,8 +181,8 @@
                                          to default to the right side of the page -->
                                     <div class="form-group" style="position: relative; float: right">
                                         <button type="reset" class="btn btn-warning">Reset</button>
-                                        <button type="submit" class="btn btn-success">Save</button>
-                                        <button type="submit" class="btn btn-primary">Save & New</button>
+                                        <button type="submit" class="btn btn-success" ng-click="submitContribution()">Save</button>
+                                        <button type="submit" class="btn btn-primary" ng-click="submitContribution()">Save & New</button>
                                     </div>
                                 </div>
                             </form>
