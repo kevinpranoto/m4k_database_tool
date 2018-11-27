@@ -112,13 +112,13 @@
                                         </tr>
 
                                         <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
-                                        <tr ng-hide="typeStatus != 'money'">
+                                        <tr ng-hide="contribType != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Enter amount</label>
                                                 <input class="form-control" placeholder="Enter amount (e.g. 400.00)" ng-model="contribAmount">
                                             </td>
                                         </tr>
-                                        <tr ng-hide="typeStatus != 'money'">
+                                        <tr ng-hide="contribType != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Select payment method</label>
                                                 <select class="form-control" ng-model="contribPaymentMethod">
