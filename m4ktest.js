@@ -33,6 +33,11 @@ allDonors.controller('donorsTable', function($scope, $location, $window, $http) 
         sessionStorage.setItem('entityID', donor.id);
         sessionStorage.setItem('entityName', donor.name)
         console.log("click " + sessionStorage.getItem('entityID'));
+
+        $http.get('http://127.0.0.1:8081/donors/' + sessionStorage.getItem('entityID')).then((res) =>
+        {
+            console.log(res.data);
+        });
     };
 
     return {
