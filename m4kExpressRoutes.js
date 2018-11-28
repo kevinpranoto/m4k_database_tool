@@ -26,7 +26,7 @@ app.get('/', (req, res) =>
 	res.send('Express/Node Demo');
 });
 
-app.get('/donors', (req, res) =>
+app.route('/donors').get((req, res) =>
 {
 	queries.getData(0, (err, data) =>
 	{
@@ -34,6 +34,13 @@ app.get('/donors', (req, res) =>
 			throw err;
 		console.log('Retrieved all donors');
 		res.json(data);
+	});
+}).post(jsonParser, (req, res) =>
+{
+	queries.addDonor(req.body, (data) =>
+	{
+		console.log('Added new donor');
+		res.send(data);
 	});
 });
 

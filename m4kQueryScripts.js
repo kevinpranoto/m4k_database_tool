@@ -50,9 +50,18 @@ var queries = [
 /*queryNum = 35: DELETE Pledge w/ ID*/ "DELETE FROM Pledge WHERE Pledge.pledge_id = @keyword",
 /*queryNum = 36: DELETE Contribution w/ ID*/ "DELETE FROM Contribution WHERE Contribution.contrib_id = @keyword",
 
-/*queryNum = 27: UPDATE Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
-/*queryNum = 28: UPDATE Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
-/*queryNum = 29: UPDATE Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
+/*queryNum = 37: POST(ADD) Supporter basic info*/ "INSERT INTO Supporter (supporter_id, last_name, first_name, salutation, alias) VALUES (newSupporterId, newLastName, newFirstName, newSalutation, newAlias)",
+/*queryNum = 38: POST(ADD) Supporter emails*/ "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterId, newEmail, newIsPrimary)",
+/*queryNum = 39: POST(ADD) Supporter phones*/ "INSERT INTO Phone (supporter_id, phone_type, phone_number, is_primary) VALUES (newSupporterId, newPhoneType, newPhoneNumber, newIsPrimary)",
+/*queryNum = 40: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
+/*queryNum = 41: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
+/*queryNum = 42: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)",
+
+
+
+/*queryNum = 27: PUT(UPDATE) Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
+/*queryNum = 28: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
+/*queryNum = 29: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
 
 ];
 
@@ -235,9 +244,114 @@ var updateIndividualDonor = function(id, body, callback)
 	});*/
 }
 
-var createDonor = function(data, callback)
+function getNewId()
 {
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Supporter.supporter_id FROM Supporter ORDER BY Supporter.supporter_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+			resolve(rows[0].supporter_id + 1);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
 
+function addSupporter(newId, body)
+{
+	//Add basic Supporter info
+	return new Promise((resolve, reject) =>
+	{
+		
+		var basicObj = {
+			newSupporterId: newId,
+			newLastName: '\'' + body.last_name + '\'',
+			newFirstName: '\'' + body.first_name + '\'',
+			newSalutation: '\'' + body.salutation + '\'',
+			newAlias: '\'' + body.alias + '\''
+		}
+
+		var patchedQuery = queries[37].replace(/newSupporterId|newLastName|newFirstName|newSalutation|newAlias|keyword/gi, (matched) =>
+		{
+			return basicObj[matched];
+		});
+
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				resolve(err);
+			resolve(rows);
+		});
+
+	}).then((res) =>
+	{
+		//Add emails
+		body.emails.forEach((email) =>
+		{
+			var emailObj = {
+				newSupporterId: newId,
+				newEmail: '\'' + email.email_address + '\'',
+				newIsPrimary: email.is_primary
+			}
+
+			var patchedQuery = queries[38].replace(/newSupporterId|newEmail|newIsPrimary/gi, (matched) =>
+			{
+				return emailObj[matched];
+			});
+			return new Promise((resolve, reject) =>
+			{
+				con.query(patchedQuery, (err, rows) =>
+				{
+					if (err)
+						throw(err);
+					resolve(rows);
+				});
+			}).then((res) =>
+			{
+				//Add phones
+				
+			});
+			
+		});
+	});
+}
+
+var addDonor = function(body, callback)
+{
+	//Generate new id
+	getNewId().then((newId) =>
+	{
+		//Add supporter info
+		addSupporter(newId, body).then((res) =>
+		{
+			//Add donor info
+			return new Promise((resolve, reject) =>
+			{
+				var basicObj = {
+					newSupporterId: newId,
+					newDonorType: '\'' + body.donor_type + '\'',
+					newStatus: '\'' + body.donor_status + '\''
+				}
+				var patchedQuery = queries[42].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
+				{
+					return basicObj[matched];
+				});
+
+				con.query(patchedQuery, (err, rows) =>
+				{
+					if (err)
+						throw err;
+					resolve(rows);
+				});
+			}).then((res) =>
+			{
+				callback(res);
+			});
+		});
+	});
 }
 
 var getIndividualStaff = function(id, callback)
@@ -446,4 +560,4 @@ exports.deleteIndividualContribution = deleteIndividualContribution;
 exports.updateIndividualDonor = updateIndividualDonor;
 exports.updateIndividualStaff = updateIndividualStaff;
 //POSTs
-exports.createDonor = createDonor;
+exports.addDonor = addDonor;

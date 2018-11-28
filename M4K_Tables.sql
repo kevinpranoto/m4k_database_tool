@@ -4,7 +4,7 @@ USE `m4k_database`;
 
 DROP TABLE IF EXISTS `Supporter`;
 CREATE TABLE `Supporter` (
-`supporter_id` int NOT NULL AUTO_INCREMENT,
+`supporter_id` int NOT NULL,
 `last_name` VARCHAR(20),
 `first_name` VARCHAR(20),
 `salutation` VARCHAR(50),
@@ -73,7 +73,7 @@ FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 
 DROP TABLE IF EXISTS `Patient`;
 CREATE TABLE `Patient` (
-`patient_id` int NOT NULL AUTO_INCREMENT,
+`patient_id` int NOT NULL,
 PRIMARY KEY(patient_id)
 );
 

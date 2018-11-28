@@ -20,7 +20,7 @@ INSERT INTO Supporter
         (17,		'Bischof',	'Carol', 	'Mrs.', 	NULL	),
         (18,		'Parsons',	'Rebecca', 	'Ms.', 		'Becky'	),
         (19,		'Houser',	'Idella', 	'Mrs.', 	NULL	),
-        (NULL,		'Nullington',	'Nulliam', 	'Mr.', 		NULL	);
+        (20,		'Nullington',	'Nulliam', 	'Mr.', 		NULL	);
 
 # Supporters' Addresses
 INSERT INTO Address 

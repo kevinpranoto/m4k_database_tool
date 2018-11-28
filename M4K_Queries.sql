@@ -1,17 +1,14 @@
 
 
-
-/*
 ######################
 ##	VIEW QUERIES	##
 ######################
 
 
 #1. query all donors
-SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name
-FROM Supporter, Donor, Email, Phone, Company
-WHERE Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE
-AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE;
+SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status
+FROM Donor, Supporter
+WHERE Donor.supporter_id = Supporter.supporter_id;
 /*
 #2. query all staffs
 SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Staff.staff_type, Staff.staff_status, Email.email_address, Phone.phone_number
@@ -200,19 +197,17 @@ WHERE Installments.pledge_id = @keyword;
 SELECT Contribution.item_name, Contribution.is_event_item, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contributes.contrib_date
 FROM Supporter, Contributes, Contribution
 WHERE Contribution.contrib_id = @keyword AND Supporter.supporter_id = Contributes.donor_id AND Contribution.contrib_id = Contributes.contrib_id;
-*/
+
 #INDIVIDUAL EVENT ITEM VIEW
 #Query basic info for event item
 SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contributes.contrib_date
 FROM Supporter, Contributes, Contribution
 WHERE Contribution.contrib_id = @keyword AND Contribution.is_event_item = 1 AND Supporter.supporter_id = Contributes.donor_id AND Contribution.contrib_id = Contributes.contrib_id;
 
-/*
 ##########################
 ##	SEARCHBAR QUERIES	##
 ##########################
-/*
-#DONORS VIEW SEARCH BAR
+/*#DONORS VIEW SEARCH BAR
 #Query all donors with keyword
 SELECT Supporter.last_name, Supporter.first_name, Email.email_address, Phone.phone_number, Company.company_name
 FROM Supporter, Donor, Email, Phone, Company
