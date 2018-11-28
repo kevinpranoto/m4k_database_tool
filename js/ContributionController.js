@@ -10,7 +10,7 @@
             {id : '3', donor_name : 'Honk Duckerson', cont_name : 'Backrubs', cont_type : 'Services', appeal: 'Sponsorship', notes: ';)'},
             {id : '4', donor_name : 'Puck Cluck', cont_name : 'Donation from Puck', cont_type : 'Cash', appeal: 'Radio', notes: 'Paid in Indian Rupees'}
         ];
-        
+
         ///////////////////////// GENERAL FUNCTIONS FOR CONTRIBUTION-RELATED ITEMS ///////////////////////////
 
         /* Function for providing the ability to highlight any given entry in a data table. */
@@ -154,7 +154,7 @@
             let newContribution = {
                 itemName: $scope.contribName,
                 type: $scope.contribType,
-                amount: $scope.contribAmount,
+                amount: $filter('number')($scope.contribAmount, 2),
                 paymentMethod: $scope.contribPaymentMethod,
                 appeal: $scope.contribAppeal,
                 destination: $scope.contribDestination,
