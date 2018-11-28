@@ -119,23 +119,23 @@ INSERT INTO Staff
 
 # Donors
 INSERT INTO Donor
-	(supporter_id,	donor_type,	last_donation,	donor_status	) VALUES # Should last_donation be an attribute in the Donor table derived from the Contribution table? status derived?
-	(1,		'Individual',	'2018-11-01',	'Active'	),
-        (6,		'Company',	'2016-10-31',	'Lax'		),
-        (7,		'Company',	'2017-01-16',	'Lax'		),
-        (8,		'Individual',	'2015-04-23',	'Lost'		),
-        (9,		'Individual',	'2018-02-09',	'Active'	),
-        (10,		'Individual',	'2018-07-30',	'Active'	),
-        (11,		'Company',	'2017-05-14',	'Lax'		),
-        (12,		'Household',	'2018-06-12',	'Active'	),
-        (13,		'Individual',	'2017-06-16',	'Lax'		),
-        (14,		'Individual',	'2016-11-18',	'Lax'		),
-        (15,		'Household',	'2018-11-05',	'Active'	),
-        (16,		'Individual',	'2017-07-13',	'Lax'		),
-        (17,		'Company',	'2018-11-17',	'Active'	),
-        (18,		'Household',	'2015-12-16',	'Lost'		),
-        (19,		'Individual',	'2014-09-19',	'Lost'		),
-        (20,		'Individual',	'2018-08-14',	'Active'	);
+	(supporter_id,	donor_type,	donor_status	) VALUES # Should last_donation be an attribute in the Donor table derived from the Contribution table? status derived?
+	(1,		'Individual',	'Active'	),
+        (6,		'Company',	'Lax'		),
+        (7,		'Company',	'Lax'		),
+        (8,		'Individual',	'Lost'		),
+        (9,		'Individual',	'Active'	),
+        (10,		'Individual',	'Active'	),
+        (11,		'Company',	'Lax'		),
+        (12,		'Household',	'Active'	),
+        (13,		'Individual',	'Lax'		),
+        (14,		'Individual',	'Lax'		),
+        (15,		'Household',	'Active'	),
+        (16,		'Individual',	'Lax'		),
+        (17,		'Company',	'Active'	),
+        (18,		'Household',	'Lost'		),
+        (19,		'Individual',	'Lost'		),
+        (20,		'Individual',	'Active'	);
 
 # Donors' Companies
 INSERT INTO Company
