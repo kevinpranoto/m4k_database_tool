@@ -2,7 +2,6 @@
 <html lang="en" ng-app="contributionEntry">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,6 +28,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../js/ContributionController.js"></script>
 
@@ -88,14 +88,17 @@
                     </div>
 
                     <!-- Contribution Controller added here -->
-                    <div class="panel-body" ng-controller="ContributionController">
+                    <div class="panel-body" ng-controller="ContributionController" >
                         <div class="row">
-                            <form role="form">
+                            <!-- FORM: Form is named ContributionForm to access whether the data entered is valid or not when performing
+                                        validation upon clicking submit or submit & new -->
+                            <form name="ContributionForm" novalidate>
                                 <!-- Using ContributionController here to modify display in entry form based on Contribution Type selected -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Contribution name</label>
-                                        <input class="form-control" placeholder="Enter first name here" ng-model="contName">
+                                        <input class="form-control" name="name" placeholder="Enter contribution name here" pattern="[a-zA-Z]+" ng-minlength="1" ng-model="contribName" required>
+                                        <div class="entryError" ng-show="ContributionForm.name.$invalid && !ContributionForm.name.$pristine" class="help-block">Contribution name is required, and must be only alphabetic characters.</div>
                                     </div>
                                     <table>
                                         <!-- When the contribution type "Money" is chosen, the view will only then display the fields
@@ -103,19 +106,26 @@
                                         <tr>
                                             <td style="padding-top:auto">
                                                 <label>Type</label>
-                                                <select name="contributionType" ng-change="ContributionTypeChanged()" class="form-control" ng-model="contribType">
+                                                <select name="contributionType" ng-change="contributionTypeChanged()" class="form-control" ng-model="contribType" required>
                                                     <option value="goods" ng-selected> Goods </option>
                                                     <option value="service"> Service </option>
                                                     <option value="money"> Money </option>
                                                 </select>
                                             </td>
                                         </tr>
-
                                         <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
                                         <tr ng-hide="contribType != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Enter amount</label>
-                                                <input class="form-control" placeholder="Enter amount (e.g. 400.00)" ng-model="contribAmount">
+                                                <input name="contributionAmount"
+                                                       type="number"
+                                                       class="form-control"
+                                                       placeholder="(e.g. 400.00)"
+                                                       ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                                                       step="0.01"
+                                                       ng-model="contribAmount"
+                                                       ng-minlength="1">
+                                                <div class="entryError" ng-show="ContributionForm.contributionAmount.$invalid && !ContributionForm.contributionAmount.$pristine" class="help-block">Amount must only be up to two decimal places.</div>
                                             </td>
                                         </tr>
                                         <tr ng-hide="contribType != 'money'">
@@ -135,7 +145,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
                                         <label>Appeal</label>
-                                        <select class="form-control" ng-model="contribAppeal">
+                                        <select class="form-control" ng-model="contribAppeal" required>
                                             <option>Direct Mail</option>
                                             <option>Email Campaign</option>
                                             <option>Radio Advertisement</option>
@@ -149,7 +159,7 @@
 
                                     <div class="form-group">
                                         <label>Destination</label>
-                                        <select class="form-control" ng-model="contribDestination">
+                                        <select class="form-control" ng-model="contribDestination" required>
                                             <option>General</option>
                                             <option>Miracle Manor</option>
                                             <option>Basket of Miracles</option>
@@ -163,10 +173,10 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="isEventChoice.Yes"> Yes </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="isEvent.choice" required> Yes </label>
                                                 </td>
                                                 <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="isEventChoice.No"> No </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="isEvent.choice" required> No </label>
                                                 </td>
                                             </tr>
                                         </table>
@@ -181,8 +191,11 @@
                                          to default to the right side of the page -->
                                     <div class="form-group" style="position: relative; float: right">
                                         <button type="reset" class="btn btn-warning">Reset</button>
-                                        <button type="submit" class="btn btn-success" ng-click="submitContribution()">Save</button>
-                                        <button type="submit" class="btn btn-primary" ng-click="submitContribution()">Save & New</button>
+
+                                        <!-- Buttons are inaccessible/"greyed out" until the entirety of the form is considered valid.
+                                              Validation occurs when submitContribution(AndNew) function(s) are invoked -->
+                                        <button type="submit" class="btn btn-success" ng-disabled="ContributionForm.$invalid" ng-click="submitContribution(ContributionForm.$valid)">Save</button>
+                                        <button type="submit" class="btn btn-primary" ng-disabled="ContributionForm.$invalid" ng-click="submitContributionAndNew(ContributionForm.$valid)">Save & Add New</button>
                                     </div>
                                 </div>
                             </form>

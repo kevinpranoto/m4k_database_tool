@@ -439,3 +439,12 @@ table.dataTable thead .sorting:after {
   color: white;
   font-weight:bold;
 }
+
+.entryError {
+  color: red;
+  padding-top: 5px;
+}
+
+.invalid {
+  border:1px solid #f00;
+}
