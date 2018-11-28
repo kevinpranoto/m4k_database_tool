@@ -47,18 +47,32 @@
 
         /**
          * removeRow($index)
-         * @param $index: position of the entry that is clicked in a given data table
-         * Function for deleting a highlighted entry from the data table in a given view.
+         * @param item: Reference to an item listed in a given data table
+         * Function for deleting an entry from the data table in a given view when the red "x" icon is clicked in the
+         *  Action column of the entry.
          */
-        $scope.removeRow = function($index){
+        $scope.removeItem = function(item) {
+            console.log(item);
+            let tempDonorName = item.donor_name;
+            let deleteMessage = "Are you sure you want to delete " + tempDonorName + "?";
+
             // Prompt user to confirm deletion; clicking OK returns true, Cancel returns false.
-            let deleteRow = $window.confirm("Are you sure you want to delete this entry?");
+            let deleteItem = $window.confirm(deleteMessage);
 
             // If user clicked OK, handle the deletion.
-            if (deleteRow) {
+            if (deleteItem) {
                 // NOTE: This only removes items from the DUMMY DATA TABLE in the controller. This needs to be
                 //       replaced with deletion code involving Angular/Node
-                $scope.contributions.splice($index, 1);     // Just a placeholder, but will need code to update DB via Node.js?
+                //$scope.contributions.splice(item, 1);     // Just a placeholder, but will need code to update DB via Node.js?
+                let length = $scope.contributions.length;
+                for (let i = 0; i < length; i++)
+                {
+                    if (item === $scope.contributions[i])
+                    {
+                        $scope.contributions.splice(item, 1);
+                        break;
+                    }
+                }
             }
         };
 
@@ -183,6 +197,5 @@
                 }
             }
         };
-
     });
 }());

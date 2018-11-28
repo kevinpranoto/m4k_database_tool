@@ -126,8 +126,9 @@
                             <td>
                                 <button type="button" class="btn btn-success" ng-click="redirectToContributionForm()">Add Entry</button>
                             </td>
+                            <script> let isRemove = false; </script>
                             <td style="padding-left:1em">
-                                <button type="button" class="btn btn-danger" ng-click="removeRow($index)">Remove Entry</button>
+                                <button type="button" ng-click = "isRemove=!isRemove" class="btn btn-danger">Remove Entries</button>
                             </td>
                         </tr>
                     </table>
@@ -150,20 +151,23 @@
                                         <th>Contribution Type</th>
                                         <th>Appeal</th>
                                         <th>Notes</th>
+                                        <th ng-hide="!isRemove"> Action </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- NOTE: If indices don't fill in missing rows post-delete, try this:
-                                    <tr data-ng-repeat="staff in staff_members track by $index"> -->
-                                    <tr data-ng-repeat="item in contributions track by $index"
-                                        ng-class="{'selected':$index == selectedRow}"
-                                        ng-click="setClickedRow($index)" ng-dblclick="goToContribution(item)">
+                                    <!-- DELETE CAPABILITY FOR DATA TABLE:
+                                         This section lists red "x" buttons beside every entry in the presented data table
+                                         to allow user to explicitly delete items. Each delete button prompts a dialogue
+                                         with user to ensure the user intends to delete that entry. -->
+                                    <tr data-ng-repeat="item in contributions" ng-dblclick="goToContribution(item)">
 
                                         <td>{{item.donor_name}}</td>
                                         <td>{{item.cont_name}}</td>
                                         <td>{{item.cont_type}}</td>
                                         <td>{{item.appeal}}</td>
                                         <td>{{item.notes}}</td>
+                                        <td> <button class="btn btn-danger" ng-hide="!isRemove" style="padding:1px 5px" ng-click="removeItem(item)"> x </button></td>
+
                                     </tr>
                                 </tbody>
                             </table>
