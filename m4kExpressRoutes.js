@@ -24,7 +24,7 @@ app.get('/', (req, res) =>
 	res.send('Express/Node Demo');
 });
 
-app.route('/donors').get((req, res) =>
+app.get('/donors', (req, res) =>
 {
 	queries.getData(0, (err, data) =>
 	{
@@ -35,7 +35,7 @@ app.route('/donors').get((req, res) =>
 	});
 });
 
-app.get('/donors/:id', (req, res) =>
+app.route('/donors/:id').get((req, res) =>
 {
 	var donor_id = req.params.id;
 	queries.getIndividualDonor(donor_id, (data) =>
@@ -44,6 +44,22 @@ app.get('/donors/:id', (req, res) =>
 		//Send prettified JSON response for debugging
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
+	});
+}).put((req, res) =>
+{
+	var donor_id = req.params.id;
+	queries.updateIndividualDonor(donor_id, (data) =>
+	{
+		console.log('Updated donor with id: ' + donor_id);
+		res.send(res);
+	});
+}).delete((req, res) =>
+{
+	var donor_id = req.params.id;
+	queries.deleteIndividualSupporter(donor_id, (res) =>
+	{
+		console.log('Deleted donor with id: ' + donor_id);
+		res.send(res);
 	});
 });
 
@@ -58,7 +74,7 @@ app.get('/staff', (req, res) =>
 	});
 });
 
-app.get('/staff/:id', (req, res) =>
+app.route('/staff/:id').get((req, res) =>
 {
 	var staff_id = req.params.id;
 	queries.getIndividualStaff(staff_id, (data) =>
@@ -66,6 +82,14 @@ app.get('/staff/:id', (req, res) =>
 		console.log('Retrieved staff with id: ' + staff_id);
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
+	});
+}).delete((req, res) =>
+{
+	var staff_id = req.params.id;
+	queries.deleteIndividualSupporter(staff_id, (res) =>
+	{
+		console.log('Deleted staff with id: ' + staff_id);
+		res.send(res);
 	});
 });
 
@@ -80,7 +104,7 @@ app.get('/patients', (req, res) =>
 	});
 });
 
-app.get('/patients/:id', (req, res) =>
+app.route('/patients/:id').get((req, res) =>
 {
 	var patient_id = req.params.id;
 	queries.getIndividualPatient(patient_id, (data) =>
@@ -88,6 +112,14 @@ app.get('/patients/:id', (req, res) =>
 		console.log('Retrieved patient with id: ' + patient_id);
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
+	});
+}).delete((req, res) =>
+{
+	var patient_id = req.params.id;
+	queries.deleteIndividualPatient(patient_id, (res) =>
+	{
+		console.log('Deleted patient with id: ' + patient_id);
+		res.send(res);
 	});
 });
 
@@ -102,16 +134,24 @@ app.get('/events', (req, res) =>
 	});
 });
 
-app.get('/events/:id', (req, res) =>
+app.route('/events/:id').get((req, res) =>
 {
 	var event_id = req.params.id;
 	queries.getIndividualEvent(event_id, (data) =>
 	{
-		console.log('Retrieved patient with id: ' + event_id);
+		console.log('Retrieved event with id: ' + event_id);
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-});
+}).delete((req, res) =>
+{
+	var event_id = req.params.id;
+	queries.deleteIndividualEvent(event_id, (res) =>
+	{
+		console.log('Deleted event with id: ' + event_id);
+		res.send(res);
+	});
+})
 
 app.get('/requests', (req, res) =>
 {
