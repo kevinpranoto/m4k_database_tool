@@ -107,7 +107,6 @@
             'Yes', 'No'
         ];
 
-
         /**
          * submitContribution(ContributionForm.$valid)
          * Function to submit the data from a form page to be packaged into JSON format for back-end to store the data.
