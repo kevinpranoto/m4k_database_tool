@@ -433,18 +433,22 @@ table.dataTable thead .sorting:after {
   }
 }
 
-/* Custom CSS Settings for Staff Pages */
+/* Custom CSS Settings for All Pages */
+
+/* Style for highlighted items in a data table */
 .selected {
   background-color: cornflowerblue;
   color: white;
   font-weight:bold;
 }
 
+/* Style for presenting error messages in red text */
 .entryError {
   color: red;
   padding-top: 5px;
 }
 
+/* Style for highlighting the border of an input field if it is invalid/incorrect */
 .invalid {
   border:1px solid #f00;
 }
