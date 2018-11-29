@@ -10,7 +10,7 @@ var con = mysql.createConnection({
 	database: "m4k_database"
 });
 
-var queries = [
+var getQueries = [
 /*queryNum = 0: GET All Donors*/ "SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Donor.donor_type, Donor.donor_status, Email.email_address, Phone.phone_number, Company.company_name FROM Supporter, Donor, Email, Phone, Company WHERE Donor.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary = TRUE AND Company.supporter_id = Supporter.supporter_id AND Company.is_primary = TRUE",
 /*queryNum = 1: GET All Staff*/ "SELECT Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Staff.staff_type, Staff.staff_status, Email.email_address, Phone.phone_number FROM Supporter, Staff, Email, Phone WHERE Staff.supporter_id = Supporter.supporter_id AND Email.supporter_id = Supporter.supporter_id AND Email.is_primary = TRUE AND Phone.supporter_id = Supporter.supporter_id AND Phone.is_primary",
 /*queryNum = 2: GET All Patients*/ "SELECT Patient.patient_id, Needs.item FROM Patient, Needs WHERE Patient.patient_id = Needs.patient_id",
@@ -42,36 +42,37 @@ var queries = [
 /*queryNum = 28: GET Pledge donors w/ ID*/ "SELECT Supporter.last_name, Supporter.first_name, Supporter.alias FROM Supporter, Pledge WHERE Pledge.pledge_id = @keyword AND Supporter.supporter_id = Pledge.donor_id",
 /*queryNum = 29: GET Pledge installments w/ ID*/ "SELECT Installments.amount, Installments.installment_date FROM Installments WHERE Installments.pledge_id = @keyword",
 /*queryNum = 30: GET Contribution basic info w/ ID*/ "SELECT Contribution.item_name, Contribution.is_event_item, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contributes.contrib_date FROM Supporter, Contributes, Contribution WHERE Contribution.contrib_id = @keyword AND Supporter.supporter_id = Contributes.donor_id AND Contribution.contrib_id = Contributes.contrib_id",
-/*queryNum = 31: GET Event Item w/ ID*/ "SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contributes.contrib_date FROM Supporter, Contributes, Contribution WHERE Contribution.contrib_id = @keyword AND Contribution.is_event_item = 1 AND Supporter.supporter_id = Contributes.donor_id AND Contribution.contrib_id = Contributes.contrib_id",
-
-/*queryNum = 32: DELETE Supporter w/ ID*/ "DELETE FROM Supporter WHERE Supporter.supporter_id = @keyword",
-/*queryNum = 33: DELETE Patient w/ ID*/ "DELETE FROM Patient WHERE Patient.patient_id = @keyword",
-/*queryNum = 34: DELETE Event w/ ID*/ "DELETE FROM Campaign WHERE Campaign.campaign_id = @keyword",
-/*queryNum = 35: DELETE Pledge w/ ID*/ "DELETE FROM Pledge WHERE Pledge.pledge_id = @keyword",
-/*queryNum = 36: DELETE Contribution w/ ID*/ "DELETE FROM Contribution WHERE Contribution.contrib_id = @keyword",
-
-/*queryNum = 37: POST(ADD) Supporter basic info*/ "INSERT INTO Supporter (supporter_id, last_name, first_name, salutation, alias) VALUES (newSupporterId, newLastName, newFirstName, newSalutation, newAlias)",
-/*queryNum = 38: POST(ADD) Supporter emails*/ "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterId, newEmail, newIsPrimary)",
-/*queryNum = 39: POST(ADD) Supporter phones*/ "INSERT INTO Phone (supporter_id, phone_type, phone_number, is_primary) VALUES (newSupporterId, newPhoneType, newPhoneNumber, newIsPrimary)",
-/*queryNum = 40: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
-/*queryNum = 41: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
-/*queryNum = 42: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)",
-
-
-
-/*queryNum = 27: PUT(UPDATE) Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
-/*queryNum = 28: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
-/*queryNum = 29: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
-
+/*queryNum = 31: GET Event Item w/ ID*/ "SELECT Contribution.item_name, Contribution.contrib_type, Contribution.amount, Contribution.pay_method, Contribution.destination, Contribution.notes, Contribution.appeal, Contribution.thanked, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Contributes.contrib_date FROM Supporter, Contributes, Contribution WHERE Contribution.contrib_id = @keyword AND Contribution.is_event_item = 1 AND Supporter.supporter_id = Contributes.donor_id AND Contribution.contrib_id = Contributes.contrib_id"
 ];
 
+var deleteQueries = [
+/*queryNum = 0: DELETE Supporter w/ ID*/ "DELETE FROM Supporter WHERE Supporter.supporter_id = @keyword",
+/*queryNum = 1: DELETE Patient w/ ID*/ "DELETE FROM Patient WHERE Patient.patient_id = @keyword",
+/*queryNum = 2: DELETE Event w/ ID*/ "DELETE FROM Campaign WHERE Campaign.campaign_id = @keyword",
+/*queryNum = 3: DELETE Pledge w/ ID*/ "DELETE FROM Pledge WHERE Pledge.pledge_id = @keyword",
+/*queryNum = 4: DELETE Contribution w/ ID*/ "DELETE FROM Contribution WHERE Contribution.contrib_id = @keyword"
+];
 
+var postQueries =
+[
+/*queryNum = 0: POST(ADD) Supporter basic info*/ "INSERT INTO Supporter (supporter_id, last_name, first_name, salutation, alias) VALUES (newSupporterId, newLastName, newFirstName, newSalutation, newAlias)",
+/*queryNum = 1: POST(ADD) Supporter emails*/ "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterId, newEmail, newIsPrimary)",
+/*queryNum = 2: POST(ADD) Supporter phones*/ "INSERT INTO Phone (supporter_id, phone_type, phone_number, is_primary) VALUES (newSupporterId, newPhoneType, newPhoneNumber, newIsPrimary)",
+/*queryNum = 3: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
+/*queryNum = 4: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
+/*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)"
+];
 
+var putQueries = [
+/*queryNum = 0: PUT(UPDATE) Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
+/*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
+/*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword"
+];
 
 //Get data from relevant table based on queryNum
 var getData = function(queryNum, callback)
 {
-	con.query(queries[queryNum], (err, rows) =>
+	con.query(getQueries[queryNum], (err, rows) =>
 	{
 		callback(err, rows)
 	});
@@ -81,77 +82,7 @@ function getIndividualInfo(id, queryNum)
 {
 	return new Promise((resolve, reject) =>
 	{
-		var patchedQuery = queries[queryNum].replace('@keyword', id);
-		con.query(patchedQuery, (err, rows) =>
-		{
-			if (err)
-				return reject(err);
-			resolve(rows);
-		});
-	});
-}
-
-function updateSupporterData(id, body, queryNum)
-{
-	//Update emails/phones/addresses??
-	return new Promise((resolve, reject) =>
-	{
-		console.log(body);
-		var basicObj = {
-			newLastName: '\'' + body.last_name + '\'',
-			newFirstName: '\'' + body.first_name + '\'',
-			newSalutation: '\'' + body.salutation + '\'',
-			newAlias: '\'' + body.alias + '\'',
-			keyword: id
-		};
-
-		var patchedQuery = queries[queryNum].replace(/newLastName|newFirstName|newSalutation|newAlias|keyword/gi, (matched) =>
-		{
-			return basicObj[matched];
-		});
-		
-		//Update basic information
-		con.query(patchedQuery, (err, rows) =>
-		{
-			if (err)
-				return reject(err);
-			resolve(rows);
-		});
-
-		/*
-		//Replace emails
-		var delEmailQuery = "DELETE FROM Email WHERE Supporter.supporter_id = @id";
-		con.query(delEmailQuery.replace('@id', id));
-
-		var newEmails = body.emails;
-		for (var email in newEmails)
-		{
-			var addEmailQuery = "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterID, newEmail, newIsPrimary)";
-			
-			var emailObj = {
-				newSupporterID: id,
-				newEmail: 
-			}
-			addEmailQuery.replace(/newSupporterID|newEmail|newIsPrimary/gi);
-			con.query(addEmailQuery);
-		}
-		*/
-	});
-}
-
-var deleteIndividualSupporter = function(id, callback)
-{
-	deleteIndividualData(id, 32).then((res) =>
-	{
-		callback(res);
-	});
-}
-
-function deleteIndividualData(id, queryNum)
-{
-	return new Promise((resolve, reject) =>
-	{
-		var patchedQuery = queries[queryNum].replace('@keyword', id);
+		var patchedQuery = getQueries[queryNum].replace('@keyword', id);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -208,42 +139,6 @@ var getIndividualDonor = function(id, callback)
 	});
 }
 
-function updateDonorData(id, body, queryNum)
-{
-	return new Promise((resolve, reject) =>
-	{
-		var fieldObj = {
-			newDonorType: '\'' + body.donor_type + '\'',
-			newStatus: '\'' + body.donor_status + '\'',
-			keyword: id
-		};
-
-		var patchedQuery = queries[queryNum].replace(/newDonorType|newStatus|keyword/gi, (matched) =>
-		{
-			return fieldObj[matched];
-		});
-		
-		con.query(patchedQuery, (err, rows) =>
-		{
-			if (err)
-				return reject(err);
-			resolve(rows);
-		});
-	});
-}
-
-var updateIndividualDonor = function(id, body, callback)
-{
-	/*
-	updateSupporterData(id, body, ##).then((res) =>
-	{
-		updateDonorData(id, body, ##).then((data) =>
-		{
-			callback(data);
-		});
-	});*/
-}
-
 function getNewId()
 {
 	return new Promise((resolve, reject) =>
@@ -260,6 +155,182 @@ function getNewId()
 	});
 }
 
+var getIndividualStaff = function(id, callback)
+{
+	var staff = {};
+	//Get all basic info from a staff member
+	getIndividualInfo(id, 15).then((staffBasicInfo) =>
+	{
+		staff.basic = staffBasicInfo;
+		//Get all emails tied to staff member
+		getIndividualInfo(id, 16).then((staffEmails) =>
+		{
+			staff.emails = staffEmails;
+			//Get all phone numbers tied to staff member
+			getIndividualInfo(id, 17).then((staffPhones) =>
+			{
+				staff.phones = staffPhones;
+				//Get all addresses tied to staff member
+				getIndividualInfo(id, 18).then((staffAddresses) =>
+				{
+					staff.addresses = staffAddresses;
+					//Get all events tied to staff member
+					getIndividualInfo(id, 19).then((staffEvents) =>
+					{
+						staff.events = staffEvents;
+						//Return aggregate staff info object 			
+						callback(staff);
+					});
+				});
+			});
+		});
+	});
+}
+
+var getIndividualPatient = function(id, callback)
+{
+	var patient = {};
+	//Get all basic info from a patient
+	patient.pid = id;
+	//Get all needs tied to patient
+	getIndividualInfo(id, 20).then((patientNeeds) =>
+	{
+		patient.needs = patientNeeds;
+		//Get all requests tied to patient
+		getIndividualInfo(id, 21).then((patientRequests) =>
+		{
+			patient.requests = patientRequests;
+			//Get all pledges tied to patient
+			getIndividualInfo(id, 22).then((patientPledges) =>
+			{
+				patient.pledges = patientPledges;
+				//Return aggregate patient info object
+				callback(patient);
+			})
+		})
+	})
+}
+
+var getIndividualEvent = function(id, callback)
+{
+	var event = {};
+	//Get all basic info from an event
+	getIndividualInfo(id, 23).then((eventBasicInfo) =>
+	{
+		event.basic = eventBasicInfo;
+		//Get all contributions tied to event
+		getIndividualInfo(id, 24).then((eventContributions) =>
+		{
+			event.contributions = eventContributions;
+			//Get all staff tied to event
+			getIndividualInfo(id, 25).then((eventStaff) =>
+			{
+				event.staff = eventStaff;
+				//Get all donors tied to event
+				getIndividualInfo(id, 26).then((eventDonors) =>
+				{
+					event.donors = eventDonors;
+					//Return aggregate event info object
+					callback(event);
+				})
+			});
+		});
+	});
+}
+
+var getIndividualPledge = function(id, callback)
+{
+	var pledge = {};
+	//Get all patients tied to pledge
+	getIndividualInfo(id, 27).then((pledgePatients) =>
+	{
+		pledge.patients = pledgePatients;
+		//Get all donors tied to pledge
+		getIndividualInfo(id, 28).then((pledgeDonors) =>
+		{
+			pledge.donors = pledgeDonors;
+			//Get all installments tied to pledge
+			getIndividualInfo(id, 29).then((pledgeInstallments) =>
+			{
+				pledge.installments = pledgeInstallments;
+				callback(pledge);
+			})
+		})
+	})
+}
+
+var getIndividualContribution = function(id, callback)
+{
+	getIndividualInfo(id, 30).then((res) =>
+	{
+		callback(res);
+	});
+} 
+
+var getIndividualEventItem = function(id, callback)
+{
+	getIndividualInfo(id, 31).then((res) =>
+	{
+		callback(res);
+	});
+}
+
+//DELETEs
+function deleteIndividualData(id, queryNum)
+{
+	return new Promise((resolve, reject) =>
+	{
+		var patchedQuery = deleteQueries[queryNum].replace('@keyword', id);
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				return reject(err);
+			resolve(rows);
+		});
+	});
+}
+
+var deleteIndividualSupporter = function(id, callback)
+{
+	deleteIndividualData(id, 0).then((res) =>
+	{
+		callback(res);
+	});
+}
+
+var deleteIndividualPatient = function(id, callback)
+{
+	deleteIndividualData(id, 1).then((res) =>
+	{
+		callback(res);
+	});
+}
+
+var deleteIndividualEvent = function(id, callback)
+{
+	deleteIndividualData(id, 2).then((res) =>
+	{
+		callback(res);
+	});
+}
+
+var deleteIndividualPledge = function(id, callback)
+{
+	deleteIndividualData(id, 3).then((res) =>
+	{
+		callback(res);
+	});
+}
+
+var deleteIndividualContribution = function(id, callback)
+{
+	deleteIndividualData(id, 4).then((res) =>
+	{
+		callback(res);
+	});
+}
+
+//POSTs
 function addSupporter(newId, body)
 {
 	//Add basic Supporter info
@@ -274,7 +345,7 @@ function addSupporter(newId, body)
 			newAlias: '\'' + body.alias + '\''
 		}
 
-		var patchedQuery = queries[37].replace(/newSupporterId|newLastName|newFirstName|newSalutation|newAlias|keyword/gi, (matched) =>
+		var patchedQuery = postQueries[0].replace(/newSupporterId|newLastName|newFirstName|newSalutation|newAlias|keyword/gi, (matched) =>
 		{
 			return basicObj[matched];
 		});
@@ -297,7 +368,7 @@ function addSupporter(newId, body)
 				newIsPrimary: email.is_primary
 			}
 
-			var patchedQuery = queries[38].replace(/newSupporterId|newEmail|newIsPrimary/gi, (matched) =>
+			var patchedQuery = postQueries[1].replace(/newSupporterId|newEmail|newIsPrimary/gi, (matched) =>
 			{
 				return emailObj[matched];
 			});
@@ -335,7 +406,7 @@ var addDonor = function(body, callback)
 					newDonorType: '\'' + body.donor_type + '\'',
 					newStatus: '\'' + body.donor_status + '\''
 				}
-				var patchedQuery = queries[42].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
+				var patchedQuery = postQueries[5].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
 				{
 					return basicObj[matched];
 				});
@@ -354,37 +425,90 @@ var addDonor = function(body, callback)
 	});
 }
 
-var getIndividualStaff = function(id, callback)
+//PUTs
+function updateSupporterData(id, body, queryNum)
 {
-	var staff = {};
-	//Get all basic info from a staff member
-	getIndividualInfo(id, 15).then((staffBasicInfo) =>
+	//Update emails/phones/addresses??
+	return new Promise((resolve, reject) =>
 	{
-		staff.basic = staffBasicInfo;
-		//Get all emails tied to staff member
-		getIndividualInfo(id, 16).then((staffEmails) =>
+		console.log(body);
+		var basicObj = {
+			newLastName: '\'' + body.last_name + '\'',
+			newFirstName: '\'' + body.first_name + '\'',
+			newSalutation: '\'' + body.salutation + '\'',
+			newAlias: '\'' + body.alias + '\'',
+			keyword: id
+		};
+
+		var patchedQuery = putQueries[0].replace(/newLastName|newFirstName|newSalutation|newAlias|keyword/gi, (matched) =>
 		{
-			staff.emails = staffEmails;
-			//Get all phone numbers tied to staff member
-			getIndividualInfo(id, 17).then((staffPhones) =>
-			{
-				staff.phones = staffPhones;
-				//Get all addresses tied to staff member
-				getIndividualInfo(id, 18).then((staffAddresses) =>
-				{
-					staff.addresses = staffAddresses;
-					//Get all events tied to staff member
-					getIndividualInfo(id, 19).then((staffEvents) =>
-					{
-						staff.events = staffEvents;
-						//Return aggregate staff info object 			
-						callback(staff);
-					});
-				});
-			});
+			return basicObj[matched];
+		});
+		
+		//Update basic information
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				return reject(err);
+			resolve(rows);
+		});
+
+		/*
+		//Replace emails
+		var delEmailQuery = "DELETE FROM Email WHERE Supporter.supporter_id = @id";
+		con.query(delEmailQuery.replace('@id', id));
+		var newEmails = body.emails;
+		for (var email in newEmails)
+		{
+			var addEmailQuery = "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterID, newEmail, newIsPrimary)";
+			
+			var emailObj = {
+				newSupporterID: id,
+				newEmail: 
+			}
+			addEmailQuery.replace(/newSupporterID|newEmail|newIsPrimary/gi);
+			con.query(addEmailQuery);
+		}
+		*/
+	});
+}
+
+function updateDonorData(id, body, queryNum)
+{
+	return new Promise((resolve, reject) =>
+	{
+		var fieldObj = {
+			newDonorType: '\'' + body.donor_type + '\'',
+			newStatus: '\'' + body.donor_status + '\'',
+			keyword: id
+		};
+
+		var patchedQuery = putQueries[1].replace(/newDonorType|newStatus|keyword/gi, (matched) =>
+		{
+			return fieldObj[matched];
+		});
+		
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				return reject(err);
+			resolve(rows);
 		});
 	});
 }
+
+var updateIndividualDonor = function(id, body, callback)
+{
+	/*
+	updateSupporterData(id, body, ##).then((res) =>
+	{
+		updateDonorData(id, body, ##).then((data) =>
+		{
+			callback(data);
+		});
+	});*/
+}
+
 
 function updateStaffData(id, body, queryNum)
 {
@@ -396,7 +520,7 @@ function updateStaffData(id, body, queryNum)
 			keyword: id
 		};
 
-		var patchedQuery = queries[queryNum].replace(/newStaffType|newStatus|keyword/gi, (matched) =>
+		var patchedQuery = putQueries[2].replace(/newStaffType|newStatus|keyword/gi, (matched) =>
 		{
 			return fieldObj[matched];
 		});
@@ -421,126 +545,6 @@ var updateIndividualStaff = function(id, body, callback)
 	});*/
 }
 
-var getIndividualPatient = function(id, callback)
-{
-	var patient = {};
-	//Get all basic info from a patient
-	patient.pid = id;
-	//Get all needs tied to patient
-	getIndividualInfo(id, 20).then((patientNeeds) =>
-	{
-		patient.needs = patientNeeds;
-		//Get all requests tied to patient
-		getIndividualInfo(id, 21).then((patientRequests) =>
-		{
-			patient.requests = patientRequests;
-			//Get all pledges tied to patient
-			getIndividualInfo(id, 22).then((patientPledges) =>
-			{
-				patient.pledges = patientPledges;
-				//Return aggregate patient info object
-				callback(patient);
-			})
-		})
-	})
-}
-
-var deleteIndividualPatient = function(id, callback)
-{
-	deleteIndividualData(id, 33).then((res) =>
-	{
-		callback(res);
-	});
-}
-
-var getIndividualEvent = function(id, callback)
-{
-	var event = {};
-	//Get all basic info from an event
-	getIndividualInfo(id, 23).then((eventBasicInfo) =>
-	{
-		event.basic = eventBasicInfo;
-		//Get all contributions tied to event
-		getIndividualInfo(id, 24).then((eventContributions) =>
-		{
-			event.contributions = eventContributions;
-			//Get all staff tied to event
-			getIndividualInfo(id, 25).then((eventStaff) =>
-			{
-				event.staff = eventStaff;
-				//Get all donors tied to event
-				getIndividualInfo(id, 26).then((eventDonors) =>
-				{
-					event.donors = eventDonors;
-					//Return aggregate event info object
-					callback(event);
-				})
-			});
-		});
-	});
-}
-
-var deleteIndividualEvent = function(id, callback)
-{
-	deleteIndividualData(id, 34).then((res) =>
-	{
-		callback(res);
-	});
-}
-
-var getIndividualPledge = function(id, callback)
-{
-	var pledge = {};
-	//Get all patients tied to pledge
-	getIndividualInfo(id, 27).then((pledgePatients) =>
-	{
-		pledge.patients = pledgePatients;
-		//Get all donors tied to pledge
-		getIndividualInfo(id, 28).then((pledgeDonors) =>
-		{
-			pledge.donors = pledgeDonors;
-			//Get all installments tied to pledge
-			getIndividualInfo(id, 29).then((pledgeInstallments) =>
-			{
-				pledge.installments = pledgeInstallments;
-				callback(pledge);
-			})
-		})
-	})
-}
-
-var deleteIndividualPledge = function(id, callback)
-{
-	deleteIndividualData(id, 35).then((res) =>
-	{
-		callback(res);
-	});
-}
-
-var getIndividualContribution = function(id, callback)
-{
-	getIndividualInfo(id, 30).then((res) =>
-	{
-		callback(res);
-	});
-} 
-
-var deleteIndividualContribution = function(id, callback)
-{
-	deleteIndividualData(id, 36).then((res) =>
-	{
-		callback(res);
-	});
-}
-
-var getIndividualEventItem = function(id, callback)
-{
-	getIndividualInfo(id, 31).then((res) =>
-	{
-		callback(res);
-	});
-}
-
 //GETs
 exports.getData = getData;
 exports.getIndividualDonor = getIndividualDonor;
@@ -550,14 +554,17 @@ exports.getIndividualEvent = getIndividualEvent;
 exports.getIndividualPledge = getIndividualPledge;
 exports.getIndividualContribution = getIndividualContribution;
 exports.getIndividualEventItem = getIndividualEventItem;
+
 //DELETEs
 exports.deleteIndividualSupporter = deleteIndividualSupporter;
 exports.deleteIndividualPatient = deleteIndividualPatient;
 exports.deleteIndividualEvent = deleteIndividualEvent;
 exports.deleteIndividualPledge = deleteIndividualPledge;
 exports.deleteIndividualContribution = deleteIndividualContribution;
+
+//POSTs
+exports.addDonor = addDonor;
+
 //PUTs
 exports.updateIndividualDonor = updateIndividualDonor;
 exports.updateIndividualStaff = updateIndividualStaff;
-//POSTs
-exports.addDonor = addDonor;
