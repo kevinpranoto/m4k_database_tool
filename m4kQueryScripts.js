@@ -670,7 +670,7 @@ function updateSupporterData(id, body, queryNum)
 					});
 				}).then((res) =>
 				{
-					callback(res);
+					
 				});
 			})
 		});
@@ -738,14 +738,14 @@ function updateStaffData(id, body, queryNum)
 }
 
 var updateIndividualStaff = function(id, body, callback)
-{/*
-	updateSupporterData(id, body, ##).then((res) =>
+{
+	updateSupporterData(id, body, 0).then((res) =>
 	{
-		updateStaffData(id, body, ##).then((data) =>
+		updateStaffData(id, body, 2).then((data) =>
 		{
 			callback(data);
 		});
-	});*/
+	});
 }
 
 //GETs
