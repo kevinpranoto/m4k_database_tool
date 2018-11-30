@@ -51,7 +51,13 @@ var deleteQueries = [
 /*queryNum = 1: DELETE Patient w/ ID*/ "DELETE FROM Patient WHERE Patient.patient_id = @keyword",
 /*queryNum = 2: DELETE Event w/ ID*/ "DELETE FROM Campaign WHERE Campaign.campaign_id = @keyword",
 /*queryNum = 3: DELETE Pledge w/ ID*/ "DELETE FROM Pledge WHERE Pledge.pledge_id = @keyword",
-/*queryNum = 4: DELETE Contribution w/ ID*/ "DELETE FROM Contribution WHERE Contribution.contrib_id = @keyword"
+/*queryNum = 4: DELETE Contribution w/ ID*/ "DELETE FROM Contribution WHERE Contribution.contrib_id = @keyword",
+/*queryNum = 5: DELETE Supporter Emails w/ ID*/ "DELETE FROM Email WHERE Email.supporter_id = @id",
+/*queryNum = 6: DELETE Supporter Phones w/ ID*/ "DELETE FROM Phone WHERE Phone.supporter_id = @id",
+/*queryNum = 7: DELETE Supporter Addresses w/ ID*/ "DELETE FROM Address WHERE Address.supporter_id = @id",
+/*queryNum = 8: DELETE Donor Companies w/ ID*/ "DELETE FROM Company WHERE Company.supporter_id = @id",
+/*queryNum = 9: DELETE Donor Events w/ ID*/ "DELETE FROM Attends WHERE Attends.donor_id = @id",
+/*queryNum = 10: DELETE Staff Events w/ ID*/ "DELETE FROM Works WHERE Works.staff_id = @id"
 ];
 
 var postQueries =
@@ -550,10 +556,8 @@ var addStaff = function(body, callback)
 //PUTs
 function updateSupporterData(id, body, queryNum)
 {
-	//Update emails/phones/addresses??
 	return new Promise((resolve, reject) =>
 	{
-		console.log(body);
 		var basicObj = {
 			newLastName: '\'' + body.last_name + '\'',
 			newFirstName: '\'' + body.first_name + '\'',
@@ -575,23 +579,101 @@ function updateSupporterData(id, body, queryNum)
 			resolve(rows);
 		});
 
-		/*
-		//Replace emails
-		var delEmailQuery = "DELETE FROM Email WHERE Supporter.supporter_id = @id";
-		con.query(delEmailQuery.replace('@id', id));
-		var newEmails = body.emails;
-		for (var email in newEmails)
+		//Drop existing emails
+		con.query(deleteQueries[5].replace('@id', id));
+	}).then((res) =>
+	{	
+		//Add emails
+		return new Promise((resolve, reject) =>
 		{
-			var addEmailQuery = "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterID, newEmail, newIsPrimary)";
+			body.emails.forEach((email) =>
+			{
+				var emailObj = {
+					newSupporterId: id,
+					newEmail: '\'' + email.email_address + '\'',
+					newIsPrimary: email.is_primary
+				}
+
+				var patchedQuery = postQueries[1].replace(/newSupporterId|newEmail|newIsPrimary/gi, (matched) =>
+				{
+					return emailObj[matched];
+				});
 			
-			var emailObj = {
-				newSupporterID: id,
-				newEmail: 
-			}
-			addEmailQuery.replace(/newSupporterID|newEmail|newIsPrimary/gi);
-			con.query(addEmailQuery);
-		}
-		*/
+				con.query(patchedQuery, (err, rows) =>
+				{
+					if (err)
+						throw(err);
+					resolve(rows);
+				});	
+			});
+
+			//Drop existing phones
+			con.query(deleteQueries[6].replace('@id', id));
+		}).then((res) =>
+		{
+			//Add phones
+			return new Promise((resolve, reject) =>
+			{
+				body.phones.forEach((phone) =>
+				{
+					var phoneObj = {
+						newSupporterId: id,
+						newPhoneType: '\'' + phone.phone_type + '\'',
+						newPhoneNumber: '\'' + phone.phone_number + '\'',
+						newIsPrimary: phone.is_primary
+					}
+
+					var patchedQuery = postQueries[2].replace(/newSupporterId|newPhoneType|newPhoneNumber|newIsPrimary/gi, (matched) =>
+					{
+						return phoneObj[matched];
+					});
+			
+					con.query(patchedQuery, (err, rows) =>
+					{
+						if (err)
+							throw(err);
+						resolve(rows);
+					});	
+				});
+			
+				//Drop existing addresses
+				con.query(deleteQueries[7].replace('@id', id));
+			}).then((res) =>
+			{
+				//Add addresses
+				return new Promise((resolve, reject) =>
+				{
+					body.addresses.forEach((address) =>
+					{
+						var addressObj = {
+							newSupporterId: id,
+							newAddressType: '\'' + address.address_type + '\'',
+							newAddLine1: '\'' + address.address_line_1 + '\'',
+							newAddLine2: '\'' + address.address_line_2 + '\'',
+							newCity: '\'' + address.city + '\'',
+							newState: '\'' + address.state + '\'',
+							newZip: '\'' + address.zip_code + '\'',
+							newIsPrimary: address.is_primary
+						}
+
+						var patchedQuery = postQueries[3].replace(/newSupporterId|newAddressType|newAddLine1|newAddLine2|newCity|newState|newZip|newIsPrimary/gi, (matched) =>
+						{
+							return addressObj[matched];
+						});
+
+						con.query(patchedQuery, (err, rows) =>
+						{
+							if (err)
+								throw(err);
+							resolve(rows);
+						});	
+					});
+				}).then((res) =>
+				{
+					callback(res);
+				});
+			})
+		});
 	});
 }
 
@@ -621,14 +703,13 @@ function updateDonorData(id, body, queryNum)
 
 var updateIndividualDonor = function(id, body, callback)
 {
-	/*
-	updateSupporterData(id, body, ##).then((res) =>
+	updateSupporterData(id, body, 0).then((res) =>
 	{
-		updateDonorData(id, body, ##).then((data) =>
+		updateDonorData(id, body, 1).then((data) =>
 		{
 			callback(data);
 		});
-	});*/
+	});
 }
 
 
