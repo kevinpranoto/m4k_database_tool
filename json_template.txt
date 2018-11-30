@@ -1,0 +1,142 @@
+DONORS
+{
+	basic:
+	{
+		salutation
+		last_name
+		first_name
+		alias
+		donor_type
+		donor_status
+	}
+	emails:
+	[
+		{
+			email_address
+			is_primary
+		}
+	]
+	phones:
+	[
+		{
+			phone_type
+			phone_number
+			is_primary
+		}
+	]
+	addresses:
+	[
+		{
+			address_type
+			address_line_1
+			address_line_2
+			city
+			state
+			zip_code
+			is_primary
+		}
+	]
+	companies:
+	[
+		{
+			company_name
+			is_primary
+		}
+	]
+}
+
+STAFF
+{
+	basic:
+	{
+		salutation
+		last_name
+		first_name
+		alias
+		staff_type
+		staff_status
+	}
+	emails:
+	[
+		{
+			email_address
+			is_primary
+		}
+	]
+	phones:
+	[
+		{
+			phone_type
+			phone_number
+			is_primary
+		}
+	]
+	addresses:
+	[
+		{
+			address_type
+			address_line_1
+			address_line_2
+			city
+			state
+			zip_code
+			is_primary
+		}
+	]
+}
+
+PATIENTS
+{
+	patient_id,
+	needs:
+	[
+		{
+			item
+		}
+	]
+}
+
+//User can add installments towards pledge goal
+INSTALLMENTS
+{
+	pledge_id
+	amount
+	installment_date	
+}
+
+PLEDGES
+{
+	donor_id
+	patient_id
+	pledge_date
+	target_amount
+	is_behind
+}
+
+//User can add new kinds of campaign types
+CAMPAIGN_TYPE
+{
+	campaign_type_name
+}
+
+CAMPAIGN
+{
+	campaign_name
+	campaign_type_id
+	is_event
+	campaign_date
+	theme
+}
+
+CONTRIBUTIONS
+{
+	item_name
+	is_event_item
+	contrib_type
+	amount
+	pay_method
+	destination
+	notes
+	appeal
+	thanked
+}
