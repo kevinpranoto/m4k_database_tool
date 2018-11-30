@@ -72,13 +72,20 @@ app.route('/donors/:id').get((req, res) =>
 	});
 });
 
-app.get('/staff', (req, res) =>
+app.route('/staff').get((req, res) =>
 {
 	queries.getData(1, (err, data) =>
 	{
 		if (err)
 			throw err;
 		console.log('Retrieved all staff');
+		res.send(data);
+	});
+}).post(jsonParser, (req, res) =>
+{
+	queries.addStaff(req.body, (data) =>
+	{
+		console.log('Added new staff');
 		res.send(data);
 	});
 });
