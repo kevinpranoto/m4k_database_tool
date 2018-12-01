@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="allStaff">
+<html lang="en" ng-app="StaffController">
 
 <head>
 
@@ -39,7 +39,7 @@
     <script src="../js/StaffController.js"></script>
 </head>
 
-<body ng-controller="StaffController">
+<body ng-controller="allStaff">
 
     <div id="wrapper">
 
@@ -137,12 +137,11 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <!-- /.panel-heading -->
-                        <div class="panel-body" ng-controller="StaffController">
+                        <div class="panel-body">
                             <table width="100%" class="table table-bordered" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
+                                        <th>Name</th>
                                         <th>Phone Number</th>
                                         <th>E-mail</th>
                                         <th>Type</th>
@@ -155,8 +154,7 @@
                                     <tr data-ng-repeat="staff in staff_members track by $index"
                                             ng-class="{'selected':$index == selectedRow}"
                                                 ng-click="setClickedRow($index)" ng-dblclick="goToStaff(staff)">
-                                        <td>{{staff.first_name}}</td>
-                                        <td>{{staff.last_name}}</td>
+                                        <td>{{staff.name}}</td>
                                         <td>{{staff.phone}}</td>
                                         <td>{{staff.email}}</td>
                                         <td>{{staff.type}}</td>

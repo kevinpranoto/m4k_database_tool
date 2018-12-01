@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="entitySpecific" ng-controller="entityData" >
+<html lang="en" ng-app="donorSpecific" ng-controller="donorContributionsTable" >
 
 <head>
 
@@ -15,8 +15,8 @@
         }
     </style>
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../js/m4ktest.js"></script>
-    <title>{{entityName}}'s Profile </title>
+    <script src="../js/donorSpecific.js"></script>
+    <title>{{entityName}}'s Contributions </title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -108,10 +108,10 @@
             <!-- /.navbar-static-side -->
         </nav>
 
-        <div id="page-wrapper">
+        <div id="page-wrapper" ng-cloak>
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"> {{entityName}}'s Profile</h1>
+                    <h1 class="page-header"> {{entityName}}'s Contributions</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -124,22 +124,27 @@
                             <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Rendering engine</th>
-                                        <th>Browser</th>
-                                        <th>Platform(s)</th>
-                                        <th>Engine version</th>
-                                        <th>CSS grade</th>
+                                        <th>Name</th>
+                                        <th>Destination</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Appeal</th>
+                                        <th>Payment Method</th>
+                                        <th>Thanked?</th>
+                                        <th>Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="odd gradeX">
-                                        <td>Trident</td>
-                                        <td>Internet Explorer 4.0</td>
-                                        <td>Win 95+</td>
-                                        <td class="center">4</td>
-                                        <td class="center">X</td>
+                                    <tr ng-repeat="contribution in contributions">
+                                        <td>{{contribution.item_name}}</td>
+                                        <td>{{contribution.destination}}</td>
+                                        <td>{{contribution.contrib_type}}</td>
+                                        <td>{{contribution.amount}}</td>
+                                        <td>{{contribution.appeal}}</td>
+                                        <td>{{contribution.pay_method}}</td>
+                                        <td>{{contribution.thanked}}</td>
+                                        <td>{{contribution.notes}}</td>
                                     </tr>
-                                    
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->

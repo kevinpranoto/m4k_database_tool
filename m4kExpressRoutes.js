@@ -4,7 +4,11 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const queries = require('./m4kQueryScripts.js');
+//const queries = require('./m4kQueryScripts.js');
+const getQueries = require('./getScripts.js');
+const deleteQueries = require('./deleteScripts.js');
+const postQueries = require('./postScripts.js');
+const putQueries = require('./putScripts.js');
 
 //DEAL WITH CORS ISSUES
 var originsWhiteList = ['http://127.0.0.1:8080', 'localhost:8080'];
@@ -23,7 +27,7 @@ var jsonParser = bodyParser.json();
 //HANDLE DONOR REQUESTS
 app.route('/donors').get((req, res) =>
 {
-	queries.getData(0, (err, data) =>
+	getQueries.getData(0, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -32,7 +36,7 @@ app.route('/donors').get((req, res) =>
 	});
 }).post(jsonParser, (req, res) =>
 {
-	queries.addDonor(req.body, (data) =>
+	postQueries.addDonor(req.body, (data) =>
 	{
 		console.log('Added new donor');
 		res.send(data);
@@ -42,7 +46,7 @@ app.route('/donors').get((req, res) =>
 app.route('/donors/:id').get((req, res) =>
 {
 	var donor_id = req.params.id;
-	queries.getIndividualDonor(donor_id, (data) =>
+	getQueries.getIndividualDonor(donor_id, (data) =>
 	{
 		console.log('Retrieved donor with id: ' + donor_id);
 		//Send prettified JSON response for debugging
@@ -52,7 +56,7 @@ app.route('/donors/:id').get((req, res) =>
 }).put(jsonParser, (req, res) =>
 {
 	var donor_id = req.params.id;
-	queries.updateIndividualDonor(donor_id, req.body, (data) =>
+	putQueries.updateIndividualDonor(donor_id, req.body, (data) =>
 	{
 		console.log('Updated donor with id: ' + donor_id);
 		res.send(data);
@@ -60,7 +64,7 @@ app.route('/donors/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var donor_id = req.params.id;
-	queries.deleteIndividualSupporter(donor_id, (data) =>
+	deleteQueries.deleteIndividualSupporter(donor_id, (data) =>
 	{
 		console.log('Deleted donor with id: ' + donor_id);
 		res.send(data);
@@ -71,7 +75,7 @@ app.route('/donors/:id').get((req, res) =>
 //HANDLE STAFF REQUESTS
 app.route('/staff').get((req, res) =>
 {
-	queries.getData(1, (err, data) =>
+	getQueries.getData(1, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -80,7 +84,7 @@ app.route('/staff').get((req, res) =>
 	});
 }).post(jsonParser, (req, res) =>
 {
-	queries.addStaff(req.body, (data) =>
+	postQueries.addStaff(req.body, (data) =>
 	{
 		console.log('Added new staff');
 		res.send(data);
@@ -90,7 +94,7 @@ app.route('/staff').get((req, res) =>
 app.route('/staff/:id').get((req, res) =>
 {
 	var staff_id = req.params.id;
-	queries.getIndividualStaff(staff_id, (data) =>
+	getQueries.getIndividualStaff(staff_id, (data) =>
 	{
 		console.log('Retrieved staff with id: ' + staff_id);
 		//res.json(data);
@@ -99,7 +103,7 @@ app.route('/staff/:id').get((req, res) =>
 }).put(jsonParser, (req, res) =>
 {
 	var staff_id = req.params.id;
-	queries.updateIndividualStaff(staff_id, req.body, (data) =>
+	putQueries.updateIndividualStaff(staff_id, req.body, (data) =>
 	{
 		console.log('Updated staff with id: ' + staff_id);
 		res.send(data);
@@ -107,7 +111,7 @@ app.route('/staff/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var staff_id = req.params.id;
-	queries.deleteIndividualSupporter(staff_id, (data) =>
+	deleteQueries.deleteIndividualSupporter(staff_id, (data) =>
 	{
 		console.log('Deleted staff with id: ' + staff_id);
 		res.send(data);
@@ -118,7 +122,7 @@ app.route('/staff/:id').get((req, res) =>
 //HANDLE PATIENT REQUESTS
 app.get('/patients', (req, res) =>
 {
-	queries.getData(2, (err, data) =>
+	getQueries.getData(2, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -130,7 +134,7 @@ app.get('/patients', (req, res) =>
 app.route('/patients/:id').get((req, res) =>
 {
 	var patient_id = req.params.id;
-	queries.getIndividualPatient(patient_id, (data) =>
+	getQueries.getIndividualPatient(patient_id, (data) =>
 	{
 		console.log('Retrieved patient with id: ' + patient_id);
 		//res.json(data);
@@ -142,7 +146,7 @@ app.route('/patients/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var patient_id = req.params.id;
-	queries.deleteIndividualPatient(patient_id, (data) =>
+	deleteQueries.deleteIndividualPatient(patient_id, (data) =>
 	{
 		console.log('Deleted patient with id: ' + patient_id);
 		res.send(data);
@@ -153,7 +157,7 @@ app.route('/patients/:id').get((req, res) =>
 //HANDLE PLEDGE REQUESTS
 app.get('/pledges', (req, res) =>
 {
-	queries.getData(3, (err, data) =>
+	getQueries.getData(3, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -165,7 +169,7 @@ app.get('/pledges', (req, res) =>
 app.route('/pledges/:id').get((req, res) =>
 {
 	var pledge_id = req.params.id;
-	queries.getIndividualPledge(pledge_id, (data) =>
+	getQueries.getIndividualPledge(pledge_id, (data) =>
 	{
 		console.log('Retrieved pledge with id: ' + pledge_id);
 		//res.json(data);
@@ -177,7 +181,7 @@ app.route('/pledges/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var pledge_id = req.params.id;
-	queries.deleteIndividualPledge(pledge_id, (data) =>
+	deleteQueries.deleteIndividualPledge(pledge_id, (data) =>
 	{
 		console.log('Deleted pledge with id: ' + pledge_id);
 		res.send(data);
@@ -188,7 +192,7 @@ app.route('/pledges/:id').get((req, res) =>
 //HANDLE EVENT REQUESTS
 app.get('/events', (req, res) =>
 {
-	queries.getData(4, (err, data) =>
+	getQueries.getData(4, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -200,7 +204,7 @@ app.get('/events', (req, res) =>
 app.route('/events/:id').get((req, res) =>
 {
 	var event_id = req.params.id;
-	queries.getIndividualEvent(event_id, (data) =>
+	getQueries.getIndividualEvent(event_id, (data) =>
 	{
 		console.log('Retrieved event with id: ' + event_id);
 		//res.json(data);
@@ -212,7 +216,7 @@ app.route('/events/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var event_id = req.params.id;
-	queries.deleteIndividualEvent(event_id, (data) =>
+	deleteQueries.deleteIndividualEvent(event_id, (data) =>
 	{
 		console.log('Deleted event with id: ' + event_id);
 		res.send(data);
@@ -223,7 +227,7 @@ app.route('/events/:id').get((req, res) =>
 //HANDLE CONTRIBUTION REQUESTS
 app.get('/contributions', (req, res) =>
 {
-	queries.getData(5, (err, data) =>
+	getQueries.getData(5, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -235,7 +239,7 @@ app.get('/contributions', (req, res) =>
 app.route('/contributions/:id').get((req, res) =>
 {
 	var contrib_id = req.params.id;
-	queries.getIndividualContribution(contrib_id, (data) =>
+	getQueries.getIndividualContribution(contrib_id, (data) =>
 	{
 		console.log('Retrieved event item with id: ' + contrib_id);
 		//res.json(data);
@@ -247,7 +251,7 @@ app.route('/contributions/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var contrib_id = req.params.id;
-	queries.deleteIndividualContribution(contrib_id, (data) =>
+	deleteQueries.deleteIndividualContribution(contrib_id, (data) =>
 	{
 		console.log('Deleted contribution with id: ' + contrib_id);
 		res.send(data);
@@ -258,7 +262,7 @@ app.route('/contributions/:id').get((req, res) =>
 //HANDLE EVENT ITEM REQUESTS
 app.get('/eventitems', (req, res) =>
 {
-	queries.getData(6, (err, data) =>
+	getQueries.getData(6, (err, data) =>
 	{
 		if (err)
 			throw err;
@@ -270,7 +274,7 @@ app.get('/eventitems', (req, res) =>
 app.route('/eventitems/:id').get((req, res) =>
 {
 	var event_item_id = req.params.id;
-	queries.getIndividualEventItem(event_item_id, (data) =>
+	getQueries.getIndividualEventItem(event_item_id, (data) =>
 	{
 		console.log('Retrieved event item with id: ' + event_item_id);
 		//res.json(data);
@@ -282,7 +286,7 @@ app.route('/eventitems/:id').get((req, res) =>
 }).delete((req, res) =>
 {
 	var event_item_id = req.params.id;
-	queries.deleteIndividualContribution(event_item_id, (data) =>
+	deleteQueries.deleteIndividualContribution(event_item_id, (data) =>
 	{
 		console.log('Deleted contribution with id: ' + event_item_id);
 		res.send(data);

@@ -57,7 +57,9 @@ var deleteQueries = [
 /*queryNum = 7: DELETE Supporter Addresses w/ ID*/ "DELETE FROM Address WHERE Address.supporter_id = @id",
 /*queryNum = 8: DELETE Donor Companies w/ ID*/ "DELETE FROM Company WHERE Company.supporter_id = @id",
 /*queryNum = 9: DELETE Donor Events w/ ID*/ "DELETE FROM Attends WHERE Attends.donor_id = @id",
-/*queryNum = 10: DELETE Staff Events w/ ID*/ "DELETE FROM Works WHERE Works.staff_id = @id"
+/*queryNum = 10: DELETE Staff Events w/ ID*/ "DELETE FROM Works WHERE Works.staff_id = @id",
+/*queryNum = 11: DELETE Patient Needs w/ ID*/ "DELETE FROM Needs Where Needs.patient_id = @id",
+/*queryNum = 12: DELETE Patient Pledges w/ ID*/ "DELETE FROM Pledge Where Pledge.patient_id = @id"
 ];
 
 var postQueries =
@@ -76,6 +78,13 @@ var putQueries = [
 /*queryNum = 0: PUT(UPDATE) Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
 /*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
 /*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword"
+
+//Entities you still need to do PUTs/updates
+//Patient
+//Pledge
+//Contribution
+//
+
 ];
 
 //Get data from relevant table based on queryNum
@@ -553,7 +562,7 @@ var addStaff = function(body, callback)
 	});
 }
 
-//PUTs
+//PUTs *********************** LOOK HERE JAMES
 function updateSupporterData(id, body, queryNum)
 {
 	return new Promise((resolve, reject) =>
@@ -677,6 +686,73 @@ function updateSupporterData(id, body, queryNum)
 	});
 }
 
+// Test ****************************
+function updatePatientData(id, body, queryNum)
+{
+	return new Promise((resolve, reject) =>
+	{
+		//Drop existing needs
+		con.query(deleteQueries[5].replace('@id', id));
+	}).then((res) =>
+	{
+		//Add emails
+		return new Promise((resolve, reject) =>
+		{
+			body.emails.forEach((email) =>
+			{
+				var emailObj = {
+					newSupporterId: id,
+					newEmail: '\'' + email.email_address + '\'',
+					newIsPrimary: email.is_primary
+				}
+
+				var patchedQuery = postQueries[1].replace(/newSupporterId|newEmail|newIsPrimary/gi, (matched) =>
+				{
+					return emailObj[matched];
+				});
+			
+				con.query(patchedQuery, (err, rows) =>
+				{
+					if (err)
+						throw(err);
+					resolve(rows);
+				});	
+			});
+
+			//Drop existing phones
+			con.query(deleteQueries[6].replace('@id', id));
+		}).then((res) =>
+		{
+			//Add phones
+			return new Promise((resolve, reject) =>
+			{
+				body.phones.forEach((phone) =>
+				{
+					var phoneObj = {
+						newSupporterId: id,
+						newPhoneType: '\'' + phone.phone_type + '\'',
+						newPhoneNumber: '\'' + phone.phone_number + '\'',
+						newIsPrimary: phone.is_primary
+					}
+
+					var patchedQuery = postQueries[2].replace(/newSupporterId|newPhoneType|newPhoneNumber|newIsPrimary/gi, (matched) =>
+					{
+						return phoneObj[matched];
+					});
+			
+					con.query(patchedQuery, (err, rows) =>
+					{
+						if (err)
+							throw(err);
+						resolve(rows);
+					});	
+				});
+			})
+		})
+	})
+}
+
+
 function updateDonorData(id, body, queryNum)
 {
 	return new Promise((resolve, reject) =>
@@ -691,6 +767,9 @@ function updateDonorData(id, body, queryNum)
 		{
 			return fieldObj[matched];
 		});
+		
+		
+		
 		
 		con.query(patchedQuery, (err, rows) =>
 		{
@@ -747,6 +826,8 @@ var updateIndividualStaff = function(id, body, callback)
 		});
 	});
 }
+
+
 
 //GETs
 exports.getData = getData;
