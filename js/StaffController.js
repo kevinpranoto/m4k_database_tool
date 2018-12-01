@@ -1,15 +1,33 @@
 var StaffController = angular.module('StaffController', []);
 var entitySpecific = angular.module('entitySpecific', []);
 
+StaffController.controller('staffEventsWorked', function($scope, $location, $window, $http) {
+    var id = sessionStorage.getItem('entityID');
+    var name = sessionStorage.getItem('entityName');
+
+    $scope.entityName = name;
+    $scope.events = [];
+
+    var obj = JSON.parse(sessionStorage.getItem('staff_object'));
+    console.log(obj);
+
+    obj.events.forEach(event_attended => {
+        var date = new Date(event.campaign_date);
+        event.campaign_date = date.toDateString();
+        $scope.events.push(event_attended);
+    });
+});
+
 StaffController.controller('staffBasicInfo', function($scope, $location, $window, $http) {
-    let id = sessionStorage.getItem('entityID');
-    let name = sessionStorage.getItem('entityName');
+    var id = sessionStorage.getItem('entityID');
+    var name = sessionStorage.getItem('entityName');
     $scope.entityID = id;
     $scope.entityName = name;
     $scope.phones = [];
     $scope.emails = [];
     $scope.addresses = [];
     console.log(id);
+    console.log(name);
     var getString = 'http://127.0.0.1:8081/staff/' + id;
     $http.get(getString).then((res)=>
     {
@@ -89,7 +107,7 @@ StaffController.controller('allStaff', function($scope, $location, $window, $htt
         window.location.href = '../pages/staff_basic_info.html';
         sessionStorage.setItem('entityID', staff.id);
         let staff_name = staff.first_name + " " + staff.last_name;
-        sessionStorage.setItem('entityName', staff_name);
+        sessionStorage.setItem('entityName', staff.name);
         console.log("click " + sessionStorage.getItem('entityID'));
     };
 
