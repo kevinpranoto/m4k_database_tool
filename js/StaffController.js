@@ -12,8 +12,8 @@ StaffController.controller('staffEventsWorked', function($scope, $location, $win
     console.log(obj);
 
     obj.events.forEach(event_attended => {
-        var date = new Date(event.campaign_date);
-        event.campaign_date = date.toDateString();
+        var date = new Date(event_attended.campaign_date);
+        event_attended.campaign_date = date.toDateString();
         $scope.events.push(event_attended);
     });
 });

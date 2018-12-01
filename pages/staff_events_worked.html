@@ -99,10 +99,10 @@
             <!-- /.navbar-static-side -->
         </nav>
 
-        <div id="page-wrapper">
+        <div id="page-wrapper" ng-cloak>
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"> Staff_Name</h1>
+                    <h1 class="page-header"> {{entityName}}'s Attendance</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -122,8 +122,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="odd gradeX">
-                                        <td>Trident</td>
+                                    <tr ng-repeat="event in events">
+                                        <td>{{event.campaign_name}}</td>
+                                        <td>{{event.campaign_type_name}}</td>
+                                        <td>{{event.theme}}</td>
+                                        <td>{{event.campaign_date}}</td>
                                     </tr>
                                     
                                 </tbody>
