@@ -6,7 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const queries = require('./m4kQueryScripts.js');
 
-//Deal with CORS issues
+//DEAL WITH CORS ISSUES
 var originsWhiteList = ['http://127.0.0.1:8080', 'localhost:8080'];
 var corsOptions = {
 	origin: function(origin, callback)
@@ -19,13 +19,8 @@ var corsOptions = {
 app.use(cors(corsOptions));
 var jsonParser = bodyParser.json();
 
-//Handle requests
-app.get('/', (req, res) =>
-{
-	console.log('Connected to DB');
-	res.send('Express/Node Demo');
-});
 
+//HANDLE DONOR REQUESTS
 app.route('/donors').get((req, res) =>
 {
 	queries.getData(0, (err, data) =>
@@ -72,13 +67,22 @@ app.route('/donors/:id').get((req, res) =>
 	});
 });
 
-app.get('/staff', (req, res) =>
+
+//HANDLE STAFF REQUESTS
+app.route('/staff').get((req, res) =>
 {
 	queries.getData(1, (err, data) =>
 	{
 		if (err)
 			throw err;
 		console.log('Retrieved all staff');
+		res.send(data);
+	});
+}).post(jsonParser, (req, res) =>
+{
+	queries.addStaff(req.body, (data) =>
+	{
+		console.log('Added new staff');
 		res.send(data);
 	});
 });
@@ -110,6 +114,8 @@ app.route('/staff/:id').get((req, res) =>
 	});
 });
 
+
+//HANDLE PATIENT REQUESTS
 app.get('/patients', (req, res) =>
 {
 	queries.getData(2, (err, data) =>
@@ -143,6 +149,8 @@ app.route('/patients/:id').get((req, res) =>
 	});
 });
 
+
+//HANDLE PLEDGE REQUESTS
 app.get('/pledges', (req, res) =>
 {
 	queries.getData(3, (err, data) =>
@@ -176,6 +184,8 @@ app.route('/pledges/:id').get((req, res) =>
 	});
 });
 
+
+//HANDLE EVENT REQUESTS
 app.get('/events', (req, res) =>
 {
 	queries.getData(4, (err, data) =>
@@ -209,6 +219,8 @@ app.route('/events/:id').get((req, res) =>
 	});
 });
 
+
+//HANDLE CONTRIBUTION REQUESTS
 app.get('/contributions', (req, res) =>
 {
 	queries.getData(5, (err, data) =>
@@ -242,6 +254,8 @@ app.route('/contributions/:id').get((req, res) =>
 	});
 });
 
+
+//HANDLE EVENT ITEM REQUESTS
 app.get('/eventitems', (req, res) =>
 {
 	queries.getData(6, (err, data) =>
@@ -275,6 +289,8 @@ app.route('/eventitems/:id').get((req, res) =>
 	});
 });
 
+
+//SET UP EXPRESS CONNECTION
 var server = app.listen(8081, function()
 {
 	var host = server.address().address;
