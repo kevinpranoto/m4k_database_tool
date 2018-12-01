@@ -1,15 +1,20 @@
 var allStaff = angular.module('allStaff', []);
 var entitySpecific = angular.module('entitySpecific', []);
 
-allStaff.controller('StaffController', function($scope, $location, $window) {
+allStaff.controller('StaffController', function($scope, $location, $window, $http) {
 
-    $scope.staff_members = [
-        {id : '1', first_name : 'Bon', middle_name : '' , last_name: 'Davis' , phone : '(449) 443 2334', email : 'brian@bb.com', type: 'Staff', status: 'Active'},
-        {id : '2', first_name : 'Poop', middle_name : 'Lol' , last_name: 'McScoop' , phone : '(422) 643 2314', email : 'lu@tek.com', type: 'Staff/Donor', status: 'Lax'},
-        {id : '3', first_name : 'Gina', middle_name : 'Bob' , last_name: 'Wong', phone : '(221) 443 8897', email : 'ginaw@hogwarts.com', type: 'Staff', status: 'Active'},
-        {id : '4', first_name : 'Def', middle_name : '' , last_name: 'Leppard', phone : '(889) 111 1111', email : 'winstonb@ab.com', type: 'Staff/Donor', status: 'Lost'},
-        {id : '5', first_name : 'Led', middle_name : 'Hi' , last_name: 'Zeppelin', phone : '(221) 990 3322', email : 'mzed@ab.com', type: 'Donor', status: 'Active'}
-    ];
+    $scope.staff_members = [];
+
+    $http.get('http://127.0.0.1:8081/staff').then((res) =>
+    {
+        for (var i in res.data)
+        {
+            var obj = res.data[i];
+            var staff = { id: obj.supporter_id, first_name: obj.first_name, last_name: obj.last_name, phone: obj.phone_number, 
+                email: obj.email_address, type: obj.staff_type, status: obj.staff_status };
+            $scope.staff_members.push(staff);
+        }
+    });
 
     let staffID = {};
 

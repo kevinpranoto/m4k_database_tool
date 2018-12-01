@@ -2,13 +2,21 @@
 
     let allPledges = angular.module('allPledges', []);
 
-    allPledges.controller('PledgeController', function($scope, $location, $window, $filter) {
+    allPledges.controller('PledgeController', function($scope, $location, $window, $filter, $http) {
 
-        $scope.pledges = [
-            {id : '1', donor_name : 'Jack Stefanski', patient_id : '7134', target_amount : '100,000.00', target_year: '2040', pledge_date: '11/24/2018'},
-            {id : '2', donor_name : 'Bob Bobberson', patient_id : '1234', target_amount : '1.00', target_year: '2020', pledge_date: '11/21/2018'},
-            {id : '3', donor_name : 'Honk Honkerson', patient_id : '52321', target_amount : '2,000.00', target_year: '2030', pledge_date: '11/11/2018'}
-        ];
+        $scope.pledges = [];
+
+        $http.get('http://127.0.0.1:8081/pledges').then((res) =>
+        {
+            for(var i in res.data)
+            {
+                console.log(res.data);
+                var obj = res.data[i];
+                var pledge = { donor_name: obj.first_name+' '+obj.last_name, patient_id: obj.patient_id, 
+                    target_amount: obj.target_amount, pledge_date: obj.pledge_date};
+                $scope.pledges.push(pledge); 
+            }
+        });
 
         /**
          *  Function for providing the ability to highlight any given entry in a data table.
