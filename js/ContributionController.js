@@ -1,17 +1,34 @@
 (function(){
-    let allContributions = angular.module("contributionEntry", []);
+    let allContributions = angular.module("allContributions", []);
+    allContributions.controller("ContributionController", function($scope, $location, $window, $filter, $http) {
 
-    allContributions.controller("ContributionController", function($scope, $location, $window, $filter) {
-
-        //////////////////////////////////// DUMMY DATA: TO BE DELETED ///////////////////////////////////////
-        $scope.contributions = [
-            {id : '1', donor_name : 'Jack Stefanski', cont_name : 'Donation from Jack', cont_type : 'Cash', appeal: 'Radio', notes: 'Paid in Prussian Francs'},
-            {id : '2', donor_name : 'Jock Lupinski', cont_name : 'Tomatoes', cont_type : 'Goods', appeal: 'Direct Mail', notes: 'Thought that it was a good idea to use Kraft Singles for mac n cheez'},
-            {id : '3', donor_name : 'Honk Duckerson', cont_name : 'Backrubs', cont_type : 'Services', appeal: 'Sponsorship', notes: ';)'},
-            {id : '4', donor_name : 'Puck Cluck', cont_name : 'Donation from Puck', cont_type : 'Cash', appeal: 'Radio', notes: 'Paid in Indian Rupees'}
-        ];
-
+        ///////////////////////// RETRIEVAL AND SUBMISSION CODE TO DATABASE //////////////////////////////////
+        /**
+         * Retrieving data from the database to display onto the main view of a contribution
+         * */
+        $scope.contributions = [];
+        console.log('Retrieving data for Contributions main view...');
+        $http.get('http://127.0.0.1:8081/contributions').then((res)=>
+        {
+            console.log(res.data);
+            for (let i in res.data)
+            {
+                let obj = res.data[i];
+                let contribution =
+                    {
+                        contrib_id : obj.contrib_id,
+                        supporter_id: obj.supporter_id,
+                        donor_name: obj.first_name + " " + obj.last_name,
+                        contrib_name: obj.item_name,
+                        contrib_type: obj.contrib_type,
+                        contrib_appeal: obj.appeal,
+                        contrib_notes: obj.notes,
+                    };
+                $scope.contributions.push(contribution);
+            }
+        });
         ///////////////////////// GENERAL FUNCTIONS FOR CONTRIBUTION-RELATED ITEMS ///////////////////////////
+
 
         /* Function for providing the ability to highlight any given entry in a data table. */
         /**
@@ -33,7 +50,7 @@
          * Contribution Type.
          */
         $scope.contributionTypeChanged = function() {
-            $scope.typeStatus = $scope.TypeValue;
+            $scope.typeStatus = $scope.contrib_type;
         };
 
         /**
@@ -46,52 +63,22 @@
         };
 
         /**
-         * removeRow($index)
-         * @param item: Reference to an item listed in a given data table
-         * Function for deleting an entry from the data table in a given view when the red "x" icon is clicked in the
-         *  Action column of the entry.
-         */
-        $scope.removeItem = function(item) {
-            console.log(item);
-            let tempDonorName = item.donor_name;
-            let deleteMessage = "Are you sure you want to delete " + tempDonorName + "?";
-
-            // Prompt user to confirm deletion; clicking OK returns true, Cancel returns false.
-            let deleteItem = $window.confirm(deleteMessage);
-
-            // If user clicked OK, handle the deletion.
-            if (deleteItem) {
-                // NOTE: This only removes items from the DUMMY DATA TABLE in the controller. This needs to be
-                //       replaced with deletion code involving Angular/Node
-                //$scope.contributions.splice(item, 1);     // Just a placeholder, but will need code to update DB via Node.js?
-                let length = $scope.contributions.length;
-                for (let i = 0; i < length; i++)
-                {
-                    if (item === $scope.contributions[i])
-                    {
-                        $scope.contributions.splice(item, 1);
-                        break;
-                    }
-                }
-            }
-        };
-
-        /**
          * goToContribution(contribution)
          * @param contribution: Specific entry related to the Contributions main view table
          * Function for pulling up the detailed information page of a selected Contribution entry on the data table
          * displayed in the main Contribution view.
+         *
+         * The contribution's ID value is saved in cache to be used in ContributionBasicInfoController.
          */
         $scope.goToContribution = function(contribution) {
+            // Save contribution ID in cache
+            sessionStorage.setItem('contributionID', contribution.contrib_id);
+
+            console.log("click " + sessionStorage.getItem('contributionID'));
+
+            // Re-route to the contribution's specific view with the ID cached for use in ContributionBasicInfoController
             window.location.href = '../pages/contribution_basic_info.html';
-            sessionStorage.setItem('entityID', contribution.id);
-
-            let cont_name = contribution.cont_name;
-            sessionStorage.setItem('entityName', cont_name);
-
-            console.log("click " + sessionStorage.getItem('entityID'));
         };
-
 
         ////////////////////////////////// FUNCTIONS FOR FORM SUBMISSION ///////////////////////////////////////
         /**
@@ -119,8 +106,7 @@
         $scope.contribIsEventChoices = [
             'Yes', 'No'
         ];
-
-
+        
         /**
          * submitContribution(ContributionForm.$valid)
          * Function to submit the data from a form page to be packaged into JSON format for back-end to store the data.
@@ -129,14 +115,14 @@
          */
         $scope.submitContribution = function(isValid) {
             let newContribution = {
-                itemName: $scope.contribName,
-                type: $scope.contribType,
-                amount: $filter('number')($scope.contribAmount, 2),
-                paymentMethod: $scope.contribPaymentMethod,
-                appeal: $scope.contribAppeal,
-                destination: $scope.contribDestination,
-                isEvent: $scope.isEvent.choice,
-                notes: $scope.contribNotes
+                item_name: $scope.contrib_name,
+                type: $scope.contrib_type,
+                amount: $filter('number')($scope.contrib_amount, 2),
+                payment_method: $scope.contrib_payment_method,
+                appeal: $scope.contrib_appeal,
+                destination: $scope.contrib_destination,
+                is_event: $scope.is_event.choice,
+                notes: $scope.contrib_notes
             };
 
             // Verify if the entire form is valid or not; if so, run through the procedures of stringifying JSON
@@ -166,14 +152,14 @@
          */
         $scope.submitContributionAndNew = function(isValid) {
             let newContribution = {
-                itemName: $scope.contribName,
-                type: $scope.contribType,
-                amount: $filter('number')($scope.contribAmount, 2),
-                paymentMethod: $scope.contribPaymentMethod,
-                appeal: $scope.contribAppeal,
-                destination: $scope.contribDestination,
-                isEvent: $scope.isEvent.choice,
-                notes: $scope.contribNotes
+                item_name: $scope.contrib_name,
+                type: $scope.contrib_type,
+                amount: $filter('number')($scope.contrib_amount, 2),
+                payment_method: $scope.contrib_payment_method,
+                appeal: $scope.contrib_appeal,
+                destination: $scope.contrib_destination,
+                is_event: $scope.is_event.choice,
+                notes: $scope.contrib_notes
             };
 
             if (isValid) {
@@ -197,5 +183,41 @@
                 }
             }
         };
+    });
+
+    /***
+     * New module and controller for handling the specific view of a contribution entity.
+     * @type {angular.Module}
+     */
+    let contributionSpecific = angular.module("contributionSpecific", []);
+    contributionSpecific.controller("ContributionBasicInfoController", function($scope, $filter, $http) {
+
+        // Retrieve contribution ID from the cache
+        let id = sessionStorage.getItem('contributionID');
+
+        $scope.contributionID = id;
+        console.log(id);
+
+        // Retrieve contribution information using the contribution ID from cache
+        let getString = 'http://127.0.0.1:8081/contributions/' + id;
+        $http.get(getString).then((res)=>
+        {
+            // Grab the first and only item from the returned database object
+            let basic_info = res.data[0];
+            console.log(basic_info);
+
+            // Bind all the retrieved information attributes to local scope to display on contribution-specific view
+            $scope.item_name = basic_info.item_name;
+            $scope.donor_name = basic_info.first_name + " " + basic_info.last_name;
+            $scope.contrib_date = $filter('date')(basic_info.contrib_date, "MM-dd-yyyy");
+            $scope.is_event_item = basic_info.is_event_item;
+            $scope.contrib_type = basic_info.contrib_type;
+            $scope.amount = $filter('number')(basic_info.amount, 2);
+            $scope.pay_method = basic_info.pay_method;
+            $scope.destination = basic_info.destination;
+            $scope.appeal = basic_info.appeal;
+            $scope.thanked = basic_info.thanked;
+            $scope.notes = basic_info.notes;
+        });
     });
 }());

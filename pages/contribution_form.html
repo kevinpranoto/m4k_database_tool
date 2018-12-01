@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="contributionEntry">
+<html lang="en" ng-app="allContributions">
 
 <head>
     <meta charset="utf-8">
@@ -92,14 +92,14 @@
                         <div class="row">
                             <!-- FORM: Form is named ContributionForm to access whether the data entered is valid or not when performing
                                         validation upon clicking submit or submit & new -->
-                            <form name="ContributionForm" novalidate>
+                            <form name="contribution_form" novalidate>
                                 <!-- Using ContributionController here to modify display in entry form based on Contribution Type selected:
 									 (1) Display error messages in red text if the input for respective fields are not valid; -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Contribution name</label>
-                                        <input class="form-control" name="name" placeholder="Enter contribution name here" pattern="[a-zA-Z]+" ng-minlength="1" ng-model="contribName" required>
-                                        <div class="entryError" ng-show="ContributionForm.name.$invalid && !ContributionForm.name.$pristine" class="help-block">Contribution name is required, and must be only alphabetic characters.</div>
+                                        <input class="form-control" name="name" placeholder="Enter contribution name here" pattern="[a-zA-Z]+" ng-minlength="1" ng-model="contrib_name" required>
+                                        <div class="entry_error" ng-show="contribution_form.name.$invalid && !contribution_form.name.$pristine">Contribution name is required, and must be only alphabetic characters.</div>
                                     </div>
                                     <table>
                                         <!-- When the contribution type "Money" is chosen, the view will only then display the fields
@@ -107,7 +107,7 @@
                                         <tr>
                                             <td style="padding-top:auto">
                                                 <label>Type</label>
-                                                <select name="contributionType" ng-change="contributionTypeChanged()" class="form-control" ng-model="contribType" required>
+                                                <select name="contribution_type" ng-change="contributionTypeChanged()" class="form-control" ng-model="contrib_type" required>
                                                     <option value="goods" ng-selected> Goods </option>
                                                     <option value="service"> Service </option>
                                                     <option value="money"> Money </option>
@@ -115,7 +115,7 @@
                                             </td>
                                         </tr>
                                         <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
-                                        <tr ng-hide="contribType != 'money'">
+                                        <tr ng-hide="contrib_type != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Enter amount</label>
                                                 <input name="contributionAmount"
@@ -124,15 +124,15 @@
                                                        placeholder="(e.g. 400.00)"
                                                        ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
                                                        step="0.01"
-                                                       ng-model="contribAmount"
+                                                       ng-model="contrib_amount"
                                                        ng-minlength="1">
-                                                <div class="entryError" ng-show="ContributionForm.contributionAmount.$invalid && !ContributionForm.contributionAmount.$pristine">Amount must only be up to two decimal places.</div>
+                                                <div class="entry_error" ng-show="contribution_form.contributionAmount.$invalid && !contribution_form.contributionAmount.$pristine">Amount must only be up to two decimal places.</div>
                                             </td>
                                         </tr>
-                                        <tr ng-hide="contribType != 'money'">
+                                        <tr ng-hide="contrib_type != 'money'">
                                             <td style="padding-top:1ex">
                                                 <label>Select payment method</label>
-                                                <select name="payMethod" class="form-control" ng-model="contribPaymentMethod">
+                                                <select name="pay_method" class="form-control" ng-model="contrib_payment_method">
                                                     <option value="cash">Cash</option>
                                                     <option value="creditCard">Credit Card</option>
                                                     <option value="check">Check</option>
@@ -146,7 +146,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
                                         <label>Appeal</label>
-                                        <select class="form-control" ng-model="contribAppeal" required>
+                                        <select class="form-control" ng-model="contrib_appeal" required>
                                             <option>Direct Mail</option>
                                             <option>Email Campaign</option>
                                             <option>Radio Advertisement</option>
@@ -160,7 +160,7 @@
 
                                     <div class="form-group">
                                         <label>Destination</label>
-                                        <select class="form-control" ng-model="contribDestination" required>
+                                        <select class="form-control" ng-model="contrib_destination" required>
                                             <option>General</option>
                                             <option>Miracle Manor</option>
                                             <option>Basket of Miracles</option>
@@ -174,10 +174,10 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="isEvent.choice" required> Yes </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="is_event.choice" required> Yes </label>
                                                 </td>
                                                 <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="isEvent.choice" required> No </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="is_event.choice" required> No </label>
                                                 </td>
                                             </tr>
                                         </table>
@@ -185,7 +185,7 @@
 
                                     <div class="form-group">
                                         <label>Additional Notes</label>
-                                        <textarea class="form-control" rows="3" ng-model="contribNotes"></textarea>
+                                        <textarea class="form-control" rows="3" ng-model="contrib_notes"></textarea>
                                     </div>
 
                                     <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
@@ -195,8 +195,8 @@
 
                                         <!-- Buttons are inaccessible/"greyed out" until the entirety of the form is considered valid.
                                               Validation occurs when submitContribution(AndNew) function(s) are invoked -->
-                                        <button type="submit" class="btn btn-success" ng-disabled="ContributionForm.$invalid" ng-click="submitContribution(ContributionForm.$valid)">Save</button>
-                                        <button type="submit" class="btn btn-primary" ng-disabled="ContributionForm.$invalid" ng-click="submitContributionAndNew(ContributionForm.$valid)">Save & Add New</button>
+                                        <button type="submit" class="btn btn-success" ng-disabled="contribution_form.$invalid" ng-click="submitContribution(contribution_form.$valid)">Save</button>
+                                        <button type="submit" class="btn btn-primary" ng-disabled="contribution_form.$invalid" ng-click="submitContributionAndNew(contribution_form.$valid)">Save & Add New</button>
                                     </div>
                                 </div>
                             </form>
