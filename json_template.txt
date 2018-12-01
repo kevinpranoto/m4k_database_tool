@@ -1,21 +1,18 @@
 DONORS
 {
-	basic:
-	{
-		salutation
-		last_name
-		first_name
-		alias
-		donor_type
-		donor_status
-	}
+	salutation
+	last_name
+	first_name
+	alias
+	donor_type
+	donor_status,
 	emails:
 	[
 		{
 			email_address
 			is_primary
 		}
-	]
+	],
 	phones:
 	[
 		{
@@ -23,7 +20,7 @@ DONORS
 			phone_number
 			is_primary
 		}
-	]
+	],
 	addresses:
 	[
 		{
@@ -35,7 +32,7 @@ DONORS
 			zip_code
 			is_primary
 		}
-	]
+	],
 	companies:
 	[
 		{
@@ -47,22 +44,19 @@ DONORS
 
 STAFF
 {
-	basic:
-	{
-		salutation
-		last_name
-		first_name
-		alias
-		staff_type
-		staff_status
-	}
+	salutation,
+	last_name,
+	first_name,
+	alias,
+	staff_type,
+	staff_status,
 	emails:
 	[
 		{
 			email_address
 			is_primary
 		}
-	]
+	],
 	phones:
 	[
 		{
@@ -70,7 +64,7 @@ STAFF
 			phone_number
 			is_primary
 		}
-	]
+	],
 	addresses:
 	[
 		{
