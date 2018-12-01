@@ -40,7 +40,7 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../js/m4ktest.js"></script>
+    <script src="../js/DonorController.js"></script>
 </head>
 
 <body>
@@ -143,6 +143,8 @@
                                         <th>Affiliation</th>
                                         <th>Phone</th>
                                         <th>Email</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -151,8 +153,9 @@
                                         <td>{{donor.company}}</td>
                                         <td>{{donor.phone}}</td>
                                         <td>{{donor.email}}</td>
+                                        <td>{{donor.type}}</td>
+                                        <td>{{donor.status}}</td>
                                     </tr>
-                                    
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->
