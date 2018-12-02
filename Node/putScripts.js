@@ -22,8 +22,8 @@ var deleteQueries = [
 /*queryNum = 8: DELETE Donor Companies w/ ID*/ "DELETE FROM Company WHERE Company.supporter_id = @id",
 /*queryNum = 9: DELETE Donor Events w/ ID*/ "DELETE FROM Attends WHERE Attends.donor_id = @id",
 /*queryNum = 10: DELETE Staff Events w/ ID*/ "DELETE FROM Works WHERE Works.staff_id = @id",
-/*queryNum = 11: DELETE Patient Needs w/ ID*/ "DELETE FROM Needs Where Needs.patient_id = @id",
-/*queryNum = 12: DELETE Patient Pledges w/ ID*/ "DELETE FROM Pledge Where Pledge.patient_id = @id"
+/*queryNum = 11: DELETE Patient Needs w/ ID*/ "DELETE FROM Needs WHERE Needs.patient_id = @id",
+/*queryNum = 12: DELETE Patient Pledges w/ ID*/ "DELETE FROM Pledge WHERE Pledge.patient_id = @id"
 
 ];
 
@@ -52,7 +52,7 @@ var putQueries = [
 
 ];
 
-//PUTs *********************** LOOK HERE JAMES
+//PUTs *********************** Supporter Updates
 function updateSupporterData(id, body, queryNum)
 {
 	return new Promise((resolve, reject) =>
@@ -279,30 +279,42 @@ var updateIndividualStaff = function(id, body, callback)
 	});
 }
 
-// Test ****************************
-function updatePatientData(id, body, queryNum)
+// PATIENT DATA UPDATES ******************NEW**************
+function updateIndividualPatient(id, body, callback)
 {
 	return new Promise((resolve, reject) =>
 	{
 		//Drop existing needs
-		con.query(deleteQueries[5].replace('@id', id));
+		
+		var patchedQuery = deleteQueries[11].replace('@id', id);
+		console.log(patchedQuery);
+		
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				throw err;
+			resolve(rows);
+		});
+		console.log("Log Mark 2");
+		
 	}).then((res) =>
 	{
-		//Add emails
+		//Add new needs
 		return new Promise((resolve, reject) =>
 		{
-			body.emails.forEach((email) =>
+			body.needs.forEach((need) =>
 			{
-				var emailObj = {
-					newSupporterId: id,
-					newEmail: '\'' + email.email_address + '\'',
-					newIsPrimary: email.is_primary
+				var needObj = {
+					newPatientId: id,
+					newItem: '\'' + need.item + '\''
 				}
-
-				var patchedQuery = postQueries[1].replace(/newSupporterId|newEmail|newIsPrimary/gi, (matched) =>
+				
+				var addPatientNeed = "INSERT INTO Needs (patient_id, item) VALUES (newPatientId, newItem)";
+				var patchedQuery = addPatientNeed.replace(/newPatientId|newItem/gi, (matched) =>
 				{
-					return emailObj[matched];
+					return needObj[matched];
 				});
+			
 			
 				con.query(patchedQuery, (err, rows) =>
 				{
@@ -311,39 +323,13 @@ function updatePatientData(id, body, queryNum)
 					resolve(rows);
 				});	
 			});
-
-			//Drop existing phones
-			con.query(deleteQueries[6].replace('@id', id));
 		}).then((res) =>
 		{
-			//Add phones
-			return new Promise((resolve, reject) =>
-			{
-				body.phones.forEach((phone) =>
-				{
-					var phoneObj = {
-						newSupporterId: id,
-						newPhoneType: '\'' + phone.phone_type + '\'',
-						newPhoneNumber: '\'' + phone.phone_number + '\'',
-						newIsPrimary: phone.is_primary
-					}
-
-					var patchedQuery = postQueries[2].replace(/newSupporterId|newPhoneType|newPhoneNumber|newIsPrimary/gi, (matched) =>
-					{
-						return phoneObj[matched];
-					});
-			
-					con.query(patchedQuery, (err, rows) =>
-					{
-						if (err)
-							throw(err);
-						resolve(rows);
-					});	
-				});
-			})
-		})
-	})
+			callback(res);
+		});
+	});
 }
 
 exports.updateIndividualDonor = updateIndividualDonor;
 exports.updateIndividualStaff = updateIndividualStaff;
+exports.updateIndividualPatient = updateIndividualPatient;
