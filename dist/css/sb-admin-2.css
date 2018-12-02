@@ -443,7 +443,7 @@ table.dataTable thead .sorting:after {
 }
 
 /* Style for presenting error messages in red text */
-.entryError {
+.entry_error {
   color: red;
   padding-top: 5px;
 }
