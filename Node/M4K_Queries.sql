@@ -1,4 +1,13 @@
+INSERT INTO Installments (installment_id, pledge_id, amount, installment_date)
+ VALUES (1, 15, '1000', '2018-04-23T08:00:00.000Z');
 
+SELECT Installments.installment_id
+FROM Installments
+WHERE Installments.pledge_id = 15;
+/*
+ORDER BY Installments.installment_id DESC LIMIT 0, 1;
+
+/*
 
 ######################
 ##	VIEW QUERIES	##

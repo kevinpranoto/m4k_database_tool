@@ -230,10 +230,10 @@ INSERT INTO Pledge
         (15,	16,		2,		'2015-09-05',	2500,		true		);
 
 INSERT INTO Installments
-	(installment_id,	pledge_id,	amount,	installment_date	) VALUES
-	(1,			1,		1000,	'2018-01-01'		),
-    (2,			1,		15000,	'2018-09-10'		),
-    (3,			3,		400,	'2016-04-23'		);
+	(pledge_id,	amount,	installment_date	) VALUES
+	(1,		1000,	'2018-01-01'		),
+    (1,		15000,	'2018-09-10'		),
+    (3,		400,	'2016-04-23'		);
 
 INSERT INTO Contributes
 	(donor_id,	contrib_id,	contrib_date) VALUES

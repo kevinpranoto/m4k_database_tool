@@ -88,14 +88,14 @@ FOREIGN KEY (patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 
 DROP TABLE IF EXISTS `CampaignType`;
 CREATE TABLE `CampaignType` (
-`campaign_type_id` int NOT NULL AUTO_INCREMENT,
+`campaign_type_id` int NOT NULL,
 `campaign_type_name` VARCHAR(50),
 PRIMARY KEY (campaign_type_id)
 );
 
 DROP TABLE IF EXISTS `Campaign`;
 CREATE TABLE `Campaign` (
-`campaign_id` int NOT NULL AUTO_INCREMENT,
+`campaign_id` int NOT NULL,
 `campaign_name` VARCHAR(50),
 `campaign_type_id` int,
 `is_event` BOOL,
@@ -108,7 +108,7 @@ FOREIGN KEY(campaign_type_id) REFERENCES CampaignType(campaign_type_id) ON DELET
 #ask about appeal and campaign
 DROP TABLE IF EXISTS `Contribution`;
 CREATE TABLE `Contribution` (
-`contrib_id` int NOT NULL AUTO_INCREMENT,
+`contrib_id` int NOT NULL,
 `item_name` VARCHAR(20),
 `is_event_item` BOOL,
 `contrib_type` ENUM('Goods', 'Services', 'Money'),
@@ -123,7 +123,7 @@ PRIMARY KEY(contrib_id)
 
 DROP TABLE IF EXISTS `Pledge`;
 CREATE TABLE `Pledge` (
-`pledge_id` int NOT NULL AUTO_INCREMENT,
+`pledge_id` int NOT NULL,
 `donor_id` int,
 `patient_id` int,
 `pledge_date` DATE,
@@ -136,11 +136,9 @@ FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 
 DROP TABLE IF EXISTS `Installments`;
 CREATE TABLE `Installments` (
-`installment_id` int NOT NULL AUTO_INCREMENT,
 `pledge_id` int,
 `amount` DECIMAL,
 `installment_date` DATE,
-PRIMARY KEY (installment_id),
 FOREIGN KEY(pledge_id) REFERENCES Pledge(pledge_id) ON DELETE CASCADE
 );
 

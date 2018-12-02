@@ -18,11 +18,14 @@ var postQueries =
 /*queryNum = 3: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
 /*queryNum = 4: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
 /*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)",
-/*queryNum = 6: POST(ADD) Staff*/ "INSERT INTO Staff (supporter_id, staff_type, staff_status) VALUES (newSupporterId, newStaffType, newStatus)"
-
+/*queryNum = 6: POST(ADD) Staff*/ "INSERT INTO Staff (supporter_id, staff_type, staff_status) VALUES (newSupporterId, newStaffType, newStatus)",
+/*queryNum = 7: POST(ADD) Patient*/ "INSERT INTO Patient (patient_id) VALUES (newPatientId)",
+/*queryNum = 8: POST(ADD) Needs*/ "INSERT INTO Needs (patient_id, item) VALUES (newPatientId, newItem)",
+/*queryNum = 9: POST(ADD) Pledge*/ "INSERT INTO Pledge (pledge_id, donor_id, patient_id, pledge_date, target_amount, is_behind) VALUES (newPledgeId, newDonorId, newPatientId, newPledgeDate, newTargetAmount, newIsBehind)",
+/*queryNum = 10: POST(ADD) Installment*/ "INSERT INTO Installments (pledge_id, amount, installment_date) VALUES (newPledgeId, newAmount, newInstallmentDate)"
 ];
 
-function getNewId()
+function getSupporterNewId()
 {
 	return new Promise((resolve, reject) =>
 	{
@@ -57,7 +60,6 @@ function addSupporter(newId, body)
 			return basicObj[matched];
 		});
 
-		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -154,7 +156,7 @@ function addSupporter(newId, body)
 var addDonor = function(body, callback)
 {
 	//Generate new id
-	getNewId().then((newId) =>
+	getSupporterNewId().then((newId) =>
 	{
 		//Add supporter info
 		addSupporter(newId, body).then((res) =>
@@ -215,7 +217,7 @@ var addDonor = function(body, callback)
 var addStaff = function(body, callback)
 {
 	//Generate new id
-	getNewId().then((newId) =>
+	getSupporterNewId().then((newId) =>
 	{
 		//Add supporter info
 		addSupporter(newId, body).then((res) =>
@@ -248,5 +250,156 @@ var addStaff = function(body, callback)
 	});
 }
 
+function getPatientNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Patient.patient_id FROM Patient ORDER BY Patient.patient_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+			resolve(rows[0].patient_id + 1);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addPatient = function(body, callback)
+{
+	getPatientNewId().then((newId) =>
+	{
+		// Add basic Patient info
+		return new Promise((resolve, reject) =>
+		{
+			var patchedQuery = postQueries[7].replace("newPatientId", newId);
+			console.log(patchedQuery);
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err) {
+					throw (error);
+				}
+				resolve (rows);
+			});
+		}).then((res) =>
+		{
+			console.log(body);
+			return new Promise((resolve, reject) =>
+				{
+					body.needs.forEach((need) =>
+					{
+						var basicObj = {
+							newPatientId : newId,
+							newItem : '\'' + need.item + '\''
+						}
+						var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
+						{
+							return basicObj[matched];
+						});
+						console.log(patchedQuery);
+						con.query(patchedQuery, (err, rows) =>
+						{
+							if (err) {
+								throw (err);
+							}
+							resolve (rows);
+						});
+					});
+				}).then((res) =>
+				{
+					callback(res);
+				});
+			});
+	});
+}
+
+//pledges
+function getPledgeNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Pledge.pledge_id FROM Pledge ORDER BY Pledge.pledge_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+			resolve(rows[0].pledge_id + 1);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addPledge = function(body, callback)
+{
+	getPledgeNewId().then((newId) =>
+	{
+		//Add basic Supporter info
+		return new Promise((resolve, reject) =>
+		{
+			var basicObj = {
+				newPledgeId: newId,
+				newDonorId: '\'' + body.donor_id + '\'',
+				newPatientId: '\'' + body.patient_id + '\'',
+				newPledgeDate: '\'' + body.pledge_date + '\'',
+				newTargetAmount: '\'' + body.target_amount + '\'',
+				newIsBehind: '\'' + body.is_behind + '\''
+			}
+
+			var patchedQuery = postQueries[9].replace(/newPledgeId|newDonorId|newPatientId|newPledgeDate|newTargetAmount|newIsBehind/gi, (matched) =>
+			{
+				return basicObj[matched];
+			});
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			return new Promise((resolve, reject) =>
+			{
+				body.installments.forEach((installment) =>
+				{
+					return new Promise((resolve, reject) =>
+					{
+						var basicObj = {
+							newPledgeId : newId,
+							newAmount : '\'' + installment.amount + '\'',
+							newInstallmentDate : '\'' + installment.installment_date + '\''
+						}
+						
+						var patchedQuery = postQueries[10].replace(/newPledgeId|newAmount|newInstallmentDate/gi, (matched) =>
+						{
+							return basicObj[matched];
+						});
+
+						con.query(patchedQuery, (err, rows) =>
+						{
+							if (err) {
+								throw (err);
+							}
+							resolve (rows);
+						});
+					});
+				});
+				resolve(res);
+			}).then((res) =>
+			{
+				callback(res);
+			});
+		});
+	});
+}
+
+
+//events
+//contributions
+
 exports.addDonor = addDonor;
 exports.addStaff = addStaff;
+exports.addPatient = addPatient;
+exports.addPledge = addPledge;
