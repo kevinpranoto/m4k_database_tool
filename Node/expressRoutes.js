@@ -145,7 +145,7 @@ app.route('/patients/:id').get((req, res) =>
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-}).put((req, res) =>
+}).put(jsonParser, (req, res) =>
 {
 	var patient_id = req.params.id;
 	putQueries.updateIndividualPatient(patient_id, req.body, (data) =>
@@ -192,7 +192,7 @@ app.route('/pledges/:id').get((req, res) =>
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-}).put((req, res) =>
+}).put(jsonParser, (req, res) =>
 {
 	var pledge_id = req.params.id;
 	putQueries.updateIndividualPledge(pledge_id, req.body, (data) =>
@@ -237,7 +237,7 @@ app.route('/events/:id').get((req, res) =>
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-}).put((req, res) =>
+}).put(jsonParser, (req, res) =>
 {
 	var event_id = req.params.id;
 	putQueries.updateIndividualEvent(event_id, req.body, (data) =>
@@ -266,7 +266,7 @@ app.route('/contributions').get((req, res) =>
 		console.log('Retrieved all contributions');
 		res.send(data);
 	});
-}).post((req, res) =>
+}).post(jsonParser, (req, res) =>
 {
 	postQueries.addContribution(req.body, (data) =>
 	{
@@ -284,7 +284,7 @@ app.route('/contributions/:id').get((req, res) =>
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-}).put((req, res) =>
+}).put(jsonParser, (req, res) =>
 {
 	var contribution_id = req.params.id;
 	putQueries.updateIndividualContribution(contribution_id, req.body, (data) =>

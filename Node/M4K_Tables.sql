@@ -1,3 +1,5 @@
+
+
 DROP DATABASE IF EXISTS `m4k_database`;
 CREATE DATABASE `m4k_database`;
 USE `m4k_database`;
