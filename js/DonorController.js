@@ -40,10 +40,27 @@ allDonors.controller('donorsTable', function($scope, $location, $window, $http) 
         });
     };
 
+    $scope.removeEntries = function() {
+        var something_deleted = false;
+        $scope.donors.forEach(don => {
+            if (don.to_remove == true) {
+                var deletePrompt = $window.confirm("Delete " + don.name + "? (Deletion cannot be reverted)");
+                if (deletePrompt) {
+                    something_deleted = true;
+                    console.log(don.id);
+                    $http.delete('http://127.0.0.1:8081/donors/' + don.id);
+                };
+            };
+        });
+        if (something_deleted) {
+            window.location.href = '../pages/all_donors.html';
+        };
+    };
+    /*
     return {
         set: set,
         get: get
-    };
+    };*/
 });
 
 donorSpecific.controller('donorEventsAttendedTable', function($scope, $location, $window, $http) {
