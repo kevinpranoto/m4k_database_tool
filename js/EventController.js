@@ -56,6 +56,22 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
         sessionStorage.setItem('entityName', event.name);
     };
 
+    $scope.removeEntries = function() {
+        var something_deleted = false;
+        $scope.events.forEach(ev => {
+            if (ev.to_remove == true) {
+                var deletePrompt = $window.confirm("Delete " + ev.name + "? (Deletion cannot be reverted)");
+                if (deletePrompt) {
+                    something_deleted = true;
+                    $http.delete('http://127.0.0.1:8081/events/' + ev.id);
+                };
+            };
+        });
+        if (something_deleted) {
+            window.location.href = '../pages/all_events.html';
+        };
+    };
+
     return {
         set: set,
         get: get
