@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="pledgeSpecific">
 
 <head>
 
@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>Pledge View</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -36,12 +36,13 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/PledgeController.js"></script>
+
 </head>
 
-<body>
-
+<body ng-controller="PledgeBasicInfoController" class="ng-cloak">
     <div id="wrapper">
-
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
@@ -91,7 +92,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Pledges_View</h1>
+                    <h1 class="page-header" style="padding-left:auto">Pledge Information for {{donor_name}}</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -100,23 +101,25 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
-                                <thead>
-                                    <tr>
-                                        <th>Header1</th>
-                                        <th>Header2</th>
-                                        <th>Header3</th>
-                                        <th>Header4</th>
-                                    </tr>
-                                </thead>
-                                    <tr>
-										<td>3</td>
-                                        <td>Larry</td>
-										<td>the Bird</td>
-										<td>@twitter</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Info Panel</div>
+                                <div class="panel-body">
+                                    <div>Name : {{donor_name}}</div>
+                                    <div>Alias: {{alias}}</div>
+                                    <div>Pledged to Patient #: {{patient_id}}</div>
+                                    <div>Target Year for Pledge Completion: {{pledge_date}}</div>
+                                    <div>Target amount for Pledge: {{target_amount}}</div>
+                                    <div>Behind in Pledge Goal? : {{is_behind ? 'True' : 'False' }}</div>
+                                </div>
+
+                                <div class="panel-heading">
+                                    Pledge Installments for {{donor_name}}
+                                </div>
+                                <div class="panel-body" ng-repeat="item in installments_list">
+                                    <span>{{'$' + item.amount + " by " + item.installment_date}}</span>
+                                </div>
+
+                            </div>
                             <!-- /.table-responsive -->
                         </div>
                         <!-- /.panel-body -->
@@ -126,7 +129,7 @@
                 <!-- /.col-lg-12 -->
             </div>
 
-    </div>
+        </div>
     <!-- /#wrapper -->
 
     <!-- jQuery -->
@@ -154,7 +157,7 @@
         });
     });
     </script>
-
+    </div>
 </body>
 
 </html>

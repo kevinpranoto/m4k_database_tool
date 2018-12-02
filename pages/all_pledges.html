@@ -11,6 +11,8 @@
 
     <title>Main View</title>
 
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../js/PledgeController.js"></script>
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -35,8 +37,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script src="../bower_components/angular/angular.js"></script>
-    <script src="../js/PledgeController.js"></script>
 
 </head>
 
@@ -127,8 +127,9 @@
                             <td>
                                 <button type="button" class="btn btn-success" ng-click="redirectToPledgeForm()">Add Entry</button>
                             </td>
+                            <script> let isRemove = false; </script>
                             <td style="padding-left:1em">
-                                <button type="button" class="btn btn-danger" ng-click="removeRow($index)">Remove Entry</button>
+                                <button type="button" ng-click="isRemove=!isRemove" class="btn btn-danger">Remove Entries</button>
                             </td>
                         </tr>
                     </table>
@@ -143,22 +144,20 @@
                                         <th>Donor Name</th>
                                         <th>Patient ID</th>
                                         <th>Target Amount</th>
-                                        <th>Target Year</th>
                                         <th>Pledge Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <tr ng-repeat="item in pledges"
+                                        class="ng-cloak"
+                                        ng-class="{'selected':$index == selectedRow}"
+                                        ng-click="setClickedRow($index)" ng-dblclick="goToPledge(item)">
 
-                                <tr data-ng-repeat="item in pledges track by $index"
-                                    ng-class="{'selected':$index == selectedRow}"
-                                    ng-click="setClickedRow($index)" ng-dblclick="goToContribution(item)">
-
-                                    <td>{{item.donor_name}}</td>
-                                    <td>{{item.patient_id}}</td>
-                                    <td>{{item.target_amount}}</td>
-                                    <td>{{item.target_year}}</td>
-                                    <td>{{item.pledge_date}}</td>
-                                </tr>
+                                        <td>{{item.donor_name}}</td>
+                                        <td>{{item.patient_id}}</td>
+                                        <td>{{item.target_amount}}</td>
+                                        <td>{{item.pledge_date}}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->
