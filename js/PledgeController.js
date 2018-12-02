@@ -2,7 +2,26 @@
     let allPledges = angular.module('allPledges', []);
     allPledges.controller('PledgeController', function($scope, $location, $window, $filter, $http) {
 
+<<<<<<< HEAD
         ///////////////////////// RETRIEVAL AND SUBMISSION CODE TO DATABASE //////////////////////////////////
+=======
+    allPledges.controller('PledgeController', function($scope, $location, $window, $filter, $http) {
+
+        $scope.pledges = [];
+
+        $http.get('http://127.0.0.1:8081/pledges').then((res) =>
+        {
+            for(var i in res.data)
+            {
+                console.log(res.data);
+                var obj = res.data[i];
+                var pledge = { donor_name: obj.first_name+' '+obj.last_name, patient_id: obj.patient_id, 
+                    target_amount: obj.target_amount, pledge_date: obj.pledge_date};
+                $scope.pledges.push(pledge); 
+            }
+        });
+
+>>>>>>> 9368237f50adddc4b9ce82d46fd6a3a6b29642b0
         /**
          * Retrieving data from the database to display onto the main view of a pledge
          * */

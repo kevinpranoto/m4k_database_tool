@@ -1,12 +1,19 @@
 var allPatients = angular.module('allPatients', []);
 var entitySpecific = angular.module('entitySpecific', []);
 
-allPatients.controller('PatientController', function($scope, $location, $window) {
+allPatients.controller('PatientController', function($scope, $location, $window, $http) {
 
-    $scope.patient_members = [
-        {id : '1', needs : 'Car', notes : 'For work'},
-        {id : '2', needs : 'Food', notes : 'To eat'}
-	];
+    $scope.patient_members = [];
+
+    $http.get('http://127.0.0.1:8081/patients').then((res) =>
+    {
+        for (var i in res.data)
+        { 
+            var obj = res.data[i];
+            var patient = { id: obj.patient_id, needs: obj.item };
+            $scope.patient_members.push(patient);
+        }
+    });
 
     let patientID = {};
 
