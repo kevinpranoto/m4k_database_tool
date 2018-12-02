@@ -27,8 +27,7 @@ var deleteQueries = [
 
 ];
 
-var postQueries =
-[
+var postQueries = [
 /*queryNum = 0: POST(ADD) Supporter basic info*/ "INSERT INTO Supporter (supporter_id, last_name, first_name, salutation, alias) VALUES (newSupporterId, newLastName, newFirstName, newSalutation, newAlias)",
 /*queryNum = 1: POST(ADD) Supporter emails*/ "INSERT INTO Email (supporter_id, email_address, is_primary) VALUES (newSupporterId, newEmail, newIsPrimary)",
 /*queryNum = 2: POST(ADD) Supporter phones*/ "INSERT INTO Phone (supporter_id, phone_type, phone_number, is_primary) VALUES (newSupporterId, newPhoneType, newPhoneNumber, newIsPrimary)",
@@ -39,16 +38,21 @@ var postQueries =
 
 ];
 
+var JamesDeleteQueries = [
+/*queryNum = 1: DELETE Pledge Needs w/ ID*/ "DELETE FROM Pledge WHERE Pledge.pledge_id = @id",
+];
+
+var JamesPostQueries = [
+
+];
+
 var putQueries = [
 /*queryNum = 0: PUT(UPDATE) Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
 /*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
-/*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword"
+/*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
+/*queryNum = 3: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET pledge_date = newPledgeDate, target_amount = newTargetAmount, is_behind = newIsBehind WHERE pledge_id = keyword"
 
-//Entities you still need to do PUTs/updates
-//Patient
-//Pledge
-//Contribution
-//
+
 
 ];
 
@@ -279,7 +283,7 @@ var updateIndividualStaff = function(id, body, callback)
 	});
 }
 
-// PATIENT DATA UPDATES ******************NEW**************
+// PATIENT DATA UPDATES ********************************
 function updateIndividualPatient(id, body, callback)
 {
 	return new Promise((resolve, reject) =>
@@ -287,16 +291,12 @@ function updateIndividualPatient(id, body, callback)
 		//Drop existing needs
 		
 		var patchedQuery = deleteQueries[11].replace('@id', id);
-		console.log(patchedQuery);
-		
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
 				throw err;
 			resolve(rows);
 		});
-		console.log("Log Mark 2");
-		
 	}).then((res) =>
 	{
 		//Add new needs
@@ -330,6 +330,81 @@ function updateIndividualPatient(id, body, callback)
 	});
 }
 
+// Pledge DATA UPDATES ********************************
+function updateIndividualPledge(id, body, callback)
+{
+	console.log(body);
+	return new Promise((resolve, reject) =>
+	{
+		var basicObj = {
+			newPledgeDate: '\'' + body.pledge_date + '\'',
+			newTargetAmount: '\'' + body.target_amount + '\'',
+			//newTargetAmount: body.target_amount,
+			newIsBehind: body.is_behind,
+			keyword: id
+		};
+		
+		var patchedQuery = putQueries[3].replace(/newPledgeDate|newTargetAmount|newIsBehind|keyword/gi, (matched) =>
+		{
+			return basicObj[matched];
+		});
+		
+		
+		//Update basic information
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				 throw err;
+			resolve(rows);
+		});
+	}).then((res) =>
+	{
+		
+		//Add new installments
+		return new Promise((resolve, reject) =>
+		{
+			body.installments.forEach((installment) =>
+			{
+				var installmentObj = {
+					newInstallmentId: installment.installment_id,
+					newPledgeId: pledge.pledge_id,
+					newPatientId: patitent.patient_id,
+					newPledgeDate: '\'' + installment.pledge_date + '\'',
+					newTargetAmount: '\'' + installment.target_amount + '\'',
+					newIsBehind: '\'' + installment.is_behind + '\'',
+					keyword: id
+				}
+				
+				var addPledgeInstallment = "INSERT INTO Installments (pledge_id, donor_id, patient_id, pledge_date, target_amount, is_behind) VALUES (newPledgeId, newDonorId, newPatientId, newPledgeDate, newTargetAmount, newIsBehind)";
+				var patchedQuery = addPatientNeed.replace(/newPledgeId|newPatientId|newPatientId|newPledgeDate|newTargetAmount|newIsBehind/gi, (matched) =>
+				{
+					return needObj[matched];
+				});
+			
+				con.query(patchedQuery, (err, rows) =>
+				{
+					if (err)
+						throw(err);
+					resolve(rows);
+				});	
+			});
+		}).then((res) =>
+		{
+			callback(res);
+		});
+		callback(res);
+	});
+}
+
+
+
+// Event DATA UPDATES ********************************
+
+
+// Contribution DATA UPDATES ********************************
+
+
 exports.updateIndividualDonor = updateIndividualDonor;
 exports.updateIndividualStaff = updateIndividualStaff;
 exports.updateIndividualPatient = updateIndividualPatient;
+exports.updateIndividualPledge = updateIndividualPledge;
