@@ -165,7 +165,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="donor in donors">
+                                    <tr class="odd gradeX" data-ng-repeat="donor in donors track by $index" ng-class="{'selected':$index == selectedRow}">
                                         <td ng-dblClick="goToDonor(donor)">{{donor.name}}</td>
                                         <td ng-dblClick="goToDonor(donor)">{{donor.company}}</td>
                                         <td ng-dblClick="goToDonor(donor)">{{donor.phone}}</td>

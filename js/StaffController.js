@@ -111,6 +111,23 @@ StaffController.controller('allStaff', function($scope, $location, $window, $htt
         console.log("click " + sessionStorage.getItem('entityID'));
     };
 
+    $scope.removeEntries = function() {
+        var something_deleted = false;
+        $scope.staff_members.forEach(staff => {
+            if (staff.to_remove == true) {
+                var deletePrompt = $window.confirm("Delete " + staff.name + "? (Deletion cannot be reverted)");
+                if (deletePrompt) {
+                    something_deleted = true;
+                    console.log(staff.id);
+                    $http.delete('http://127.0.0.1:8081/staff/' + staff.id);
+                };
+            };
+        });
+        if (something_deleted) {
+            window.location.href = '../pages/all_staff.html';
+        };
+    };
+
     return {
         set: set,
         get: get

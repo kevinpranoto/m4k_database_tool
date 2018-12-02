@@ -19,6 +19,12 @@ allDonors.controller('donorsTable', function($scope, $location, $window, $http) 
         }
     });
 
+    $scope.selectedRow = null;                          // Initialize selectedRow to null
+    $scope.setClickedRow = function (index) {           // Set the value of the row to current index
+        $scope.selectedRow = index;
+        $scope.isDisabled = true;
+    };
+
     function set(data) {
         donorID = data;
     };
