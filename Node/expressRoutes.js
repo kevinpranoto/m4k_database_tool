@@ -129,7 +129,7 @@ app.route('/patients').get((req, res) =>
 		res.send(data);
 	});
 }).post(jsonParser, (req, res) => {
-	postQueries.addPatients(req.body, (data) =>
+	postQueries.addPatient(req.body, (data) =>
 	{
 		console.log('Added new patients');
 		res.send(data);
@@ -147,7 +147,12 @@ app.route('/patients/:id').get((req, res) =>
 	});
 }).put((req, res) =>
 {
-	//put shenanigans
+	var patient_id = req.params.id;
+	putQueries.updateIndividualPatient(patient_id, req.body, (data) =>
+	{
+		console.log('Updated patient with id: ' + patient_id);
+		res.send(data);
+	});
 }).delete((req, res) =>
 {
 	var patient_id = req.params.id;
@@ -189,7 +194,12 @@ app.route('/pledges/:id').get((req, res) =>
 	});
 }).put((req, res) =>
 {
-	//put shenanigans
+	var pledge_id = req.params.id;
+	putQueries.updateIndividualPledge(pledge_id, req.body, (data) =>
+	{
+		console.log('Updated pledge with id: ' + pledge_id);
+		res.send(data);
+	});
 }).delete((req, res) =>
 {
 	var pledge_id = req.params.id;
@@ -229,7 +239,12 @@ app.route('/events/:id').get((req, res) =>
 	});
 }).put((req, res) =>
 {
-	//put shenanigans
+	var event_id = req.params.id;
+	putQueries.updateIndividualEvent(event_id, req.body, (data) =>
+	{
+		console.log('Updated event with id: ' + event_id);
+		res.send(data);
+	});
 }).delete((req, res) =>
 {
 	var event_id = req.params.id;
@@ -271,7 +286,12 @@ app.route('/contributions/:id').get((req, res) =>
 	});
 }).put((req, res) =>
 {
-	//put shenanigans
+	var contribution_id = req.params.id;
+	putQueries.updateIndividualContribution(contribution_id, req.body, (data) =>
+	{
+		console.log('Updated contribution with id: ' + contribution_id);
+		res.send(data);
+	});
 }).delete((req, res) =>
 {
 	var contrib_id = req.params.id;
@@ -303,17 +323,6 @@ app.route('/eventitems/:id').get((req, res) =>
 		console.log('Retrieved event item with id: ' + event_item_id);
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
-	});
-}).put((req, res) =>
-{
-	//put shenanigans
-}).delete((req, res) =>
-{
-	var event_item_id = req.params.id;
-	deleteQueries.deleteIndividualContribution(event_item_id, (data) =>
-	{
-		console.log('Deleted contribution with id: ' + event_item_id);
-		res.send(data);
 	});
 });
 
