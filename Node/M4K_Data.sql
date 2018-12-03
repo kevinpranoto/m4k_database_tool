@@ -1,5 +1,6 @@
 # Supporters
-INSERT INTO Supporter 
+
+INSERT INTO Supporter
 	(supporter_id,	last_name,	first_name,	salutation,	alias	) VALUES
 	(1,		'Gates',	'William', 	'Mr.', 		'Bill'	),
 	(2,		'Gamarra',	'Eric', 	'Mr.', '	Jim'	),
@@ -236,18 +237,7 @@ INSERT INTO Contribution
         (7,		12,	'2018-07-11',		'Barbie Dollhouse',	TRUE,		'Goods',	NULL,		NULL,		'Miracle Manor',	'Silent Auction',	TRUE,		'Made in China.'			),
         (8,		13,	'2018-09-21',	'Justin Bieber Meet',	FALSE,		'Services',	NULL,		NULL,		'Basket of Miracles',	'Live Auction',		FALSE,		'Parent Supervision Required'		);
 
-/*
-INSERT INTO Contributes
-	(donor_id,	contrib_id,	contrib_date) VALUES
-	(1,		1,		'2018-05-05'),
-        (1,		2,		'2018-06-15'),
-        (8,		3,		'2017-12-21'),
-        (9,		4,		'2018-02-14'),
-        (10,		5,		'2018-03-17'),
-	(11,		6,		'2018-04-20'),
-	(12,		7,		'2018-07-11'),
-        (13,		8,		'2018-09-21');
-*/
+
 INSERT INTO Requests
 	(patient_id,	contrib_id	) VALUES
         (1,		1		),

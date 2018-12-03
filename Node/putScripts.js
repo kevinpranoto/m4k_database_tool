@@ -106,9 +106,14 @@ function updateSupporterData(id, body, queryNum)
 					resolve(rows);
 				});	
 			});
-
+			
 			//Drop existing phones
-			con.query(deleteQueries[6].replace('@id', id));
+			con.query(deleteQueries[6].replace('@id', id), (err, rows) =>
+			{
+				if (err)
+					throw err;
+				resolve(rows);
+			});
 		}).then((res) =>
 		{
 			//Add phones
@@ -133,11 +138,16 @@ function updateSupporterData(id, body, queryNum)
 						if (err)
 							throw(err);
 						resolve(rows);
-					});	
+					});
 				});
 			
 				//Drop existing addresses
-				con.query(deleteQueries[7].replace('@id', id));
+				con.query(deleteQueries[7].replace('@id', id), (err, rows) =>
+				{
+					if (err)
+						throw err;
+					resolve(rows);
+				});
 			}).then((res) =>
 			{
 				//Add addresses
@@ -166,8 +176,10 @@ function updateSupporterData(id, body, queryNum)
 							if (err)
 								throw(err);
 							resolve(rows);
-						});	
+						});
 					});
+
+					resolve();
 				}).then((res) =>
 				{
 
@@ -227,6 +239,8 @@ function updateDonorData(id, body, queryNum)
 					resolve(rows);
 				});	
 			});
+
+			resolve();
 		}).then((res) =>
 		{
 
@@ -317,6 +331,8 @@ var updateIndividualPatient = function(id, body, callback)
 					resolve(rows);
 				});	
 			});
+
+			resolve();
 		}).then((res) =>
 		{
 			callback(res);
@@ -375,6 +391,8 @@ var updateIndividualPledge = function(id, body, callback)
 					resolve(rows);
 				});	
 			});
+
+			resolve();
 		}).then((res) =>
 		{
 			callback(res);
@@ -501,6 +519,7 @@ var updateIndividualCampaign = function(id, body, callback)
 							resolve(rows);
 						});
 					});
+
 					resolve();
 				}).then((res) =>
 				{
@@ -515,7 +534,6 @@ var updateIndividualCampaign = function(id, body, callback)
 // Contribution DATA UPDATES ********************************
 var updateIndividualContribution = function(id, body, callback)
 {
-	console.log(body);
 	return new Promise((resolve, reject) =>
 	{
 		var basicObj = {
@@ -538,8 +556,7 @@ var updateIndividualContribution = function(id, body, callback)
 		{
 			return basicObj[matched];
 		});
-		
-		console.log(patchedQuery);
+
 		//Update basic information
 		con.query(patchedQuery, (err, rows) =>
 		{

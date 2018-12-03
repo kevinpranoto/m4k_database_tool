@@ -26,8 +26,10 @@ var postQueries =
 /*queryNum = 11: POST(ADD) Campaign*/ "INSERT INTO Campaign (campaign_id, campaign_name, campaign_type_id, is_event, campaign_date, theme) VALUES (newCampaignId, newCampaignName, newCampaignTypeId, newIsEvent, newCampaignDate, newTheme)",
 /*queryNum = 12: POST(ADD) Donor to Event*/ "INSERT INTO Attends (donor_id, campaign_id) VALUES (newDonorId, newCampaignId)",
 /*queryNum = 13: POST(ADD) Staff to Event*/ "INSERT INTO Works (staff_id, campaign_id) VALUES (newStaffId, newCampaignId)",
-/*queryNum = 14: POST(ADD) Event Item to Event*/ "INSERT INTO PresentedAt (contrib_id, campaign_id) VALUES (newContribId, newCampaignId)"
+/*queryNum = 14: POST(ADD) Event Item to Event*/ "INSERT INTO PresentedAt (contrib_id, campaign_id) VALUES (newContribId, newCampaignId)",
+/*queryNum = 15: POST(ADD) Contribution*/ "INSERT INTO Contribution (contrib_id, donor_id, contrib_date, item_name, is_event_item, contrib_type, amount, pay_method, destination, notes, appeal, thanked) VALUES (newContribId, newDonorId, newContribDate, newItemName, newIsEventItem, newContribType, newAmount, newPayMethod, newDestination, newNotes, newAppeal, newThanked)"
 ];
+
 
 function getSupporterNewId()
 {
@@ -37,7 +39,14 @@ function getSupporterNewId()
 		{
 			if (err)
 				reject(err);
-			resolve(rows[0].supporter_id + 1);
+			
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].supporter_id;
+			}
+
+			resolve(maxId);
 		});
 	}).then((newId) =>
 	{
@@ -45,7 +54,6 @@ function getSupporterNewId()
 	});
 }
 
-//POSTs
 function addSupporter(newId, body)
 {
 	//Add basic Supporter info
@@ -95,6 +103,8 @@ function addSupporter(newId, body)
 					resolve(rows);
 				});	
 			});
+
+			resolve();
 		}).then((res) =>
 		{
 			//Add phones
@@ -121,6 +131,8 @@ function addSupporter(newId, body)
 						resolve(rows);
 					});	
 				});
+
+				resolve();
 			}).then((res) =>
 			{
 				//Add addresses
@@ -151,12 +163,15 @@ function addSupporter(newId, body)
 							resolve(rows);
 						});	
 					});
+
+					resolve();
 				});
 			});
 		});
 	});
 }
 
+//DONORS
 var addDonor = function(body, callback)
 {
 	//Generate new id
@@ -173,6 +188,7 @@ var addDonor = function(body, callback)
 					newDonorType: '\'' + body.donor_type + '\'',
 					newStatus: '\'' + body.donor_status + '\''
 				}
+
 				var patchedQuery = postQueries[5].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
 				{
 					return basicObj[matched];
@@ -209,6 +225,8 @@ var addDonor = function(body, callback)
 							resolve(rows);
 						});	
 					});
+
+					resolve();
 				}).then((res) =>
 				{
 					callback(res);
@@ -218,6 +236,7 @@ var addDonor = function(body, callback)
 	});
 }
 
+//STAFF
 var addStaff = function(body, callback)
 {
 	//Generate new id
@@ -254,6 +273,7 @@ var addStaff = function(body, callback)
 	});
 }
 
+//PATIENTS
 function getPatientNewId()
 {
 	return new Promise((resolve, reject) =>
@@ -262,7 +282,14 @@ function getPatientNewId()
 		{
 			if (err)
 				reject(err);
-			resolve(rows[0].patient_id + 1);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].patient_id;
+			}
+
+			resolve(maxId);
 		});
 	}).then((newId) =>
 	{
@@ -278,7 +305,7 @@ var addPatient = function(body, callback)
 		return new Promise((resolve, reject) =>
 		{
 			var patchedQuery = postQueries[7].replace("newPatientId", newId);
-			console.log(patchedQuery);
+
 			con.query(patchedQuery, (err, rows) =>
 			{
 				if (err) {
@@ -288,37 +315,40 @@ var addPatient = function(body, callback)
 			});
 		}).then((res) =>
 		{
-			console.log(body);
+			//Add Patient needs info
 			return new Promise((resolve, reject) =>
+			{
+				body.needs.forEach((need) =>
 				{
-					body.needs.forEach((need) =>
+					var basicObj = {
+						newPatientId : newId,
+						newItem : '\'' + need.item + '\''
+					}
+			
+					var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
 					{
-						var basicObj = {
-							newPatientId : newId,
-							newItem : '\'' + need.item + '\''
-						}
-						var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
-						{
-							return basicObj[matched];
-						});
-						console.log(patchedQuery);
-						con.query(patchedQuery, (err, rows) =>
-						{
-							if (err) {
-								throw (err);
-							}
-							resolve (rows);
-						});
+						return basicObj[matched];
 					});
-				}).then((res) =>
-				{
-					callback(res);
+					
+					con.query(patchedQuery, (err, rows) =>
+					{
+						if (err) {
+							throw (err);
+						}
+						resolve (rows);
+					});
 				});
+
+				resolve();
+			}).then((res) =>
+			{
+				callback(res);
 			});
+		});
 	});
 }
 
-//pledges
+//PLEDGES
 function getPledgeNewId()
 {
 	return new Promise((resolve, reject) =>
@@ -327,7 +357,14 @@ function getPledgeNewId()
 		{
 			if (err)
 				reject(err);
-			resolve(rows[0].pledge_id + 1);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].pledge_id;
+			}
+
+			resolve(maxId);
 		});
 	}).then((newId) =>
 	{
@@ -339,7 +376,7 @@ var addPledge = function(body, callback)
 {
 	getPledgeNewId().then((newId) =>
 	{
-		//Add basic Supporter info
+		//Add basic Pledge info
 		return new Promise((resolve, reject) =>
 		{
 			var basicObj = {
@@ -364,6 +401,7 @@ var addPledge = function(body, callback)
 			});
 		}).then((res) =>
 		{
+			//Add Pledge installment info
 			return new Promise((resolve, reject) =>
 			{
 				body.installments.forEach((installment) =>
@@ -400,7 +438,7 @@ var addPledge = function(body, callback)
 }
 
 
-//events
+//CAMPAIGNS
 function getCampaignNewId()
 {
 	return new Promise((resolve, reject) =>
@@ -409,7 +447,14 @@ function getCampaignNewId()
 		{
 			if (err)
 				reject(err);
-			resolve(rows[0].campaign_id + 1);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].campaign_id;
+			}
+
+			resolve(maxId);
 		});
 	}).then((newId) =>
 	{
@@ -421,6 +466,7 @@ var addCampaign = function(body, callback)
 {
 	getCampaignNewId().then((newId) =>
 	{
+		//Add basic Campaign info
 		return new Promise((resolve, reject) =>
 		{
 			var basicObj = {
@@ -445,22 +491,47 @@ var addCampaign = function(body, callback)
 			});
 		}).then((res) =>
 		{
+			//Add Campaign donor info
 			return new Promise((resolve, reject) =>
 			{
 				body.donors.forEach((donor) =>
 				{
-					return new Promise((resolve, reject) =>
-					{
-						var basicObj = {
-							newDonorId: donor,
-							newCampaignId: newId
-						}
+					var donorObj = {
+						newDonorId: donor,
+						newCampaignId: newId
+					}
 
-						var patchedQuery = postQueries[12].replace(/newDonorId|newCampaignId/gi, (matched) =>
+					var patchedQuery = postQueries[12].replace(/newDonorId|newCampaignId/gi, (matched) =>
+					{
+						return donorObj[matched];
+					});
+
+					con.query(patchedQuery, (err, rows) =>
+					{
+						if (err) {
+							throw (err);
+						}
+						resolve (rows);
+					});
+				});
+
+				resolve();
+			}).then((res) =>
+			{
+				//Add Campaign staff info
+				return new Promise((resolve, reject) =>
+				{
+					body.staff.forEach((staff) =>
+					{
+						var staffObj = {
+							newStaffId: staff,
+							newCampaignId : newId
+						}
+							
+						var patchedQuery = postQueries[13].replace(/newStaffId|newCampaignId/gi, (matched) =>
 						{
-							return basicObj[matched];
+							return staffObj[matched];
 						});
-						console.log(patchedQuery);
 
 						con.query(patchedQuery, (err, rows) =>
 						{
@@ -470,26 +541,23 @@ var addCampaign = function(body, callback)
 							resolve (rows);
 						});
 					});
-				});
-				resolve(res);
-			}).then((res) =>
-			{
-				return new Promise((resolve, reject) =>
+
+					resolve();
+				}).then((res) =>
 				{
-					body.staff.forEach((staff) =>
+					return new Promise((resolve, reject) =>
 					{
-						return new Promise((resolve, reject) =>
+						body.contributions.forEach((contribution) =>
 						{
-							var basicObj = {
-								newStaffId: staff,
+							var contribObj = {
+								newContribId: contribution,
 								newCampaignId : newId
 							}
-							
-							var patchedQuery = postQueries[12].replace(/newStaffId|newCampaignId/gi, (matched) =>
+								
+							var patchedQuery = postQueries[14].replace(/newContribId|newCampaignId/gi, (matched) =>
 							{
-								return basicObj[matched];
+								return contribObj[matched];
 							});
-							console.log(patchedQuery);
 
 							con.query(patchedQuery, (err, rows) =>
 							{
@@ -499,37 +567,8 @@ var addCampaign = function(body, callback)
 								resolve (rows);
 							});
 						});
-					});
-					resolve(res);
-				}).then((res) =>
-				{
-					return new Promise((resolve, reject) =>
-					{
-						body.contributions.forEach((contribution) =>
-						{
-							return new Promise((resolve, reject) =>
-							{
-								var basicObj = {
-									newContribId: contribution,
-									newCampaignId : newId
-								}
-								
-								var patchedQuery = postQueries[13].replace(/newContribId|newCampaignId/gi, (matched) =>
-								{
-									return basicObj[matched];
-								});
-								console.log(patchedQuery);
 
-								con.query(patchedQuery, (err, rows) =>
-								{
-									if (err) {
-										throw (err);
-									}
-									resolve (rows);
-								});
-							});
-						});
-						resolve(res);
+						resolve();
 					}).then((res) =>
 					{
 						callback(res);
@@ -539,10 +578,74 @@ var addCampaign = function(body, callback)
 		});
 	});
 }
-//contributions
+
+//CONTRIBUTIONS
+function getContributionNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Contribution.contrib_id FROM Contribution ORDER BY Contribution.contrib_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].contrib_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+
+var addContribution = function(body, callback)
+{
+	getContributionNewId().then((newId) =>
+	{
+		return new Promise((resolve, reject) =>
+		{
+			var basicObj = {
+				newContribId: newId,
+				newDonorId: body.donor_id,
+				newContribDate: '\'' + body.contrib_date + '\'',
+				newItemName: '\'' + body.item_name + '\'',
+				newIsEventItem: body.is_event_item,
+				newContribType: '\'' + body.contrib_type + '\'',
+				newAmount: body.amount,
+				newPayMethod: '\'' + body.pay_method + '\'',
+				newDestination: '\'' + body.destination + '\'',
+				newNotes: '\'' + body.notes + '\'',
+				newAppeal: '\'' + body.appeal + '\'',
+				newThanked: body.thanked
+			}
+
+			var patchedQuery = postQueries[15].replace(/newContribId|newDonorId|newContribDate|newItemName|newIsEventItem|newContribType|newAmount|newPayMethod|newDestination|newNotes|newAppeal|newThanked/gi, (matched) =>
+			{
+				return basicObj[matched];
+			});
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			callback(res);
+		});
+	});
+}
 
 exports.addDonor = addDonor;
 exports.addStaff = addStaff;
 exports.addPatient = addPatient;
 exports.addPledge = addPledge;
 exports.addCampaign = addCampaign;
+exports.addContribution = addContribution;
