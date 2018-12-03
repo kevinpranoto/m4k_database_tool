@@ -1,0 +1,137 @@
+//PUTS
+
+DONOR
+{
+	"last_name": lname,
+	"first_name" fname,
+	"salutation": sal,
+	"alias": al,
+	"emails": [
+		{
+			"email_address": email,
+			"is_primary": (true, false)
+		}
+	],
+	"phones": [
+		{
+			"phone_type": (business, home, mobile),
+			"phone_number": email,
+			"is_primary": (true, false)
+		}
+	],
+	"addresses": [
+		{
+			"address_type": (business, home, information),
+			"address_line_1": adline1,
+			"address_line_2": adline2,
+			"city": city,
+			"state": state,
+			"zip_code": zip,
+			"is_primary": (true, false)
+		}
+	],
+	"companies": [
+		{
+			"company_name": cname,
+			"is_primary": (true, false)
+		}
+	],
+	"donor_type": (Individual, Company, Household),
+	"donor_status" (Active, Lax, Lost),
+}
+
+STAFF
+{
+	"last_name": lname,
+	"first_name" fname,
+	"salutation": sal,
+	"alias": al,
+	"emails": [
+		{
+			"email_address": email,
+			"is_primary": (true, false)
+		}
+	],
+	"phones": [
+		{
+			"phone_type": (business, home, mobile),
+			"phone_number": email,
+			"is_primary": (true, false)
+		}
+	],
+	"addresses": [
+		{
+			"address_type": (business, home, information),
+			"address_line_1": adline1,
+			"address_line_2": adline2,
+			"city": city,
+			"state": state,
+			"zip_code": zip,
+			"is_primary": (true, false)
+		}
+	],
+	"staff_type": (Volunteer, Employee),
+	"donor_status" (Active, Inactive),
+}
+
+PATIENT
+{
+	"needs":
+	[
+		{
+			"item": item
+		}
+	]
+}
+
+PLEDGE
+{
+	"pledge_date": pDate,
+	"target_amount": tAmount,
+	"is_behind": (true, false),
+	"installments": [
+		{
+			"amount": amnt,
+			"installment_date": inDate
+		}
+	]
+}
+
+CAMPAIGN
+{
+	"campaign_name": cname,
+	"campaign_type_id": cTypeId,
+	"is_event": (true, false),
+	"campaign_date": cDate,
+	"theme": theme,
+	"donors": [
+		1,
+		2,	//Just list IDs in array
+		7
+	],
+	"staff": [
+		2,
+		3,	//Just list IDs in array
+		5
+	],
+	"contributions": [
+		1,
+		2,	//Just list IDs in array
+		3
+	]
+}
+
+CONTRIBUTION
+{
+	"donor_id": id,
+	"contrib_date": date,
+	"item_name": name,
+	"is_event_item": (true, false),
+	"contrib_type": (Goods, Services, Money),
+	"amount": amount,
+	"pay_method": (Cash, Credit Card, Check, Stock),
+	"destination": (General, Miracle Manor, Basket of Miracles, Grant Program, Health & Wellness),
+	"notes": notes,
+	"appeal": (Direct Mail, Email Campaign, Radio Ad, Sponsorship, Fund-a-Need, Opportunity Ticket, Silent Auction, Live Auction),
+	"thanked": (true, false)
+}

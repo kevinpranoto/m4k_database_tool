@@ -1,5 +1,3 @@
-
-
 DROP DATABASE IF EXISTS `m4k_database`;
 CREATE DATABASE `m4k_database`;
 USE `m4k_database`;
@@ -109,6 +107,8 @@ FOREIGN KEY(campaign_type_id) REFERENCES CampaignType(campaign_type_id) ON DELET
 DROP TABLE IF EXISTS `Contribution`;
 CREATE TABLE `Contribution` (
 `contrib_id` int NOT NULL,
+`donor_id` int,
+`contrib_date` DATE,
 `item_name` VARCHAR(20),
 `is_event_item` BOOL,
 `contrib_type` ENUM('Goods', 'Services', 'Money'),
@@ -141,7 +141,7 @@ CREATE TABLE `Installments` (
 `installment_date` DATE,
 FOREIGN KEY(pledge_id) REFERENCES Pledge(pledge_id) ON DELETE CASCADE
 );
-
+/*
 DROP TABLE IF EXISTS `Contributes`;
 CREATE TABLE `Contributes` (
 `donor_id` int,
@@ -151,7 +151,7 @@ PRIMARY KEY(donor_id, contrib_id),
 FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
 FOREIGN KEY(contrib_id) REFERENCES Contribution(contrib_id) ON DELETE CASCADE
 );
-
+*/
 DROP TABLE IF EXISTS `Requests`;
 CREATE TABLE `Requests` (
 `patient_id` int,
