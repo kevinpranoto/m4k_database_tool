@@ -283,14 +283,6 @@ app.route('/events/:id').get((req, res) =>
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-}).put(jsonParser, (req, res) =>
-{
-	var event_id = req.params.id;
-	putQueries.updateIndividualEvent(event_id, req.body, (data) =>
-	{
-		console.log('Updated event with id: ' + event_id);
-		res.send(data);
-	});
 });
 
 //HANDLE CONTRIBUTION REQUESTS

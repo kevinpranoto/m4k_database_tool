@@ -1,9 +1,8 @@
-//PUTS
-
+//POSTS
 DONOR
 {
 	"last_name": lname,
-	"first_name" fname,
+	"first_name": fname,
 	"salutation": sal,
 	"alias": al,
 	"emails": [
@@ -15,7 +14,7 @@ DONOR
 	"phones": [
 		{
 			"phone_type": (business, home, mobile),
-			"phone_number": email,
+			"phone_number": phone,
 			"is_primary": (true, false)
 		}
 	],
@@ -37,13 +36,13 @@ DONOR
 		}
 	],
 	"donor_type": (Individual, Company, Household),
-	"donor_status" (Active, Lax, Lost),
+	"donor_status": (Active, Lax, Lost),
 }
 
 STAFF
 {
 	"last_name": lname,
-	"first_name" fname,
+	"first_name": fname,
 	"salutation": sal,
 	"alias": al,
 	"emails": [
@@ -55,7 +54,7 @@ STAFF
 	"phones": [
 		{
 			"phone_type": (business, home, mobile),
-			"phone_number": email,
+			"phone_number": phone,
 			"is_primary": (true, false)
 		}
 	],
@@ -71,7 +70,7 @@ STAFF
 		}
 	],
 	"staff_type": (Volunteer, Employee),
-	"donor_status" (Active, Inactive),
+	"staff_status": (Active, Inactive),
 }
 
 PATIENT
@@ -86,6 +85,8 @@ PATIENT
 
 PLEDGE
 {
+	"donor_id": dId,
+	"patient_id": pId,
 	"pledge_date": pDate,
 	"target_amount": tAmount,
 	"is_behind": (true, false),
@@ -119,19 +120,4 @@ CAMPAIGN
 		2,	//Just list IDs in array
 		3
 	]
-}
-
-CONTRIBUTION
-{
-	"donor_id": id,
-	"contrib_date": date,
-	"item_name": name,
-	"is_event_item": (true, false),
-	"contrib_type": (Goods, Services, Money),
-	"amount": amount,
-	"pay_method": (Cash, Credit Card, Check, Stock),
-	"destination": (General, Miracle Manor, Basket of Miracles, Grant Program, Health & Wellness),
-	"notes": notes,
-	"appeal": (Direct Mail, Email Campaign, Radio Ad, Sponsorship, Fund-a-Need, Opportunity Ticket, Silent Auction, Live Auction),
-	"thanked": (true, false)
 }
