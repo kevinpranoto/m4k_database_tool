@@ -210,6 +210,52 @@ app.route('/pledges/:id').get((req, res) =>
 	});
 });
 
+//HANDLE CAMPAIGN REQUESTS
+app.route('/campaigns').get((req, res) =>
+{
+	getQueries.getData(33, (err, data) =>
+	{
+		if (err)
+			throw err;
+		console.log("Retrieved all campaigns");
+		res.send(data);
+	});
+}).post((req, res) =>
+{
+	postQueries.addCampaign(req.body, (data) =>
+	{
+		console.log('Added new campaign');
+		res.send(data);
+	});
+});
+
+app.route('/campaigns/:id').get((req, res) =>
+{
+	var campaign_id = req.params.id;
+	getQueries.getIndividualCampaign(campaign_id, (data) =>
+	{
+		console.log('Retrieved campaign with id: ' + campaign_id);
+		//res.json(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
+	});
+}).put(jsonParser, (req, res) =>
+{
+	var campaign_id = req.params.id;
+	putQueries.updateIndividualCampaign(campaign_id, req.body, (data) =>
+	{
+		console.log('Updated campaign with id: ' + campaign_id);
+		res.send(data);
+	});
+}).delete((req, res) =>
+{
+	var campaign_id = req.params.id;
+	deleteQueries.deleteIndividualEvent(campaign_id, (data) =>
+	{
+		console.log('Deleted campaign with id: ' + campaign_id);
+		res.send(data);
+	});
+});
+
 //HANDLE EVENT REQUESTS
 app.route('/events').get((req, res) =>
 {
@@ -237,24 +283,7 @@ app.route('/events/:id').get((req, res) =>
 		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
-}).put(jsonParser, (req, res) =>
-{
-	var event_id = req.params.id;
-	putQueries.updateIndividualEvent(event_id, req.body, (data) =>
-	{
-		console.log('Updated event with id: ' + event_id);
-		res.send(data);
-	});
-}).delete((req, res) =>
-{
-	var event_id = req.params.id;
-	deleteQueries.deleteIndividualEvent(event_id, (data) =>
-	{
-		console.log('Deleted event with id: ' + event_id);
-		res.send(data);
-	});
 });
-
 
 //HANDLE CONTRIBUTION REQUESTS
 app.route('/contributions').get((req, res) =>
@@ -310,7 +339,7 @@ app.route('/eventitems').get((req, res) =>
 	{
 		if (err)
 			throw err;
-		console.log('Retrieved all eventitems');
+		console.log('Retrieved all event items');
 		res.send(data);
 	});
 });
