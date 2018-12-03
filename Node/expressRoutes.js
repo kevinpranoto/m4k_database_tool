@@ -131,7 +131,7 @@ app.route('/patients').get((req, res) =>
 }).post(jsonParser, (req, res) => {
 	postQueries.addPatient(req.body, (data) =>
 	{
-		console.log('Added new patients');
+		console.log('Added new patient');
 		res.send(data);
 	});
 });
@@ -220,7 +220,7 @@ app.route('/campaigns').get((req, res) =>
 		console.log("Retrieved all campaigns");
 		res.send(data);
 	});
-}).post((req, res) =>
+}).post(jsonParser, (req, res) =>
 {
 	postQueries.addCampaign(req.body, (data) =>
 	{
@@ -264,12 +264,6 @@ app.route('/events').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all events');
-		res.send(data);
-	});
-}).post(jsonParser, (req, res) => {
-	postQueries.addEvent(req.body, (data) =>
-	{
-		console.log('Added new event');
 		res.send(data);
 	});
 });

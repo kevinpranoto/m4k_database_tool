@@ -141,17 +141,7 @@ CREATE TABLE `Installments` (
 `installment_date` DATE,
 FOREIGN KEY(pledge_id) REFERENCES Pledge(pledge_id) ON DELETE CASCADE
 );
-/*
-DROP TABLE IF EXISTS `Contributes`;
-CREATE TABLE `Contributes` (
-`donor_id` int,
-`contrib_id` int,
-`contrib_date` DATE,
-PRIMARY KEY(donor_id, contrib_id),
-FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
-FOREIGN KEY(contrib_id) REFERENCES Contribution(contrib_id) ON DELETE CASCADE
-);
-*/
+
 DROP TABLE IF EXISTS `Requests`;
 CREATE TABLE `Requests` (
 `patient_id` int,
