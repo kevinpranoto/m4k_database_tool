@@ -167,13 +167,12 @@
                 let submit_data = JSON.stringify(newContribution);
 
                 $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
-                    {
-                        console.log(res);
-                        $window.alert("Entry saved!");
-                    }
-                );
+                {
+                    console.log(res);
+                    $window.alert("Entry saved!");
+                });
                 // Re-route user back to main contributions page
-                //$window.location.href="../pages/all_contributions.html";
+                $window.location.href="../pages/all_contributions.html";
             }
         };
 
@@ -199,28 +198,40 @@
                 thanked: false
             };
 
+            if (newContribution.contrib_type !== 'money') {
+                newContribution.amount = null;
+                newContribution.payment_method = null;
+            }
+
             if (isValid) {
                 // Package the data into JSON format
                 let submit_data = JSON.stringify(newContribution);
 
-                // Send newContribution in JSON format to back-end and confirm saved entry
-
-                $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
-                    {
-                        console.log(res);
-                        $window.alert("Entry saved!");
-                    }
-                );
-
                 // Send an alert to the user to determine if user intends to add in additional entries
+                // NOTE: May need custom confirmation to say "yes, save and add new" or "no, save and take me back"
                 let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
 
                 // If user wants to add in a new entry
                 if (newEntryPrompt) {
+                    // Send newContribution in JSON format to back-end and confirm saved entry
+                    $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
+                    {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    });
+
                     // Route user to data entry page
                     $window.location.href = "../pages/contribution_form.html";
+
                 }
                 else {
+                    // Send newContribution in JSON format to back-end and confirm saved entry
+                    $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
+                    {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    });
+
                     $window.location.href = "../pages/all_contributions.html";
                 }
             }
