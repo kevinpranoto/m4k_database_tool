@@ -94,11 +94,10 @@
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Donor name</label>
                                         <script>
-                                            let donors_list = [];
-                                            let patients_list = [];
+                                            let temp_pledge_list = [];
 
                                         </script>
-                                        <select ng-repeat="item in donors_list">
+                                        <select ng-repeat="item in temp_pledge_list">
                                             <option>{{item.donor_name}}</option>
                                         </select>
 

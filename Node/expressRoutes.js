@@ -39,7 +39,7 @@ app.route('/donors').get((req, res) =>
 	postQueries.addDonor(req.body, (data) =>
 	{
 		console.log('Added new donor');
-		res.send(data);
+		res.status(200).send(data);
 	});
 });
 
@@ -61,7 +61,7 @@ app.route('/donors/:id').get((req, res) =>
 	putQueries.updateIndividualDonor(donor_id, req.body, (data) =>
 	{
 		console.log('Updated donor with id: ' + donor_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {
@@ -89,7 +89,7 @@ app.route('/staff').get((req, res) =>
 	postQueries.addStaff(req.body, (data) =>
 	{
 		console.log('Added new staff');
-		res.send(data);
+		res.status(200).send(data);
 	});
 });
 
@@ -110,7 +110,7 @@ app.route('/staff/:id').get((req, res) =>
 	putQueries.updateIndividualStaff(staff_id, req.body, (data) =>
 	{
 		console.log('Updated staff with id: ' + staff_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {
@@ -137,7 +137,7 @@ app.route('/patients').get((req, res) =>
 	postQueries.addPatient(req.body, (data) =>
 	{
 		console.log('Added new patient');
-		res.send(data);
+		res.status(200).send(data);
 	});
 });
 
@@ -158,7 +158,7 @@ app.route('/patients/:id').get((req, res) =>
 	putQueries.updateIndividualPatient(patient_id, req.body, (data) =>
 	{
 		console.log('Updated patient with id: ' + patient_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {
@@ -186,7 +186,7 @@ app.route('/pledges').get((req, res) =>
 	postQueries.addPledge(req.body, (data) =>
 	{
 		console.log('Added new pledge');
-		res.send(data);
+		res.status(200).send(data);
 	});
 });
 
@@ -207,7 +207,7 @@ app.route('/pledges/:id').get((req, res) =>
 	putQueries.updateIndividualPledge(pledge_id, req.body, (data) =>
 	{
 		console.log('Updated pledge with id: ' + pledge_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {
@@ -234,7 +234,7 @@ app.route('/campaigntype').get((req, res) =>
 	postQueries.addCampaignType(req.body, (data) =>
 	{
 		console.log("Added new campaign type");
-		res.send(data);
+		res.status(200).send(data);
 	});
 })
 
@@ -246,7 +246,7 @@ app.route('/campaigntype/:id').put(jsonParser, (req, res) =>
 	putQueries.updateIndividualCampaignType(campaign_type_id, req.body, (data) =>
 	{
 		console.log("Updated campaign type with id: " + campaign_type_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {
@@ -274,7 +274,7 @@ app.route('/campaigns').get((req, res) =>
 	postQueries.addCampaign(req.body, (data) =>
 	{
 		console.log('Added new campaign');
-		res.send(data);
+		res.status(200).send(data);
 	});
 });
 
@@ -295,7 +295,7 @@ app.route('/campaigns/:id').get((req, res) =>
 	putQueries.updateIndividualCampaign(campaign_id, req.body, (data) =>
 	{
 		console.log('Updated campaign with id: ' + campaign_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {
@@ -349,7 +349,7 @@ app.route('/contributions').get((req, res) =>
 	postQueries.addContribution(req.body, (data) =>
 	{
 		console.log('Added new contribution');
-		res.send(data);
+		res.status(200).send(data);
 	});
 });
 
@@ -370,7 +370,7 @@ app.route('/contributions/:id').get((req, res) =>
 	putQueries.updateIndividualContribution(contribution_id, req.body, (data) =>
 	{
 		console.log('Updated contribution with id: ' + contribution_id);
-		res.send(data);
+		res.status(200).send(data);
 	});
 }).delete((req, res) =>
 {

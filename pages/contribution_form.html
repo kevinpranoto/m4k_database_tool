@@ -100,11 +100,10 @@
                                         <label>Contribution name</label>
                                         <input class="form-control" name="name"
                                                placeholder="Enter contribution name here"
-                                               pattern="[a-zA-Z]+"
                                                ng-minlength="1"
                                                ng-maxlength="100"
                                                ng-model="contrib_name" required>
-                                        <div class="entry_error" ng-show="contribution_form.name.$invalid && !contribution_form.name.$pristine">Contribution name is required, and must be only alphabetic characters.</div>
+                                        <div class="entry_error" ng-show="contribution_form.name.$invalid && !contribution_form.name.$pristine">Contribution name is required.</div>
                                     </div>
                                     <table>
                                         <!-- When the contribution type "Money" is chosen, the view will only then display the fields
