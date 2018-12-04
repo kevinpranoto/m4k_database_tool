@@ -27,7 +27,8 @@ var postQueries =
 /*queryNum = 12: POST(ADD) Donor to Event*/ "INSERT INTO Attends (donor_id, campaign_id) VALUES (newDonorId, newCampaignId)",
 /*queryNum = 13: POST(ADD) Staff to Event*/ "INSERT INTO Works (staff_id, campaign_id) VALUES (newStaffId, newCampaignId)",
 /*queryNum = 14: POST(ADD) Event Item to Event*/ "INSERT INTO PresentedAt (contrib_id, campaign_id) VALUES (newContribId, newCampaignId)",
-/*queryNum = 15: POST(ADD) Contribution*/ "INSERT INTO Contribution (contrib_id, donor_id, contrib_date, item_name, is_event_item, contrib_type, amount, pay_method, destination, notes, appeal, thanked) VALUES (newContribId, newDonorId, newContribDate, newItemName, newIsEventItem, newContribType, newAmount, newPayMethod, newDestination, newNotes, newAppeal, newThanked)"
+/*queryNum = 15: POST(ADD) Contribution*/ "INSERT INTO Contribution (contrib_id, donor_id, contrib_date, item_name, is_event_item, contrib_type, amount, pay_method, destination, notes, appeal, thanked) VALUES (newContribId, newDonorId, newContribDate, newItemName, newIsEventItem, newContribType, newAmount, newPayMethod, newDestination, newNotes, newAppeal, newThanked)",
+/*queryNum = 16: POST(ADD) CampaignType*/ "INSERT INTO CampaignType (campaign_type_id, campaign_type_name) VALUES (newCampaignTypeId, newCampaignTypeName)"
 ];
 
 
@@ -643,9 +644,63 @@ var addContribution = function(body, callback)
 	});
 }
 
+//CAMPAIGN TYPE
+function getCampaignTypeNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT CampaignType.campaign_type_id FROM CampaignType ORDER BY CampaignType.campaign_type_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].campaign_type_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addCampaignType = function(body, callback)
+{
+	getCampaignTypeNewId().then((newId) =>
+	{
+		return new Promise((resolve, reject) =>
+		{
+			var campaignTypeObj = {
+				newCampaignTypeId: newId,
+				newCampaignTypeName: '\'' + body.campaign_type_name + '\''
+			}
+
+			var patchedQuery = postQueries[16].replace(/newCampaignTypeId|newCampaignTypeName/gi, (matched) =>
+			{
+				return campaignTypeObj[matched];
+			});
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			callback(res);
+		});
+	});
+}
+
 exports.addDonor = addDonor;
 exports.addStaff = addStaff;
 exports.addPatient = addPatient;
 exports.addPledge = addPledge;
 exports.addCampaign = addCampaign;
 exports.addContribution = addContribution;
+exports.addCampaignType = addCampaignType;

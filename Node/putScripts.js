@@ -50,7 +50,8 @@ var putQueries = [
 /*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
 /*queryNum = 3: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET pledge_date = newPledgeDate, target_amount = newTargetAmount, is_behind = newIsBehind WHERE pledge_id = keyword",
 /*queryNum = 4: PUT(UPDATE) Campaign w/ ID*/ "UPDATE Campaign SET campaign_name = newCampaignName, campaign_type_id = newCampaignTypeId, is_event = newIsEvent, campaign_date = newCampaignDate, theme = newTheme WHERE campaign_id = keyword",
-/*queryNum = 5: PUT(UPDATE) Contribution w/ ID*/ "UPDATE Contribution SET Contribution.donor_id = newDonorId, Contribution.contrib_date = newContribDate, Contribution.item_name = newItemName, Contribution.is_event_item = newIsEventItem, Contribution.contrib_type = newContribType, Contribution.amount = newAmount, Contribution.pay_method = newPayMethod, Contribution.destination = newDestination, Contribution.notes = newNotes, Contribution.appeal = newAppeal, Contribution.thanked = newThanked WHERE Contribution.contrib_id = keyword"
+/*queryNum = 5: PUT(UPDATE) Contribution w/ ID*/ "UPDATE Contribution SET Contribution.donor_id = newDonorId, Contribution.contrib_date = newContribDate, Contribution.item_name = newItemName, Contribution.is_event_item = newIsEventItem, Contribution.contrib_type = newContribType, Contribution.amount = newAmount, Contribution.pay_method = newPayMethod, Contribution.destination = newDestination, Contribution.notes = newNotes, Contribution.appeal = newAppeal, Contribution.thanked = newThanked WHERE Contribution.contrib_id = keyword",
+/*queryNum = 6: PUT(UPDATE) CampaignType w/ ID*/ "UPDATE CampaignType SET CampaignType.campaign_type_name = newCampaignTypeName WHERE campaign_type_id = keyword"
 ];
 
 //SUPPORTER
@@ -531,7 +532,7 @@ var updateIndividualCampaign = function(id, body, callback)
 }
 
 
-// Contribution DATA UPDATES ********************************
+//CONTRIBUTIONS
 var updateIndividualContribution = function(id, body, callback)
 {
 	return new Promise((resolve, reject) =>
@@ -551,7 +552,6 @@ var updateIndividualContribution = function(id, body, callback)
 			keyword: id
 		};
 		
-		
 		var patchedQuery = putQueries[5].replace(/newDonorId|newContribDate|newItemName|newIsEventItem|newContribType|newAmount|newPayMethod|newDestination|newNotes|newAppeal|newThanked|keyword/gi, (matched) =>
 		{
 			return basicObj[matched];
@@ -570,9 +570,38 @@ var updateIndividualContribution = function(id, body, callback)
 	});
 }
 
+
+//CAMPAIGNTYPE
+var updateIndividualCampaignType = function(id, body, callback)
+{
+	return new Promise((resolve, reject) =>
+	{
+		var campaignTypeObj = {
+			newCampaignTypeName: '\'' + body.campaign_type_name + '\'',
+			keyword: id
+		};
+
+		var patchedQuery = putQueries[6].replace(/newCampaignTypeName|keyword/gi, (matched) =>
+		{
+			return campaignTypeObj[matched];
+		});
+
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err)
+				throw err;
+			resolve (rows);
+		})
+	}).then((res) =>
+	{
+		callback(res);
+	});
+}
+
 exports.updateIndividualDonor = updateIndividualDonor;
 exports.updateIndividualStaff = updateIndividualStaff;
 exports.updateIndividualPatient = updateIndividualPatient;
 exports.updateIndividualPledge = updateIndividualPledge;
 exports.updateIndividualCampaign = updateIndividualCampaign;
 exports.updateIndividualContribution = updateIndividualContribution;
+exports.updateIndividualCampaignType = updateIndividualCampaignType;

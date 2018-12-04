@@ -16,6 +16,7 @@ var deleteQueries = [
 /*queryNum = 2: DELETE Event w/ ID*/ "DELETE FROM Campaign WHERE Campaign.campaign_id = @keyword",
 /*queryNum = 3: DELETE Pledge w/ ID*/ "DELETE FROM Pledge WHERE Pledge.pledge_id = @keyword",
 /*queryNum = 4: DELETE Contribution w/ ID*/ "DELETE FROM Contribution WHERE Contribution.contrib_id = @keyword",
+/*queryNum = 5: DELETE CampaignType w/ ID*/ "DELETE FROM CampaignType WHERE CampaignType.campaign_type_id = @keyword"
 ];
 
 //DELETEs
@@ -73,8 +74,17 @@ var deleteIndividualContribution = function(id, callback)
 	});
 }
 
+var deleteIndividualCampaignType = function(id, callback)
+{
+	deleteIndividualData(id, 5).then((res) =>
+	{
+		callback(res);
+	});
+}
+
 exports.deleteIndividualSupporter = deleteIndividualSupporter;
 exports.deleteIndividualPatient = deleteIndividualPatient;
 exports.deleteIndividualEvent = deleteIndividualEvent;
 exports.deleteIndividualPledge = deleteIndividualPledge;
 exports.deleteIndividualContribution = deleteIndividualContribution;
+exports.deleteIndividualCampaignType = deleteIndividualCampaignType;
