@@ -135,3 +135,8 @@ CONTRIBUTION
 	"appeal": (Direct Mail, Email Campaign, Radio Ad, Sponsorship, Fund-a-Need, Opportunity Ticket, Silent Auction, Live Auction),
 	"thanked": (true, false)
 }
+
+CAMPAIGNTYPE
+{
+	"campaign_type_name": cTypeName
+}

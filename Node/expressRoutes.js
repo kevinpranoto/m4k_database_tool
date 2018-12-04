@@ -9,6 +9,7 @@ const deleteQueries = require('./deleteScripts.js');
 const postQueries = require('./postScripts.js');
 const putQueries = require('./putScripts.js');
 
+
 //DEAL WITH CORS ISSUES
 var originsWhiteList = ['http://127.0.0.1:8080', 'localhost:8080'];
 var corsOptions = {
@@ -23,7 +24,7 @@ app.use(cors(corsOptions));
 var jsonParser = bodyParser.json();
 
 
-//HANDLE DONOR REQUESTS
+//HANDLE GENERAL DONOR REQUESTS
 app.route('/donors').get((req, res) =>
 {
 	getQueries.getData(0, (err, data) =>
@@ -42,6 +43,8 @@ app.route('/donors').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC DONOR REQUESTS
 app.route('/donors/:id').get((req, res) =>
 {
 	var donor_id = req.params.id;
@@ -71,7 +74,7 @@ app.route('/donors/:id').get((req, res) =>
 });
 
 
-//HANDLE STAFF REQUESTS
+//HANDLE GENERAL STAFF REQUESTS
 app.route('/staff').get((req, res) =>
 {
 	getQueries.getData(1, (err, data) =>
@@ -90,6 +93,8 @@ app.route('/staff').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC STAFF REQUESTS
 app.route('/staff/:id').get((req, res) =>
 {
 	var staff_id = req.params.id;
@@ -118,7 +123,7 @@ app.route('/staff/:id').get((req, res) =>
 });
 
 
-//HANDLE PATIENT REQUESTS
+//HANDLE GENERAL PATIENT REQUESTS
 app.route('/patients').get((req, res) =>
 {
 	getQueries.getData(2, (err, data) =>
@@ -136,6 +141,8 @@ app.route('/patients').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC PATIENT REQUESTS
 app.route('/patients/:id').get((req, res) =>
 {
 	var patient_id = req.params.id;
@@ -164,7 +171,7 @@ app.route('/patients/:id').get((req, res) =>
 });
 
 
-//HANDLE PLEDGE REQUESTS
+//HANDLE GENERAL PLEDGE REQUESTS
 app.route('/pledges').get((req, res) =>
 {
 	getQueries.getData(3, (err, data) =>
@@ -183,6 +190,8 @@ app.route('/pledges').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC PLEDGE REQUESTS
 app.route('/pledges/:id').get((req, res) =>
 {
 	var pledge_id = req.params.id;
@@ -210,7 +219,47 @@ app.route('/pledges/:id').get((req, res) =>
 	});
 });
 
-//HANDLE CAMPAIGN REQUESTS
+//HANDLE GENERAL CAMPAIGN TYPE REQUESTS
+app.route('/campaigntype').get((req, res) =>
+{
+	getQueries.getData(34, (err, data) =>
+	{
+		if (err)
+			throw err;
+		console.log("Retrieved all campaign types");
+		res.send(data);
+	});
+}).post(jsonParser, (req, res) =>
+{
+	postQueries.addCampaignType(req.body, (data) =>
+	{
+		console.log("Added new campaign type");
+		res.send(data);
+	});
+})
+
+
+//HANDLE SPECIFIC CAMPAIGN TYPE REQUESTS
+app.route('/campaigntype/:id').put(jsonParser, (req, res) =>
+{
+	var campaign_type_id = req.params.id;
+	putQueries.updateIndividualCampaignType(campaign_type_id, req.body, (data) =>
+	{
+		console.log("Updated campaign type with id: " + campaign_type_id);
+		res.send(data);
+	});
+}).delete((req, res) =>
+{
+	var campaign_type_id = req.params.id;
+	deleteQueries.deleteIndividualCampaignType(campaign_type_id, (data) =>
+	{
+		console.log('Deleted campaign type with id: ' + campaign_type_id);
+		res.send(data);
+	});
+});
+
+
+//HANDLE GENERAL CAMPAIGN REQUESTS
 app.route('/campaigns').get((req, res) =>
 {
 	getQueries.getData(33, (err, data) =>
@@ -229,6 +278,8 @@ app.route('/campaigns').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC CAMPAIGN REQUESTS
 app.route('/campaigns/:id').get((req, res) =>
 {
 	var campaign_id = req.params.id;
@@ -256,7 +307,8 @@ app.route('/campaigns/:id').get((req, res) =>
 	});
 });
 
-//HANDLE EVENT REQUESTS
+
+//HANDLE GENERAL EVENT REQUESTS
 app.route('/events').get((req, res) =>
 {
 	getQueries.getData(4, (err, data) =>
@@ -268,6 +320,8 @@ app.route('/events').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC EVENT REQUESTS
 app.route('/events/:id').get((req, res) =>
 {
 	var event_id = req.params.id;
@@ -279,7 +333,8 @@ app.route('/events/:id').get((req, res) =>
 	});
 });
 
-//HANDLE CONTRIBUTION REQUESTS
+
+//HANDLE GENERAL CONTRIBUTION REQUESTS
 app.route('/contributions').get((req, res) =>
 {
 	getQueries.getData(5, (err, data) =>
@@ -298,6 +353,8 @@ app.route('/contributions').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC CONTRIBUTION REQUESTS
 app.route('/contributions/:id').get((req, res) =>
 {
 	var contrib_id = req.params.id;
@@ -326,7 +383,7 @@ app.route('/contributions/:id').get((req, res) =>
 });
 
 
-//HANDLE EVENT ITEM REQUESTS
+//HANDLE GENERAL EVENT ITEM REQUESTS
 app.route('/eventitems').get((req, res) =>
 {
 	getQueries.getData(6, (err, data) =>
@@ -338,6 +395,8 @@ app.route('/eventitems').get((req, res) =>
 	});
 });
 
+
+//HANDLE SPECIFIC EVENT ITEM REQUESTS
 app.route('/eventitems/:id').get((req, res) =>
 {
 	var event_item_id = req.params.id;
