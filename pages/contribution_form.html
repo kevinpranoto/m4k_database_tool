@@ -32,6 +32,9 @@
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../js/ContributionController.js"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
+
 </head>
 
 <body class="ng-cloak">
@@ -109,7 +112,7 @@
                                         <!-- When the contribution type "Money" is chosen, the view will only then display the fields
                                              for specifying the amount and payment method the money contribution was for. -->
                                         <tr>
-                                            <td style="padding-top:auto">
+                                            <td>
                                                 <label>Type</label>
                                                 <select name="contribution_type" ng-change="contributionTypeChanged()" class="form-control" ng-model="contrib_type" required>
                                                     <option value="goods" ng-selected> Goods </option>

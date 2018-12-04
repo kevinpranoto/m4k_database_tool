@@ -95,17 +95,18 @@
                                 <!-- Using PledgeController here to modify display in entry form based on Contribution Type selected -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
+
                                         <!-- Initializes the donors dropdown with all the donor names from the database -->
                                         <label>Donor name</label>
                                         <select class="form-control"
                                                 ng-init="getDropdownDonors()"
                                                 name="name"
+                                                ng-model="donor_selected"
                                                 required>
                                             <!-- name dropdown not working anymore...-->
-                                            <option ng-model=donor_dropdown" ng-repeat="item in temp_donor_list" value="{{item.name}}">{{item.name}}</option>
+                                            <option ng-repeat="donor in temp_donor_list">{{donor.id}}</option>
                                         </select>
                                         <div class="entry_error" ng-show="pledge_form.name.$invalid && !pledge_form.name.$pristine">Please select a donor to associate with pledge.</div>
-
                                     </div>
 
                                     <div class="form-group">
@@ -115,7 +116,7 @@
                                                name="id"
                                                ng-model="pledge_patient_id"
                                                required>
-                                            <option ng-repeat="item in temp_patient_list | unique: item" value="{{item.id}}">{{item.id}}</option>
+                                            <option ng-repeat="item in temp_patient_list | unique:'id'" value="{{item.id}}">{{item.id}}</option>
                                         </select>
                                         <div class="entry_error" ng-show="pledge_form.id.$invalid && !pledge_form.id.$pristine">Please select a patient ID to associate with pledge.</div>
                                     </div>

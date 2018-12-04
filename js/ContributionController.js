@@ -1,5 +1,5 @@
 (function(){
-    let allContributions = angular.module("allContributions", []);
+    let allContributions = angular.module("allContributions", ['ui.directives', 'ui.filters']);
     allContributions.controller("ContributionController", function($scope, $location, $window, $filter, $http) {
 
         ///////////////////////// RETRIEVAL AND SUBMISSION CODE TO DATABASE //////////////////////////////////
