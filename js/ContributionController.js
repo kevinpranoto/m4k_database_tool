@@ -138,15 +138,19 @@
          * and performs a one-time submission to save the entry.
          */
         $scope.submitContribution = function(isValid) {
+            let cached_donor_id = sessionStorage.getItem('entityID');
             let newContribution = {
+                donor_id: cached_donor_id,
+                contrib_date: $scope.contrib_date,
                 item_name: $scope.contrib_name,
-                type: $scope.contrib_type,
+                is_event_item: $scope.is_event.choice,
+                contrib_type: $scope.contrib_type,
                 amount: $filter('number')($scope.contrib_amount, 2),
                 payment_method: $scope.contrib_payment_method,
-                appeal: $scope.contrib_appeal,
                 destination: $scope.contrib_destination,
-                is_event: $scope.is_event.choice,
-                notes: $scope.contrib_notes
+                notes: $scope.contrib_notes,
+                appeal: $scope.contrib_appeal,
+                thanked: false
             };
 
             // Verify if the entire form is valid or not; if so, run through the procedures of stringifying JSON
@@ -155,13 +159,10 @@
             if (isValid)
             {
                 // Package the data into JSON format
-                console.log(JSON.stringify(newContribution));
+                let submit_data = JSON.stringify(newContribution);
 
-                // Send newContribution in JSON format to back-end
-
-
-                // Notify user that the data is saved/submitted before sending data to backend
-                $window.alert("Entry saved!");
+                // Send newContribution in JSON format to back-end and confirm saved entry
+                $http.post('127.0.0.1:8081/contributions', submit_data).success($window.alert("Entry saved!"));
 
                 // Re-route user back to main contributions page
                 $window.location.href="../pages/all_contributions.html";
@@ -175,30 +176,33 @@
          * and asks user if additional entries need to be submitted in addition to the initial entry being saved.
          */
         $scope.submitContributionAndNew = function(isValid) {
+            let cached_donor_id = sessionStorage.getItem('entityID');
             let newContribution = {
+                donor_id: cached_donor_id,
+                contrib_date: $scope.contrib_date,
                 item_name: $scope.contrib_name,
-                type: $scope.contrib_type,
+                is_event_item: $scope.is_event.choice,
+                contrib_type: $scope.contrib_type,
                 amount: $filter('number')($scope.contrib_amount, 2),
                 payment_method: $scope.contrib_payment_method,
-                appeal: $scope.contrib_appeal,
                 destination: $scope.contrib_destination,
-                is_event: $scope.is_event.choice,
-                notes: $scope.contrib_notes
+                notes: $scope.contrib_notes,
+                appeal: $scope.contrib_appeal,
+                thanked: false
             };
 
             if (isValid) {
-                // Package the data into JSON format for back-end server
-                console.log(JSON.stringify(newContribution));
+                // Package the data into JSON format
+                let submit_data = JSON.stringify(newContribution);
+
+                // Send newContribution in JSON format to back-end and confirm saved entry
+                $http.post('127.0.0.1:8081/contributions', submit_data).success($window.alert("Entry saved!"));
 
                 // Send an alert to the user to determine if user intends to add in additional entries
                 let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
 
                 // If user wants to add in a new entry
                 if (newEntryPrompt) {
-
-                    // Send the current data in newContribution to database
-
-
                     // Route user to data entry page
                     $window.location.href = "../pages/contribution_form.html";
                 }
