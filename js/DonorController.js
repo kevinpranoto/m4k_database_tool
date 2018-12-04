@@ -96,6 +96,10 @@ donorSpecific.controller('donorContributionsTable', function($scope, $location, 
         contribution.contrib_date= date.toDateString();
         $scope.contributions.push(contribution);
     });
+
+    $scope.redirectToContributionForm = function() {
+        window.location.href = '../pages/contribution_form.html';
+    };
 });
 
 donorSpecific.controller('donorPledgesTable', function($scope, $location, $window, $http) {
@@ -183,28 +187,32 @@ donorEntry.controller('donorForm', function($scope) {
     ];
     
     $scope.emails = [
-        {address: ''}
+        {email_address: '', is_primary: ''}
     ];
     
     $scope.phones = [
-        {type: '', number: ''}
+        {phone_type: '', phone_number: '', is_primary: ''}
     ];
 
     $scope.addresses = [
-        {type: '', street: '', city: '', state: '', zip: ''}
+        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: ''}
+    ];
+
+    $scope.companies = [
+        {company_name: '', is_primary: ''}
     ];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({type: '', number: ''});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: ''});
 	};
     
 	$scope.addAddress = function() {
-        $scope.addresses.push({type: '', street: '', city: '', state: '', zip: ''});
+        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: ''});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({address: ''});
-	};
+        $scope.emails.push({email_address: '', is_primary: ''});
+    };
 
     $scope.submitDonor = function() {
         var name = $scope.salutation + " " + $scope.firstName + 
@@ -212,10 +220,11 @@ donorEntry.controller('donorForm', function($scope) {
         console.log(name);
         console.log($scope.phones[0].number);
         var donor = {
-            status: $scope.state,
+            donor_status: $scope.state,
+            donor_type: $scope.type,
             salutation: $scope.salutation, 
-            firstName: $scope.firstName,
-            lastName: $scope.lastName,
+            first_name: $scope.firstName,
+            last_name: $scope.lastName,
             alias: $scope.alias,
             emails: [],
             phones: [], 
