@@ -93,6 +93,14 @@
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Donor name</label>
+                                        <script>
+                                            let temp_pledge_list = [];
+
+                                        </script>
+                                        <select ng-repeat="item in temp_pledge_list">
+                                            <option>{{item.donor_name}}</option>
+                                        </select>
+
                                         <input class="form-control" name="name" ng-model="pledge_donor_name" pattern="[a-zA-Z]+" ng-minlength="1" placeholder="Enter donor's full name here" required>
                                         <div class="entry_error" ng-show="pledge_form.name.$invalid && !pledge_form.name.$pristine">Donor's name is required, and must be alphabetic characters only.</div>
                                     </div>

@@ -18,11 +18,21 @@ var postQueries =
 /*queryNum = 3: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
 /*queryNum = 4: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
 /*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)",
-/*queryNum = 6: POST(ADD) Staff*/ "INSERT INTO Staff (supporter_id, staff_type, staff_status) VALUES (newSupporterId, newStaffType, newStatus)"
-
+/*queryNum = 6: POST(ADD) Staff*/ "INSERT INTO Staff (supporter_id, staff_type, staff_status) VALUES (newSupporterId, newStaffType, newStatus)",
+/*queryNum = 7: POST(ADD) Patient*/ "INSERT INTO Patient (patient_id) VALUES (newPatientId)",
+/*queryNum = 8: POST(ADD) Needs*/ "INSERT INTO Needs (patient_id, item) VALUES (newPatientId, newItem)",
+/*queryNum = 9: POST(ADD) Pledge*/ "INSERT INTO Pledge (pledge_id, donor_id, patient_id, pledge_date, target_amount, is_behind) VALUES (newPledgeId, newDonorId, newPatientId, newPledgeDate, newTargetAmount, newIsBehind)",
+/*queryNum = 10: POST(ADD) Installment*/ "INSERT INTO Installments (pledge_id, amount, installment_date) VALUES (newPledgeId, newAmount, newInstallmentDate)",
+/*queryNum = 11: POST(ADD) Campaign*/ "INSERT INTO Campaign (campaign_id, campaign_name, campaign_type_id, is_event, campaign_date, theme) VALUES (newCampaignId, newCampaignName, newCampaignTypeId, newIsEvent, newCampaignDate, newTheme)",
+/*queryNum = 12: POST(ADD) Donor to Event*/ "INSERT INTO Attends (donor_id, campaign_id) VALUES (newDonorId, newCampaignId)",
+/*queryNum = 13: POST(ADD) Staff to Event*/ "INSERT INTO Works (staff_id, campaign_id) VALUES (newStaffId, newCampaignId)",
+/*queryNum = 14: POST(ADD) Event Item to Event*/ "INSERT INTO PresentedAt (contrib_id, campaign_id) VALUES (newContribId, newCampaignId)",
+/*queryNum = 15: POST(ADD) Contribution*/ "INSERT INTO Contribution (contrib_id, donor_id, contrib_date, item_name, is_event_item, contrib_type, amount, pay_method, destination, notes, appeal, thanked) VALUES (newContribId, newDonorId, newContribDate, newItemName, newIsEventItem, newContribType, newAmount, newPayMethod, newDestination, newNotes, newAppeal, newThanked)",
+/*queryNum = 16: POST(ADD) CampaignType*/ "INSERT INTO CampaignType (campaign_type_id, campaign_type_name) VALUES (newCampaignTypeId, newCampaignTypeName)"
 ];
 
-function getNewId()
+
+function getSupporterNewId()
 {
 	return new Promise((resolve, reject) =>
 	{
@@ -30,7 +40,14 @@ function getNewId()
 		{
 			if (err)
 				reject(err);
-			resolve(rows[0].supporter_id + 1);
+			
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].supporter_id;
+			}
+
+			resolve(maxId);
 		});
 	}).then((newId) =>
 	{
@@ -38,7 +55,6 @@ function getNewId()
 	});
 }
 
-//POSTs
 function addSupporter(newId, body)
 {
 	//Add basic Supporter info
@@ -57,7 +73,6 @@ function addSupporter(newId, body)
 			return basicObj[matched];
 		});
 
-		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -89,6 +104,8 @@ function addSupporter(newId, body)
 					resolve(rows);
 				});	
 			});
+
+			resolve();
 		}).then((res) =>
 		{
 			//Add phones
@@ -115,6 +132,8 @@ function addSupporter(newId, body)
 						resolve(rows);
 					});	
 				});
+
+				resolve();
 			}).then((res) =>
 			{
 				//Add addresses
@@ -145,16 +164,19 @@ function addSupporter(newId, body)
 							resolve(rows);
 						});	
 					});
+
+					resolve();
 				});
 			});
 		});
 	});
 }
 
+//DONORS
 var addDonor = function(body, callback)
 {
 	//Generate new id
-	getNewId().then((newId) =>
+	getSupporterNewId().then((newId) =>
 	{
 		//Add supporter info
 		addSupporter(newId, body).then((res) =>
@@ -167,6 +189,7 @@ var addDonor = function(body, callback)
 					newDonorType: '\'' + body.donor_type + '\'',
 					newStatus: '\'' + body.donor_status + '\''
 				}
+
 				var patchedQuery = postQueries[5].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
 				{
 					return basicObj[matched];
@@ -203,6 +226,8 @@ var addDonor = function(body, callback)
 							resolve(rows);
 						});	
 					});
+
+					resolve();
 				}).then((res) =>
 				{
 					callback(res);
@@ -212,10 +237,11 @@ var addDonor = function(body, callback)
 	});
 }
 
+//STAFF
 var addStaff = function(body, callback)
 {
 	//Generate new id
-	getNewId().then((newId) =>
+	getSupporterNewId().then((newId) =>
 	{
 		//Add supporter info
 		addSupporter(newId, body).then((res) =>
@@ -248,5 +274,435 @@ var addStaff = function(body, callback)
 	});
 }
 
+//PATIENTS
+function getPatientNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Patient.patient_id FROM Patient ORDER BY Patient.patient_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].patient_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addPatient = function(body, callback)
+{
+	getPatientNewId().then((newId) =>
+	{
+		// Add basic Patient info
+		return new Promise((resolve, reject) =>
+		{
+			var patchedQuery = postQueries[7].replace("newPatientId", newId);
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err) {
+					throw (error);
+				}
+				resolve (rows);
+			});
+		}).then((res) =>
+		{
+			//Add Patient needs info
+			return new Promise((resolve, reject) =>
+			{
+				body.needs.forEach((need) =>
+				{
+					var basicObj = {
+						newPatientId : newId,
+						newItem : '\'' + need.item + '\''
+					}
+			
+					var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
+					{
+						return basicObj[matched];
+					});
+					
+					con.query(patchedQuery, (err, rows) =>
+					{
+						if (err) {
+							throw (err);
+						}
+						resolve (rows);
+					});
+				});
+
+				resolve();
+			}).then((res) =>
+			{
+				callback(res);
+			});
+		});
+	});
+}
+
+//PLEDGES
+function getPledgeNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Pledge.pledge_id FROM Pledge ORDER BY Pledge.pledge_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].pledge_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addPledge = function(body, callback)
+{
+	getPledgeNewId().then((newId) =>
+	{
+		//Add basic Pledge info
+		return new Promise((resolve, reject) =>
+		{
+			var basicObj = {
+				newPledgeId: newId,
+				newDonorId: '\'' + body.donor_id + '\'',
+				newPatientId: '\'' + body.patient_id + '\'',
+				newPledgeDate: '\'' + body.pledge_date + '\'',
+				newTargetAmount: '\'' + body.target_amount + '\'',
+				newIsBehind: '\'' + body.is_behind + '\''
+			}
+
+			var patchedQuery = postQueries[9].replace(/newPledgeId|newDonorId|newPatientId|newPledgeDate|newTargetAmount|newIsBehind/gi, (matched) =>
+			{
+				return basicObj[matched];
+			});
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			//Add Pledge installment info
+			return new Promise((resolve, reject) =>
+			{
+				body.installments.forEach((installment) =>
+				{
+					return new Promise((resolve, reject) =>
+					{
+						var basicObj = {
+							newPledgeId : newId,
+							newAmount : '\'' + installment.amount + '\'',
+							newInstallmentDate : '\'' + installment.installment_date + '\''
+						}
+						
+						var patchedQuery = postQueries[10].replace(/newPledgeId|newAmount|newInstallmentDate/gi, (matched) =>
+						{
+							return basicObj[matched];
+						});
+
+						con.query(patchedQuery, (err, rows) =>
+						{
+							if (err) {
+								throw (err);
+							}
+							resolve (rows);
+						});
+					});
+				});
+				resolve(res);
+			}).then((res) =>
+			{
+				callback(res);
+			});
+		});
+	});
+}
+
+
+//CAMPAIGNS
+function getCampaignNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Campaign.campaign_id FROM Campaign ORDER BY Campaign.campaign_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].campaign_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addCampaign = function(body, callback)
+{
+	getCampaignNewId().then((newId) =>
+	{
+		//Add basic Campaign info
+		return new Promise((resolve, reject) =>
+		{
+			var basicObj = {
+				newCampaignId: newId,
+				newCampaignName: '\'' + body.campaign_name + '\'',
+				newCampaignTypeId: '\'' + body.campaign_type_id + '\'',
+				newIsEvent: '\'' + body.is_event + '\'',
+				newCampaignDate: '\'' + body.campaign_date + '\'',
+				newTheme: '\'' + body.theme + '\''
+			}
+
+			var patchedQuery = postQueries[11].replace(/newCampaignId|newCampaignName|newCampaignTypeId|newIsEvent|newCampaignDate|newTheme/gi, (matched) =>
+			{
+				return basicObj[matched];
+			});
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			//Add Campaign donor info
+			return new Promise((resolve, reject) =>
+			{
+				body.donors.forEach((donor) =>
+				{
+					var donorObj = {
+						newDonorId: donor,
+						newCampaignId: newId
+					}
+
+					var patchedQuery = postQueries[12].replace(/newDonorId|newCampaignId/gi, (matched) =>
+					{
+						return donorObj[matched];
+					});
+
+					con.query(patchedQuery, (err, rows) =>
+					{
+						if (err) {
+							throw (err);
+						}
+						resolve (rows);
+					});
+				});
+
+				resolve();
+			}).then((res) =>
+			{
+				//Add Campaign staff info
+				return new Promise((resolve, reject) =>
+				{
+					body.staff.forEach((staff) =>
+					{
+						var staffObj = {
+							newStaffId: staff,
+							newCampaignId : newId
+						}
+							
+						var patchedQuery = postQueries[13].replace(/newStaffId|newCampaignId/gi, (matched) =>
+						{
+							return staffObj[matched];
+						});
+
+						con.query(patchedQuery, (err, rows) =>
+						{
+							if (err) {
+								throw (err);
+							}
+							resolve (rows);
+						});
+					});
+
+					resolve();
+				}).then((res) =>
+				{
+					return new Promise((resolve, reject) =>
+					{
+						body.contributions.forEach((contribution) =>
+						{
+							var contribObj = {
+								newContribId: contribution,
+								newCampaignId : newId
+							}
+								
+							var patchedQuery = postQueries[14].replace(/newContribId|newCampaignId/gi, (matched) =>
+							{
+								return contribObj[matched];
+							});
+
+							con.query(patchedQuery, (err, rows) =>
+							{
+								if (err) {
+									throw (err);
+								}
+								resolve (rows);
+							});
+						});
+
+						resolve();
+					}).then((res) =>
+					{
+						callback(res);
+					});
+				});
+			});
+		});
+	});
+}
+
+//CONTRIBUTIONS
+function getContributionNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT Contribution.contrib_id FROM Contribution ORDER BY Contribution.contrib_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].contrib_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+
+var addContribution = function(body, callback)
+{
+	console.log(body);
+	getContributionNewId().then((newId) =>
+	{
+		return new Promise((resolve, reject) =>
+		{
+			var basicObj = {
+				newContribId: newId,
+				newDonorId: body.donor_id,
+				newContribDate: '\'' + body.contrib_date + '\'',
+				newItemName: '\'' + body.item_name + '\'',
+				newIsEventItem: body.is_event_item,
+				newContribType: '\'' + body.contrib_type + '\'',
+				newAmount: body.amount,
+				newPayMethod: '\'' + body.pay_method + '\'',
+				newDestination: '\'' + body.destination + '\'',
+				newNotes: '\'' + body.notes + '\'',
+				newAppeal: '\'' + body.appeal + '\'',
+				newThanked: body.thanked
+			}
+
+			var patchedQuery = postQueries[15].replace(/newContribId|newDonorId|newContribDate|newItemName|newIsEventItem|newContribType|newAmount|newPayMethod|newDestination|newNotes|newAppeal|newThanked/gi, (matched) =>
+			{
+				return basicObj[matched];
+			});
+
+			console.log(patchedQuery);
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			callback(res);
+		});
+	});
+}
+
+//CAMPAIGN TYPE
+function getCampaignTypeNewId()
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query("SELECT CampaignType.campaign_type_id FROM CampaignType ORDER BY CampaignType.campaign_type_id DESC LIMIT 0, 1", (err, rows) =>
+		{
+			if (err)
+				reject(err);
+
+			var maxId = 1;
+			if (rows.length > 0)
+			{
+				maxId += rows[0].campaign_type_id;
+			}
+
+			resolve(maxId);
+		});
+	}).then((newId) =>
+	{
+		return newId;
+	});
+}
+
+var addCampaignType = function(body, callback)
+{
+	getCampaignTypeNewId().then((newId) =>
+	{
+		return new Promise((resolve, reject) =>
+		{
+			var campaignTypeObj = {
+				newCampaignTypeId: newId,
+				newCampaignTypeName: '\'' + body.campaign_type_name + '\''
+			}
+
+			var patchedQuery = postQueries[16].replace(/newCampaignTypeId|newCampaignTypeName/gi, (matched) =>
+			{
+				return campaignTypeObj[matched];
+			});
+
+			con.query(patchedQuery, (err, rows) =>
+			{
+				if (err)
+					throw(err);
+				resolve(rows);
+			});
+		}).then((res) =>
+		{
+			callback(res);
+		});
+	});
+}
+
 exports.addDonor = addDonor;
 exports.addStaff = addStaff;
+exports.addPatient = addPatient;
+exports.addPledge = addPledge;
+exports.addCampaign = addCampaign;
+exports.addContribution = addContribution;
+exports.addCampaignType = addCampaignType;

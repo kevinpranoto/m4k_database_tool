@@ -7,6 +7,7 @@
          * Retrieving data from the database to display onto the main view of a pledge
          * */
         $scope.pledges = [];
+
         console.log('Retrieving data for Pledges main view...');
         $http.get('http://127.0.0.1:8081/pledges').then((res)=>
         {
@@ -15,17 +16,40 @@
             {
                 let obj = res.data[i];
                 let pledge =
-                    {
-                        pledge_id : obj.pledge_id,
-                        supporter_id: obj.supporter_id,
-                        donor_name: obj.first_name + " " + obj.last_name,
-                        patient_id: obj.patient_id,
-                        target_amount: $filter('number')(obj.target_amount, 2),
-                        pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy')
-                    };
+                {
+                    pledge_id : obj.pledge_id,
+                    supporter_id: obj.supporter_id,
+                    donor_name: obj.first_name + " " + obj.last_name,
+                    patient_id: obj.patient_id,
+                    target_amount: $filter('number')(obj.target_amount, 2),
+                    pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy')
+                };
                 $scope.pledges.push(pledge);
             }
         });
+
+        /**
+         * removeEntries()
+         * Sends delete requests to the backend server with a list of object ID's to be deleted.
+         * Also refreshes main page if anything gets deleted; if not, remains on same page.
+         */
+        $scope.removeEntries = function() {
+            let something_deleted = false;
+            $scope.pledges.forEach(pled => {
+                if (pled.to_remove === true) {
+                    let deletePrompt = $window.confirm("Delete " + pled.donor_name + "'s pledge? (Deletion cannot be reverted)");
+                    if (deletePrompt) {
+                        something_deleted = true;
+                        console.log("Deleting " + pled.pledge_id);
+                        $http.delete('http://127.0.0.1:8081/pledges/' + pled.pledge_id);
+                    }
+                }
+            });
+            if (something_deleted) {
+                window.location.href = '../pages/all_pledges.html';
+            }
+        };
+
         /**
          * setClickedRow($index)
          * Function for retrieving the index of the item clicked on in a given data table.
@@ -65,28 +89,6 @@
             $scope.list_of_years = range;
         };
 
-
-        /**
-        $scope.removeRow = function(index, pledge){
-            // Prompt user to confirm deletion; clicking OK returns true, Cancel returns false.
-            let deleteRow = $window.confirm("Are you sure you want to delete this entry?");
-
-            // If user clicked OK, handle the deletion.
-            if (deleteRow) {
-
-                function find_data(items) {
-                    return items.id === pledge.id;
-                }
-
-                $scope.pledges.splice(index, 1);     // Just a placeholder, but will need code to update DB via Node.js?
-                let to_delete = $scope.items.find(find_data);
-
-                let index = $scope.items.indexOf(to_delete);
-
-                $scope.pledges.splice(index,1);
-            }
-        };*/
-
         /**
          * goToPledge(pledge)
          * @param pledge: Specific entry related to the Pledge main view table
@@ -109,6 +111,19 @@
          * Function(s) related to gathering data from form pages and packaging them into JSON format
          */
         $scope.submitPledge = function(isValid) {
+            /***
+             * 	"donor_id": dId,
+             "patient_id": pId,
+             "pledge_date": pDate,
+             "target_amount": tAmount,
+             "is_behind": (true, false),
+             "installments": [
+             {
+                "amount": amnt,
+                "installment_date": inDate
+            } ]
+             * @type {{donorName: *, patientID: *, date: *, targetAmount: *, targetYear: *, notes: *}}
+             */
             let newPledge = {
                 donor_name: $scope.pledge_donor_name,
                 patient_id: $scope.pledge_patient_id,
@@ -119,11 +134,11 @@
 
             if (isValid)
             {
-                // Package the data into JSON format
-                console.log(JSON.stringify(newPledge));
+                // Package the data into JSON format and send the current data in newContribution to database
+                let submit_data = JSON.stringify(newPledge);
 
                 // Send newContribution in JSON format to back-end
-
+                $http.post('http://127.0.0.1:8081/pledges', submit_data).success($window.alert("Entry saved!"));
 
                 // Notify user that the data is saved/submitted before sending data to backend
                 $window.alert("Entry saved!");
@@ -134,28 +149,42 @@
         };
 
         $scope.submitPledgeAndNew = function(isValid) {
+            /***
+             * 	"donor_id": dId,
+             "patient_id": pId,
+             "pledge_date": pDate,
+             "target_amount": tAmount,
+             "is_behind": (true, false),
+             "installments": [
+             {
+                "amount": amnt,
+                "installment_date": inDate
+            } ]
+             * @type {{donorName: *, patientID: *, date: *, targetAmount: *, targetYear: *, notes: *}}
+             */
+            let installments_list = [];
+
             let newPledge = {
-                donorName: $scope.pledge_donor_name,
-                patientID: $scope.pledge_patient_id,
+                donor_name: $scope.pledge_donor_name,
+                patient_id: $scope.pledge_patient_id,
                 date: $filter('date')($scope.pledge_date, "MM-dd-yyyy"),     // Date is filtered to remove clock time
-                targetAmount: $filter('number')($scope.pledge_target_amount, 2),
-                targetYear: $scope.pledge_target_year,
+                target_amount: $filter('number')($scope.pledge_target_amount, 2),
+                target_year: $scope.pledge_target_year,
                 notes: $scope.pledge_notes
             };
 
             if (isValid) {
-                // Package the data into JSON format for back-end server
-                console.log(JSON.stringify(newPledge));
+                // Package the data into JSON format
+                let submit_data = JSON.stringify(newPledge);
+
+                // Send newContribution in JSON format to back-end and confirm saved entry
+                $http.post('http://127.0.0.1:8081/pledges', submit_data).success($window.alert("Entry saved!"));
 
                 // Send an alert to the user to determine if user intends to add in additional entries
                 let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
 
                 // If user wants to add in a new entry
                 if (newEntryPrompt) {
-
-                    // Send the current data in newContribution to database
-
-
                     // Route user to data entry page
                     $window.location.href = "../pages/pledge_form.html";
                 }
@@ -163,6 +192,32 @@
                     $window.location.href = "../pages/all_pledges.html";
                 }
             }
+        };
+
+        $scope.getDonors = function(){
+            let temp_list = [];
+            $http.get('http://127.0.0.1:8081/donors').then((res)=>
+            {
+                console.log(res.data);
+                for (let i in res.data)
+                {
+                    let obj = res.data[i];
+                    let donors =
+                    {
+                        contrib_id : obj.contrib_id,
+                        supporter_id: obj.supporter_id,
+                        donor_name: obj.first_name + " " + obj.last_name,
+                        contrib_name: obj.item_name,
+                        contrib_type: obj.contrib_type,
+                        contrib_appeal: obj.appeal,
+                        contrib_notes: obj.notes,
+                    };
+                    $scope.contributions.push(contribution);
+                }
+            });
+
+            return temp_list;
+
         };
     });
 
