@@ -1,5 +1,6 @@
 # Supporters
-INSERT INTO Supporter 
+
+INSERT INTO Supporter
 	(supporter_id,	last_name,	first_name,	salutation,	alias	) VALUES
 	(1,		'Gates',	'William', 	'Mr.', 		'Bill'	),
 	(2,		'Gamarra',	'Eric', 	'Mr.', '	Jim'	),
@@ -184,17 +185,6 @@ INSERT INTO Campaign
         (6, 		'Christmas Caring',		6, 			FALSE, 		'2018-12-25', 		'Christmas'		),
 	(7,		'Play Like Tiger Woods',	1,			TRUE,		'2018-03-17',		'Tiger Woods'		);
 
-# Contributions
-INSERT INTO Contribution
-	(contrib_id,	item_name,		is_event_item,	contrib_type,	amount, 	pay_method,	destination,		appeal,			thanked,	notes					) VALUES #event_item connected to campaign?
-	(1,		'Bill''s Dollar Bills', FALSE, 		'Money', 	1000000, 	'Cash', 	'General', 		'Direct Mail',		TRUE, 		'Jeff Bezos is richer than me now!'	),
-        (2,		'Nintendo Switch',	TRUE,		'Goods',	NULL,		NULL,		'Miracle Manor',	'Email Campaign',	FALSE,		'RIP my bank account.'			),
-        (3,		'Puppet Show',		FALSE,		'Services',	NULL,		NULL,		'Basket of Miracles',	'Radio Ad',		TRUE,		NULL					),
-        (4,		'Futurama Meme',	TRUE,		'Money',	420.69,		'Credit Card',	'Grant Program',	'Sponsorship',		TRUE,		'Shut up and take my money!'		),
-        (5,		'Not One Thousand',	TRUE,		'Money',	999.99,		'Check',	'Health & Wellness',	'Fund-a-Need',		TRUE,		'1 cent away from a thousand.'		),
-        (6,		'1 AMZN Stock Share',	FALSE,		'Money',	1665.53,	'Stock',	'General',		'Opportunity Ticket',	FALSE,		NULL					),
-        (7,		'Barbie Dollhouse',	TRUE,		'Goods',	NULL,		NULL,		'Miracle Manor',	'Silent Auction',	TRUE,		'Made in China.'			),
-        (8,		'Justin Bieber Meet',	FALSE,		'Services',	NULL,		NULL,		'Basket of Miracles',	'Live Auction',		FALSE,		'Parent Supervision Required'		);
 
 INSERT INTO Patient
 	(patient_id	) VALUES
@@ -230,21 +220,23 @@ INSERT INTO Pledge
         (15,	16,		2,		'2015-09-05',	2500,		true		);
 
 INSERT INTO Installments
-	(installment_id,	pledge_id,	amount,	installment_date	) VALUES
-	(1,			1,		1000,	'2018-01-01'		),
-    (2,			1,		15000,	'2018-09-10'		),
-    (3,			3,		400,	'2016-04-23'		);
+	(pledge_id,	amount,	installment_date	) VALUES
+	(1,		1000,	'2018-01-01'		),
+    (1,		15000,	'2018-09-10'		),
+    (3,		400,	'2016-04-23'		);
 
-INSERT INTO Contributes
-	(donor_id,	contrib_id,	contrib_date) VALUES
-	(1,		1,		'2018-05-05'),
-        (1,		2,		'2018-06-15'),
-        (8,		3,		'2017-12-21'),
-        (9,		4,		'2018-02-14'),
-        (10,		5,		'2018-03-17'),
-	(11,		6,		'2018-04-20'),
-	(12,		7,		'2018-07-11'),
-        (13,		8,		'2018-09-21');
+# Contributions
+INSERT INTO Contribution
+	(contrib_id,	donor_id,	contrib_date,	item_name,	is_event_item,	contrib_type,	amount, 	pay_method,	destination,		appeal,			thanked,	notes					) VALUES #event_item connected to campaign?
+	(1,		1,	'2018-05-05',	'Bill''s Dollar Bills', FALSE, 		'Money', 	1000000, 	'Cash', 	'General', 		'Direct Mail',		TRUE, 		'Jeff Bezos is richer than me now!'	),
+        (2,		1,	'2018-06-15',	'Nintendo Switch',	TRUE,		'Goods',	NULL,		NULL,		'Miracle Manor',	'Email Campaign',	FALSE,		'RIP my bank account.'			),
+        (3,		8,		'2017-12-21',	'Puppet Show',		FALSE,		'Services',	NULL,		NULL,		'Basket of Miracles',	'Radio Ad',		TRUE,		NULL					),
+        (4,		9,	'2018-02-14',		'Futurama Meme',	TRUE,		'Money',	420.69,		'Credit Card',	'Grant Program',	'Sponsorship',		TRUE,		'Shut up and take my money!'		),
+        (5,		10, '2018-03-17',		'Not One Thousand',	TRUE,		'Money',	999.99,		'Check',	'Health & Wellness',	'Fund-a-Need',		TRUE,		'1 cent away from a thousand.'		),
+        (6,		11,	'2018-04-20',	'1 AMZN Stock Share',	FALSE,		'Money',	1665.53,	'Stock',	'General',		'Opportunity Ticket',	FALSE,		NULL					),
+        (7,		12,	'2018-07-11',		'Barbie Dollhouse',	TRUE,		'Goods',	NULL,		NULL,		'Miracle Manor',	'Silent Auction',	TRUE,		'Made in China.'			),
+        (8,		13,	'2018-09-21',	'Justin Bieber Meet',	FALSE,		'Services',	NULL,		NULL,		'Basket of Miracles',	'Live Auction',		FALSE,		'Parent Supervision Required'		);
+
 
 INSERT INTO Requests
 	(patient_id,	contrib_id	) VALUES
