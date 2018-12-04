@@ -1,5 +1,5 @@
 (function (){
-    let allPledges = angular.module('allPledges', []);
+    let allPledges = angular.module('allPledges', ['ui.directives', 'ui.filters']);
     allPledges.controller('PledgeController', function($scope, $location, $window, $filter, $http) {
 
         ///////////////////////// RETRIEVAL AND SUBMISSION CODE TO DATABASE //////////////////////////////////
@@ -111,25 +111,13 @@
          * Function(s) related to gathering data from form pages and packaging them into JSON format
          */
         $scope.submitPledge = function(isValid) {
-            /***
-             * 	"donor_id": dId,
-             "patient_id": pId,
-             "pledge_date": pDate,
-             "target_amount": tAmount,
-             "is_behind": (true, false),
-             "installments": [
-             {
-                "amount": amnt,
-                "installment_date": inDate
-            } ]
-             * @type {{donorName: *, patientID: *, date: *, targetAmount: *, targetYear: *, notes: *}}
-             */
             let newPledge = {
-                donor_name: $scope.pledge_donor_name,
+                donor_id: $scope.donor_dropdown.id,  ///// THIS NEEDS TO BE THE DONOR ID OF THE DROPDOWN ITEM
                 patient_id: $scope.pledge_patient_id,
-                target_amount: $filter('number')($scope.pledge_target_amount, 2),
                 pledge_date: $scope.pledge_target_year,
-                is_behind: 0
+                target_amount: $filter('number')($scope.pledge_target_amount, 2),
+                is_behind: false,
+                installments: installments_list,
             };
 
             if (isValid)
@@ -137,11 +125,11 @@
                 // Package the data into JSON format and send the current data in newContribution to database
                 let submit_data = JSON.stringify(newPledge);
 
-                // Send newContribution in JSON format to back-end
-                $http.post('http://127.0.0.1:8081/pledges', submit_data).success($window.alert("Entry saved!"));
-
-                // Notify user that the data is saved/submitted before sending data to backend
-                $window.alert("Entry saved!");
+                $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
+                {
+                    console.log(res);
+                    $window.alert("Entry saved!");
+                });
 
                 // Re-route user back to main contributions page
                 $window.location.href="../pages/all_pledges.html";
@@ -149,75 +137,108 @@
         };
 
         $scope.submitPledgeAndNew = function(isValid) {
-            /***
-             * 	"donor_id": dId,
-             "patient_id": pId,
-             "pledge_date": pDate,
-             "target_amount": tAmount,
-             "is_behind": (true, false),
-             "installments": [
-             {
-                "amount": amnt,
-                "installment_date": inDate
-            } ]
-             * @type {{donorName: *, patientID: *, date: *, targetAmount: *, targetYear: *, notes: *}}
-             */
-            let installments_list = [];
+            let cached_donor_id = sessionStorage.getItem('entityID');
+            let cached_patient_id = sessionStorage.getItem('patientID');
+
+            let installments_list = [
+                {
+                    amount: null,
+                    installment_date: null
+                }
+            ];
 
             let newPledge = {
-                donor_name: $scope.pledge_donor_name,
+                donor_id: $scope.donor_dropdown.id,  ///// THIS NEEDS TO BE THE DONOR ID OF THE DROPDOWN ITEM
                 patient_id: $scope.pledge_patient_id,
-                date: $filter('date')($scope.pledge_date, "MM-dd-yyyy"),     // Date is filtered to remove clock time
+                pledge_date: $scope.pledge_target_year,
                 target_amount: $filter('number')($scope.pledge_target_amount, 2),
-                target_year: $scope.pledge_target_year,
-                notes: $scope.pledge_notes
+                is_behind: false,
+                installments: installments_list,
+                //date: $filter('date')($scope.pledge_date, "MM-dd-yyyy")     // Date is filtered to remove clock time
             };
+            console.log(newPledge);
 
             if (isValid) {
                 // Package the data into JSON format
                 let submit_data = JSON.stringify(newPledge);
-
-                // Send newContribution in JSON format to back-end and confirm saved entry
-                $http.post('http://127.0.0.1:8081/pledges', submit_data).success($window.alert("Entry saved!"));
 
                 // Send an alert to the user to determine if user intends to add in additional entries
                 let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
 
                 // If user wants to add in a new entry
                 if (newEntryPrompt) {
+
+                    $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
+                    {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    });
                     // Route user to data entry page
                     $window.location.href = "../pages/pledge_form.html";
                 }
                 else {
+
+                    $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
+                    {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    });
                     $window.location.href = "../pages/all_pledges.html";
                 }
             }
         };
 
-        $scope.getDonors = function(){
-            let temp_list = [];
+        /***
+         * getDropdownDonors()
+         * Helper function to retrieve all the donor names from the database for populating the dropdown menu
+         * for creating a new pledge. Prevents user from manually entering names and avoids redundancies or
+         * mismatching in the database when associating donors and patients with pledges.
+         */
+        $scope.getDropdownDonors = function(){
+            $scope.temp_donor_list = [];
             $http.get('http://127.0.0.1:8081/donors').then((res)=>
             {
+                console.log("GRABBING DONORS DATA FOR PLEDGE FORM...")
                 console.log(res.data);
                 for (let i in res.data)
                 {
                     let obj = res.data[i];
-                    let donors =
-                    {
-                        contrib_id : obj.contrib_id,
-                        supporter_id: obj.supporter_id,
-                        donor_name: obj.first_name + " " + obj.last_name,
-                        contrib_name: obj.item_name,
-                        contrib_type: obj.contrib_type,
-                        contrib_appeal: obj.appeal,
-                        contrib_notes: obj.notes,
+                    let donor = {
+                        id: obj.supporter_id,
+                        first_name: obj.first_name,
+                        last_name: obj.last_name,
+                        name: obj.first_name + " " + obj.last_name
                     };
-                    $scope.contributions.push(contribution);
+
+                    $scope.temp_donor_list.push(donor);
                 }
             });
+            console.log($scope.temp_donor_list);
+        };
 
-            return temp_list;
+        /***
+         * getDropdownPatients()
+         * Helper function to retrieve all the patient IDs from the database for populating the dropdown menu
+         * for creating a new pledge. Prevents user from manually entering patient IDs and avoids redundancies or
+         * mismatching in the database when associating donors and patients with pledges.
+         */
+        $scope.getDropdownPatients = function(){
+            $scope.temp_patient_list = [];
+            $http.get('http://127.0.0.1:8081/patients').then((res)=>
+            {
+                console.log("GRABBING PATIENT ID's FOR PLEDGE FORM...")
+                console.log(res.data);
+                for (let i in res.data)
+                {
+                    let obj = res.data[i];
+                    let patient = {
+                        id: obj.patient_id
+                    };
 
+                    $scope.temp_patient_list.push(patient);
+                }
+            });
+            console.log($scope.temp_patient_list);
         };
     });
 

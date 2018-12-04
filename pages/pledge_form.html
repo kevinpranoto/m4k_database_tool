@@ -31,7 +31,8 @@
     <![endif]-->
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../js/PledgeController.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
 </head>
 
 <body class="ng-cloak" ng-controller="PledgeController">
@@ -88,33 +89,35 @@
                     </div>
                     <div class="panel-body">
                         <div class="row">
+                            <!-- Disables the native validation prompts from the browser to enable custom validation notes -->
                             <form role="form" name="pledge_form" novalidate>
+
                                 <!-- Using PledgeController here to modify display in entry form based on Contribution Type selected -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top: 1em">
+                                        <!-- Initializes the donors dropdown with all the donor names from the database -->
                                         <label>Donor name</label>
-                                        <script>
-                                            let temp_pledge_list = [];
-
-                                        </script>
-                                        <select ng-repeat="item in temp_pledge_list">
-                                            <option>{{item.donor_name}}</option>
+                                        <select class="form-control"
+                                                ng-init="getDropdownDonors()"
+                                                name="name"
+                                                required>
+                                            <!-- name dropdown not working anymore...-->
+                                            <option ng-model=donor_dropdown" ng-repeat="item in temp_donor_list" value="{{item.name}}">{{item.name}}</option>
                                         </select>
+                                        <div class="entry_error" ng-show="pledge_form.name.$invalid && !pledge_form.name.$pristine">Please select a donor to associate with pledge.</div>
 
-                                        <input class="form-control" name="name" ng-model="pledge_donor_name" pattern="[a-zA-Z]+" ng-minlength="1" placeholder="Enter donor's full name here" required>
-                                        <div class="entry_error" ng-show="pledge_form.name.$invalid && !pledge_form.name.$pristine">Donor's name is required, and must be alphabetic characters only.</div>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Patient ID</label>
-                                        <input class="form-control"
-                                               type="number"
+                                        <select class="form-control"
+                                               ng-init="getDropdownPatients()"
                                                name="id"
                                                ng-model="pledge_patient_id"
-                                               placeholder="Enter patient's ID here"
-                                               ng-pattern="/^[0-9]/"
                                                required>
-                                        <div class="entry_error" ng-show="pledge_form.id.$invalid && !pledge_form.id.$pristine">Patient ID should be numeric characters only.</div>
+                                            <option ng-repeat="item in temp_patient_list | unique: item" value="{{item.id}}">{{item.id}}</option>
+                                        </select>
+                                        <div class="entry_error" ng-show="pledge_form.id.$invalid && !pledge_form.id.$pristine">Please select a patient ID to associate with pledge.</div>
                                     </div>
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
@@ -135,9 +138,10 @@
                                     <!-- NOTE: ng-init will invoke a function as soon as the page is initialized -->
                                     <div class="form-group">
                                         <label>Target year</label>
-                                        <select class="form-control" ng-model="pledge_target_year" ng-init="calendarList()" required>
+                                        <select class="form-control" name="year" ng-model="pledge_target_year" ng-init="calendarList()" required>
                                             <option ng-repeat="year in list_of_years">{{year}}</option>
                                         </select>
+                                        <div class="entry_error" ng-show="pledge_form.year.$invalid && !pledge_form.year.$pristine">Please select a target pledge year.</div>
                                     </div>
 
                                     <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
