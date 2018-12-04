@@ -62,11 +62,6 @@ allDonors.controller('donorsTable', function($scope, $location, $window, $http) 
             window.location.href = '../pages/all_donors.html';
         };
     };
-    /*
-    return {
-        set: set,
-        get: get
-    };*/
 });
 
 donorSpecific.controller('donorEventsAttendedTable', function($scope, $location, $window, $http) {

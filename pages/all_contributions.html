@@ -131,8 +131,7 @@
                                 <button type="button" ng-click="isRemove=!isRemove" class="btn btn-warning">Remove Entries</button>
                             </td>
                             <td style="padding-left:1em">
-                                <script> let confirmDelete = false; </script>
-                                <button type="button" ng-hide="!isRemove" class="btn btn-danger">Delete Entries</button>
+                                <button type="button" ng-hide="!isRemove" ng-click="removeEntries()" class="btn btn-danger">Delete Entries</button>
                             </td>
 
                         </tr>
@@ -164,15 +163,25 @@
                                     <tr ng-repeat="item in contributions"
                                         class="ng-cloak"
                                         ng-class="{'selected':$index == selectedRow}"
-                                        ng-click="setClickedRow($index)" ng-dblclick="goToContribution(item)">
+                                        ng-click="setClickedRow($index)">
 
-                                        <td>{{item.contrib_name}}</td>
-                                        <td>{{item.donor_name}}</td>
-                                        <td>{{item.contrib_type}}</td>
-                                        <td>{{item.contrib_appeal}}</td>
-                                        <td>{{item.contrib_notes}}</td>
-                                        <td class="text-center"><input type="checkbox" name="checkbox-inline" ng-hide="!isRemove"></td>
-                                        <!--<td> <button class="btn btn-danger" ng-hide="!isRemove" style="padding:1px 5px" ng-click="removeItem(item)"> x </button></td>-->
+                                        <!-- Each table cell is explicitly allowed to re-direct the user to the
+                                             entity's specific page except for the delete box cell. This is to address
+                                             an unintended bug where a user double clicks the checkbox and the page
+                                             is re-directed to the entity specific page. -->
+                                        <td ng-dblclick="goToContribution(item)">{{item.contrib_name}}</td>
+                                        <td ng-dblclick="goToContribution(item)">{{item.donor_name}}</td>
+                                        <td ng-dblclick="goToContribution(item)">{{item.contrib_type}}</td>
+                                        <td ng-dblclick="goToContribution(item)">{{item.contrib_appeal}}</td>
+                                        <td ng-dblclick="goToContribution(item)">{{item.contrib_notes}}</td>
+                                        <td class="text-center">
+                                            <input
+                                                type="checkbox"
+                                                name="checkbox-inline"
+                                                ng-hide="!isRemove"
+                                                ng-model="item.to_remove"
+                                                ng-init="item.to_remove = isRemove">
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
