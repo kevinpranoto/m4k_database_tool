@@ -62,6 +62,11 @@ allDonors.controller('donorsTable', function($scope, $location, $window, $http) 
             window.location.href = '../pages/all_donors.html';
         };
     };
+
+    $scope.addNewDonor = function() {
+        sessionStorage.setItem('isModify', false);
+        window.location.href = '../pages/donor_form.html';
+    };
 });
 
 donorSpecific.controller('donorEventsAttendedTable', function($scope, $location, $window, $http) {
@@ -168,79 +173,185 @@ donorSpecific.controller('donorBasicInfo', function($scope, $location, $window, 
 
         sessionStorage.setItem('donor_object', JSON.stringify(obj));
     });
+
+    $scope.editingDonor = function() { 
+        sessionStorage.setItem('isModify', true);
+        sessionStorage.setItem('entityID', id);
+        console.log("button clicked");
+        window.location.href = '../pages/donor_form.html';
+    };
+
 });
 
 var donorEntry = angular.module('donorEntry', []);
-donorEntry.controller('donorForm', function($scope) {
+donorEntry.controller('donorForm', function($scope, $http) {
+
     $scope.salutations = [
         'Mr.', 'Ms.', 'Mrs.', 'Dr.', 
         'Prof.', 'Rev.', 'Lady', 'Sir'
     ];
      $scope.phoneTypes = [
-        'Home', 'Work', 'Mobile'
+        'business', 'home', 'mobile'
     ];
      $scope.statuses = [
         'Active', 'Lax', 'Lost'
     ];
      $scope.addressTypes = [
-        'Residential', 'Business'
+        'home', 'business'
+    ];
+    $scope.types = [
+        'Individual', 'Company', 'Household'
     ];
     
     $scope.emails = [
-        {email_address: '', is_primary: ''}
+        {email_address: '', is_primary: 'false'}
     ];
     
     $scope.phones = [
-        {phone_type: '', phone_number: '', is_primary: ''}
+        {phone_type: '', phone_number: '', is_primary: 'false'}
     ];
 
     $scope.addresses = [
-        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: ''}
+        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 'false'}
     ];
 
-    $scope.companies = [
-        {company_name: '', is_primary: ''}
-    ];
+    $scope.companies = [];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({phone_type: '', phone_number: '', is_primary: ''});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 'false'});
 	};
     
 	$scope.addAddress = function() {
-        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: ''});
+        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 'false'});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({email_address: '', is_primary: ''});
+        $scope.emails.push({email_address: '', is_primary: 'false'});
     };
 
+    var isModify = sessionStorage.getItem('isModify');
+
+    if (isModify === 'true'){
+        var modId = sessionStorage.getItem('entityID');
+        console.log(modId);
+        var getStr = 'http://127.0.0.1:8081/donors/' + modId;
+        $http.get(getStr).then((res)=>
+        {
+            var obj = res.data;
+            console.log("now modifying");
+            console.log(obj);
+            var basic_info = obj.basic[0];
+
+            $scope.state = basic_info.donor_status;
+            $scope.type = basic_info.donor_type;
+            $scope.salutation = basic_info.salutation; 
+            $scope.firstName = basic_info.first_name;
+            $scope.lastName = basic_info.last_name;
+            $scope.alias = basic_info.alias;
+            $scope.company = obj.companies[0].company_name;
+
+            $scope.phones = [];
+            obj.phones.forEach(phone => {
+                $scope.phones.push(phone);
+            });
+
+            $scope.emails = [];
+            obj.emails.forEach(email => {
+                $scope.emails.push(email);
+            });
+
+            $scope.addresses = [];
+            obj.addresses.forEach(address => {
+                $scope.addresses.push(address);
+            });
+
+            sessionStorage.setItem('donor_object', JSON.stringify(obj));
+        });        
+    }
+        
+
     $scope.submitDonor = function() {
-        var name = $scope.salutation + " " + $scope.firstName + 
-            " " + $scope.lastName + "\nAlso known as " + $scope.alias;
-        console.log(name);
-        console.log($scope.phones[0].number);
-        var donor = {
-            donor_status: $scope.state,
-            donor_type: $scope.type,
-            salutation: $scope.salutation, 
-            first_name: $scope.firstName,
-            last_name: $scope.lastName,
-            alias: $scope.alias,
-            emails: [],
-            phones: [], 
-            addresses: [],
-            notes: $scope.notes
+
+        if (isModify === 'true') {
+            var donor = {
+                donor_status: $scope.state,
+                donor_type: $scope.type,
+                salutation: $scope.salutation, 
+                first_name: $scope.firstName,
+                last_name: $scope.lastName,
+                alias: $scope.alias,
+                emails: [],
+                phones: [], 
+                addresses: [],
+                companies: [
+                    {company_name: $scope.company, is_primary: 'true'}
+                ]
+            };
+            $scope.phones.forEach(element => {
+                element.is_primary = 'false';
+                donor.phones.push(element);
+            });
+            $scope.phones[0].is_primary = 'true';
+            
+            $scope.emails.forEach(element => {
+                element.is_primary = 'false';
+                donor.emails.push(element);
+            });
+            $scope.emails[0].is_primary = 'true';
+
+            $scope.addresses.forEach(element => {
+                element.is_primary = 'false';
+                donor.addresses.push(element);
+            });
+            $scope.addresses[0].is_primary = 'true';
+
+            var putStr = getStr;
+            $http.put(putStr, donor).then((res) => {
+                console.log(res);
+                window.location.href = '../pages/donor_basic_info.html';
+            });
         }
-        $scope.phones.forEach(element => {
-            donor.phones.push(element);
-        });
-        $scope.emails.forEach(element => {
-            donor.emails.push(element);
-        });
-        $scope.addresses.forEach(element => {
-            donor.addresses.push(element);
-        });
-        console.log(JSON.stringify(donor));
-        //send donor here to server
+        else {
+            var name = $scope.salutation + " " + $scope.firstName + 
+                " " + $scope.lastName + "\nAlso known as " + $scope.alias;
+            console.log(name);
+            console.log($scope.phones[0].number);
+            var donor = {
+                donor_status: $scope.state,
+                donor_type: $scope.type,
+                salutation: $scope.salutation, 
+                first_name: $scope.firstName,
+                last_name: $scope.lastName,
+                alias: $scope.alias,
+                emails: [],
+                phones: [], 
+                addresses: [],
+                companies: [
+                    {company_name: $scope.company, is_primary: 'true'}
+                ]
+            }
+            $scope.phones.forEach(element => {
+                donor.phones.push(element);
+            });
+            $scope.phones[0].is_primary = 'true';
+            
+            $scope.emails.forEach(element => {
+                donor.emails.push(element);
+            });
+            $scope.emails[0].is_primary = 'true';
+
+            $scope.addresses.forEach(element => {
+                donor.addresses.push(element);
+            });
+            $scope.addresses[0].is_primary = 'true';
+
+            
+            console.log(JSON.stringify(donor));
+            $http.post('http://127.0.0.1:8081/donors', donor).then((res) => {
+                console.log(res);
+                window.location.href = '../pages/all_donors.html';
+            });
+            //send donor here to server
+        }
     };	
 });
