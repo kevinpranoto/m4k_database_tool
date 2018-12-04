@@ -153,6 +153,11 @@
                 thanked: false
             };
 
+            if (newContribution.contrib_type !== 'money') {
+                newContribution.amount = null;
+                newContribution.payment_method = null;
+            }
+
             // Verify if the entire form is valid or not; if so, run through the procedures of stringifying JSON
             //  data, sending it to the back-end, notifying the user of entry being saved, and then re-route to
             //  main view of Contributions.
@@ -161,11 +166,14 @@
                 // Package the data into JSON format
                 let submit_data = JSON.stringify(newContribution);
 
-                // Send newContribution in JSON format to back-end and confirm saved entry
-                $http.post('127.0.0.1:8081/contributions', submit_data).success($window.alert("Entry saved!"));
-
+                $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
+                    {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    }
+                );
                 // Re-route user back to main contributions page
-                $window.location.href="../pages/all_contributions.html";
+                //$window.location.href="../pages/all_contributions.html";
             }
         };
 
@@ -196,7 +204,13 @@
                 let submit_data = JSON.stringify(newContribution);
 
                 // Send newContribution in JSON format to back-end and confirm saved entry
-                $http.post('127.0.0.1:8081/contributions', submit_data).success($window.alert("Entry saved!"));
+
+                $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
+                    {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    }
+                );
 
                 // Send an alert to the user to determine if user intends to add in additional entries
                 let newEntryPrompt = $window.confirm("Save current data and create blank entry?");

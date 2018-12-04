@@ -607,6 +607,7 @@ function getContributionNewId()
 
 var addContribution = function(body, callback)
 {
+	console.log(body);
 	getContributionNewId().then((newId) =>
 	{
 		return new Promise((resolve, reject) =>
@@ -631,6 +632,7 @@ var addContribution = function(body, callback)
 				return basicObj[matched];
 			});
 
+			console.log(patchedQuery);
 			con.query(patchedQuery, (err, rows) =>
 			{
 				if (err)
