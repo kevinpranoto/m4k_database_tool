@@ -129,7 +129,10 @@
                             </td>
                             <script> let isRemove = false; </script>
                             <td style="padding-left:1em">
-                                <button type="button" ng-click="isRemove=!isRemove" class="btn btn-danger">Remove Entries</button>
+                                <button type="button" ng-click="isRemove=!isRemove" class="btn btn-warning">Remove Entries</button>
+                            </td>
+                            <td style="padding-left:1em">
+                                <button type="button" ng-hide="!isRemove" ng-click="removeEntries()" class="btn btn-danger">Delete Entries</button>
                             </td>
                         </tr>
                     </table>
@@ -145,6 +148,7 @@
                                         <th>Patient ID</th>
                                         <th>Target Amount</th>
                                         <th>Pledge Date</th>
+                                        <th ng-hide="!isRemove">Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -153,10 +157,23 @@
                                         ng-class="{'selected':$index == selectedRow}"
                                         ng-click="setClickedRow($index)" ng-dblclick="goToPledge(item)">
 
-                                        <td>{{item.donor_name}}</td>
-                                        <td>{{item.patient_id}}</td>
-                                        <td>{{item.target_amount}}</td>
-                                        <td>{{item.pledge_date}}</td>
+                                        <!-- Each table cell is explicitly allowed to re-direct the user to the
+                                             entity's specific page except for the delete box cell. This is to address
+                                             an unintended bug where a user double clicks the checkbox and the page
+                                             is re-directed to the entity specific page. -->
+
+                                        <td ng-dblclick="goToPledge(item)">{{item.donor_name}}</td>
+                                        <td ng-dblclick="goToPledge(item)">{{item.patient_id}}</td>
+                                        <td ng-dblclick="goToPledge(item)">{{item.target_amount}}</td>
+                                        <td ng-dblclick="goToPledge(item)">{{item.pledge_date}}</td>
+                                        <td class="text-center">
+                                            <input
+                                                    type="checkbox"
+                                                    name="checkbox-inline"
+                                                    ng-hide="!isRemove"
+                                                    ng-model="item.to_remove"
+                                                    ng-init="item.to_remove = isRemove">
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

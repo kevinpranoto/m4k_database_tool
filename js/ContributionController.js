@@ -7,6 +7,7 @@
          * Retrieving data from the database to display onto the main view of a contribution
          * */
         $scope.contributions = [];
+
         console.log('Retrieving data for Contributions main view...');
         $http.get('http://127.0.0.1:8081/contributions').then((res)=>
         {
@@ -78,6 +79,29 @@
 
             // Re-route to the contribution's specific view with the ID cached for use in ContributionBasicInfoController
             window.location.href = '../pages/contribution_basic_info.html';
+        };
+
+        /**
+         * removeEntries()
+         * Sends delete requests to the backend server with a list of object ID's to be deleted.
+         * Also refreshes main page if anything gets deleted; if not, remains on same page.
+         */
+        $scope.removeEntries = function() {
+            let something_deleted = false;
+            $scope.contributions.forEach(cont => {
+                console.log(cont);
+                if (cont.to_remove === true) {
+                    let deletePrompt = $window.confirm("Delete " + cont.contrib_name + "? (Deletion cannot be reverted)");
+                    if (deletePrompt) {
+                        something_deleted = true;
+                        console.log("Deleting " + cont.contrib_id);
+                        $http.delete('http://127.0.0.1:8081/contributions/' + cont.contrib_id);
+                    }
+                }
+            });
+            if (something_deleted) {
+                window.location.href = '../pages/all_contributions.html';
+            }
         };
 
         ////////////////////////////////// FUNCTIONS FOR FORM SUBMISSION ///////////////////////////////////////

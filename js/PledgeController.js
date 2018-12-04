@@ -7,6 +7,7 @@
          * Retrieving data from the database to display onto the main view of a pledge
          * */
         $scope.pledges = [];
+
         console.log('Retrieving data for Pledges main view...');
         $http.get('http://127.0.0.1:8081/pledges').then((res)=>
         {
@@ -26,6 +27,30 @@
                 $scope.pledges.push(pledge);
             }
         });
+
+
+        /**
+         * removeEntries()
+         * Sends delete requests to the backend server with a list of object ID's to be deleted.
+         * Also refreshes main page if anything gets deleted; if not, remains on same page.
+         */
+        $scope.removeEntries = function() {
+            let something_deleted = false;
+            $scope.pledges.forEach(pled => {
+                if (pled.to_remove === true) {
+                    let deletePrompt = $window.confirm("Delete " + pled.donor_name + "'s pledge? (Deletion cannot be reverted)");
+                    if (deletePrompt) {
+                        something_deleted = true;
+                        console.log("Deleting " + pled.pledge_id);
+                        $http.delete('http://127.0.0.1:8081/pledges/' + pled.pledge_id);
+                    }
+                }
+            });
+            if (something_deleted) {
+                window.location.href = '../pages/all_pledges.html';
+            }
+        };
+
         /**
          * setClickedRow($index)
          * Function for retrieving the index of the item clicked on in a given data table.
