@@ -10,7 +10,8 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
         for (var i in res.data)
         {
             var obj = res.data[i];
-            var event = { id: obj.campaign_id, name: obj.campaign_name, date: obj.campaign_date, theme: obj.theme}
+            var dt = new Date(obj.campaign_date);
+            var event = { id: obj.campaign_id, name: obj.campaign_name, date: dt.toDateString(), theme: obj.theme}
             $scope.events.push(event);
         }
     });
@@ -88,7 +89,8 @@ eventSpecific.controller('eventBasicInfo', ($scope, $location, $window, $http) =
         $scope.name = basic_info.campaign_name;
         $scope.type = basic_info.campaign_type_name;
         $scope.theme = basic_info.theme;
-        $scope.date = basic_info.campaign_date;
+        var dt = new Date(basic_info.campaign_date);
+        $scope.date = dt.toDateString();
 
         sessionStorage.setItem('eventItem', JSON.stringify(res.data));
      });

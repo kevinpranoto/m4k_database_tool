@@ -10,7 +10,11 @@
     <meta name="author" content="">
 
     <title>Main View</title>
-
+    <style>
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none;
+        }
+    </style>
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -122,18 +126,22 @@
                 <div class="col-xs-1" style="padding-bottom:2em; position: relative; float: left">
                     <table>
                         <tr>
+                            <script> let isRemove = false; </script>
                             <td>
-                                <button type="button" class="btn btn-success" ng-click="redirectToPatientForm()">Add Entry</button>
+                                <button type="button" class="btn btn-success" onclick="location.href='patient_form.html'">Add Entry</button>
                             </td>
                             <td style="padding-left:1em">
-                                <button type="button" class="btn btn-danger" ng-click="removeRow($index)">Remove Entry</button>
+                                <button type="button" class="btn btn-warning" ng-click="isRemove=!isRemove">Remove Entries</button>
+                            </td>
+                            <td style="padding-left:1em">
+                                <button type="button" class="btn btn-danger" ng-click="removeEntries()" ng-hide="!isRemove">Delete Entries</button>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
             <!-- /.row -->
-            <div class="row">
+            <div class="row" ng-cloak>
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <!-- /.panel-heading -->
@@ -142,17 +150,13 @@
                                 <thead>
                                     <tr>
                                         <th>Patient ID</th>
-                                        <th>Needs</th>
-                                        <th>Notes</th>
+                                        <th ng-hide="!isRemove">Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr data-ng-repeat="patient in patient_members track by $index"
-                                            ng-class="{'selected':$index == selectedRow}"
-                                                ng-click="setClickedRow($index)">
-                                        <td>{{patient.id}}</td>
-                                        <td>{{patient.needs}}</td>
-                                        <td>{{patient.notes}}</td>
+                                    <tr class="odd gradeX" data-ng-repeat="patient in patients track by $index" ng-class="{'selected':$index == selectedRow}">   
+                                        <td ng-dblclick="goToPatient(patient)">{{patient.id}}</td>
+                                        <td class="text-center"><input type="checkbox" name="checkbox-inline" ng-hide="!isRemove" ng-model="patient.to_remove" ng-init="patient.to_remove = isRemove"></td>
                                     </tr>
                                 </tbody>
                             </table>
