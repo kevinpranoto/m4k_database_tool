@@ -60,10 +60,10 @@ function updateSupporterData(id, body, queryNum)
 	return new Promise((resolve, reject) =>
 	{
 		var basicObj = {
-			newLastName: '\'' + body.last_name + '\'',
-			newFirstName: '\'' + body.first_name + '\'',
-			newSalutation: '\'' + body.salutation + '\'',
-			newAlias: '\'' + body.alias + '\'',
+			newLastName: '\"' + body.last_name + '\"',
+			newFirstName: '\"' + body.first_name + '\"',
+			newSalutation: '\"' + body.salutation + '\"',
+			newAlias: '\"' + body.alias + '\"',
 			keyword: id
 		};
 
@@ -91,7 +91,7 @@ function updateSupporterData(id, body, queryNum)
 			{
 				var emailObj = {
 					newSupporterId: id,
-					newEmail: '\'' + email.email_address + '\'',
+					newEmail: '\"' + email.email_address + '\"',
 					newIsPrimary: email.is_primary
 				}
 
@@ -124,8 +124,8 @@ function updateSupporterData(id, body, queryNum)
 				{
 					var phoneObj = {
 						newSupporterId: id,
-						newPhoneType: '\'' + phone.phone_type + '\'',
-						newPhoneNumber: '\'' + phone.phone_number + '\'',
+						newPhoneType: '\"' + phone.phone_type + '\"',
+						newPhoneNumber: '\"' + phone.phone_number + '\"',
 						newIsPrimary: phone.is_primary
 					}
 
@@ -158,12 +158,12 @@ function updateSupporterData(id, body, queryNum)
 					{
 						var addressObj = {
 							newSupporterId: id,
-							newAddressType: '\'' + address.address_type + '\'',
-							newAddLine1: '\'' + address.address_line_1 + '\'',
-							newAddLine2: '\'' + address.address_line_2 + '\'',
-							newCity: '\'' + address.city + '\'',
-							newState: '\'' + address.state + '\'',
-							newZip: '\'' + address.zip_code + '\'',
+							newAddressType: '\"' + address.address_type + '\"',
+							newAddLine1: '\"' + address.address_line_1 + '\"',
+							newAddLine2: '\"' + address.address_line_2 + '\"',
+							newCity: '\"' + address.city + '\"',
+							newState: '\"' + address.state + '\"',
+							newZip: '\"' + address.zip_code + '\"',
 							newIsPrimary: address.is_primary
 						}
 
@@ -196,8 +196,8 @@ function updateDonorData(id, body, queryNum)
 	return new Promise((resolve, reject) =>
 	{
 		var fieldObj = {
-			newDonorType: '\'' + body.donor_type + '\'',
-			newStatus: '\'' + body.donor_status + '\'',
+			newDonorType: '\"' + body.donor_type + '\"',
+			newStatus: '\"' + body.donor_status + '\"',
 			keyword: id
 		};
 
@@ -224,7 +224,7 @@ function updateDonorData(id, body, queryNum)
 			{
 				var companyObj = {
 					newSupporterId: id,
-					newCompanyName: '\'' + company.company_name + '\'',
+					newCompanyName: '\"' + company.company_name + '\"',
 					newIsPrimary: company.is_primary
 				}
 
@@ -266,8 +266,8 @@ function updateStaffData(id, body, queryNum)
 	return new Promise((resolve, reject) =>
 	{
 		var fieldObj = {
-			newStaffType: '\'' + body.staff_type + '\'',
-			newStatus: '\'' + body.staff_status + '\'',
+			newStaffType: '\"' + body.staff_type + '\"',
+			newStatus: '\"' + body.staff_status + '\"',
 			keyword: id
 		};
 
@@ -317,7 +317,7 @@ var updateIndividualPatient = function(id, body, callback)
 			{
 				var needObj = {
 					newPatientId: id,
-					newItem: '\'' + need.item + '\''
+					newItem: '\"' + need.item + '\"'
 				}
 				
 				var patchedQuery = postQueries[7].replace(/newPatientId|newItem/gi, (matched) =>
@@ -347,8 +347,8 @@ var updateIndividualPledge = function(id, body, callback)
 	return new Promise((resolve, reject) =>
 	{
 		var basicObj = {
-			newPledgeDate: '\'' + body.pledge_date + '\'',
-			newTargetAmount: '\'' + body.target_amount + '\'',
+			newPledgeDate: '\"' + body.pledge_date + '\"',
+			newTargetAmount: '\"' + body.target_amount + '\"',
 			newIsBehind: body.is_behind,
 			keyword: id
 		};
@@ -376,8 +376,8 @@ var updateIndividualPledge = function(id, body, callback)
 			{
 				var installmentObj = {
 					newPledgeId: id,
-					newAmount: '\'' + installment.amount + '\'',
-					newInstallmentDate: '\'' + installment.installment_date + '\''
+					newAmount: '\"' + installment.amount + '\"',
+					newInstallmentDate: '\"' + installment.installment_date + '\"'
 				}
 
 				var patchedQuery = postQueries[8].replace(/newPledgeId|newAmount|newInstallmentDate/gi, (matched) =>
@@ -409,11 +409,11 @@ var updateIndividualCampaign = function(id, body, callback)
 	{
 		var basicObj = {
 			newCampaignId: body.campaign_id,
-			newCampaignName: '\'' + body.campaign_name + '\'',
+			newCampaignName: '\"' + body.campaign_name + '\"',
 			newCampaignTypeId: body.campaign_type_id,
 			newIsEvent: body.is_event,
-			newCampaignDate: '\'' + body.campaign_date + '\'',
-			newTheme: '\'' + body.theme + '\'',
+			newCampaignDate: '\"' + body.campaign_date + '\"',
+			newTheme: '\"' + body.theme + '\"',
 			keyword: id
 		};
 		
@@ -539,15 +539,15 @@ var updateIndividualContribution = function(id, body, callback)
 	{
 		var basicObj = {
 			newDonorId: body.donor_id,
-			newContribDate: '\'' + body.contrib_date + '\'',
-			newItemName: '\'' + body.item_name + '\'',
+			newContribDate: '\"' + body.contrib_date + '\"',
+			newItemName: '\"' + body.item_name + '\"',
 			newIsEventItem: body.is_event_item,
-			newContribType: '\'' + body.contrib_type + '\'',
+			newContribType: '\"' + body.contrib_type + '\"',
 			newAmount: body.amount,
-			newPayMethod: '\'' + body.pay_method + '\'',
-			newDestination: '\'' + body.destination + '\'',
-			newNotes: '\'' + body.notes + '\'',
-			newAppeal: '\'' + body.appeal + '\'',
+			newPayMethod: '\"' + body.pay_method + '\"',
+			newDestination: '\"' + body.destination + '\"',
+			newNotes: '\"' + body.notes + '\"',
+			newAppeal: '\"' + body.appeal + '\"',
 			newThanked: body.thanked,
 			keyword: id
 		};
@@ -558,6 +558,7 @@ var updateIndividualContribution = function(id, body, callback)
 		});
 
 		//Update basic information
+		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -577,7 +578,7 @@ var updateIndividualCampaignType = function(id, body, callback)
 	return new Promise((resolve, reject) =>
 	{
 		var campaignTypeObj = {
-			newCampaignTypeName: '\'' + body.campaign_type_name + '\'',
+			newCampaignTypeName: '\"' + body.campaign_type_name + '\"',
 			keyword: id
 		};
 

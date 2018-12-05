@@ -103,8 +103,56 @@
                 window.location.href = '../pages/all_contributions.html';
             }
         };
+    });
 
-        ////////////////////////////////// FUNCTIONS FOR FORM SUBMISSION ///////////////////////////////////////
+
+    /***
+     * New module and controller for handling the specific view of a contribution entity.
+     * @type {angular.Module}
+     */
+    let contributionSpecific = angular.module("contributionSpecific", []);
+    contributionSpecific.controller("ContributionBasicInfoController", function($scope, $filter, $http, $window) {
+
+        // Retrieve contribution ID from the cache
+        let id = sessionStorage.getItem('contributionID');
+
+        $scope.contributionID = id;
+        console.log(id);
+
+        // Retrieve contribution information using the contribution ID from cache
+        let getString = 'http://127.0.0.1:8081/contributions/' + id;
+        $http.get(getString).then((res)=>
+        {
+            // Grab the first and only item from the returned database object
+            let basic_info = res.data[0];
+            console.log(basic_info);
+
+            // Bind all the retrieved information attributes to local scope to display on contribution-specific view
+            $scope.item_name = basic_info.item_name;
+            $scope.donor_name = basic_info.first_name + " " + basic_info.last_name;
+            $scope.contrib_date = $filter('date')(basic_info.contrib_date, "MM-dd-yyyy");
+            $scope.is_event_item = basic_info.is_event_item;
+            $scope.contrib_type = basic_info.contrib_type;
+            $scope.amount = $filter('number')(basic_info.amount, 2);
+            $scope.pay_method = basic_info.pay_method;
+            $scope.destination = basic_info.destination;
+            $scope.appeal = basic_info.appeal;
+            $scope.thanked = basic_info.thanked;
+            $scope.notes = basic_info.notes;
+        });
+
+        $scope.editingContribution = function() {
+            sessionStorage.setItem('isModify', true);
+            sessionStorage.setItem('contributionID', id);
+            console.log("Modify Contribution button clicked");
+            $window.location.href = '../pages/contribution_form.html';
+        };
+    });
+
+
+    let contributionEntry = angular.module("contributionEntry", []);
+    contributionEntry.controller("ContributionFormController", function($scope, $http, $filter, $window) {
+
         /**
          * Fields and function specific to retrieving data from the input form fields to be packaged into JSON format
          */
@@ -130,7 +178,42 @@
         $scope.contribIsEventChoices = [
             'Yes', 'No'
         ];
-        
+
+        /***
+         * Section for retrieving data to populate into a form page if the user is attempting to modify
+         * an existing Contribution entry.
+         */
+        let is_modify = sessionStorage.getItem('isModify');
+        if (is_modify)
+        {
+            let mod_id = sessionStorage.getItem('contributionID');
+            console.log("mod_id: " + mod_id);
+
+            let get_URL = "http://127.0.0.1:8081/contributions/" + mod_id;
+            $http.get(get_URL).then((res)=> {
+                let obj = res.data[0];
+                console.log("Attempting to modify:");
+                console.log(obj);
+
+                $scope.item_name = obj.item_name;
+                $scope.is_event_item = obj.is_event_item;
+                $scope.contrib_type = obj.contrib_type;
+                $scope.amount = obj.amount;
+                $scope.pay_method = obj.pay_method;
+                $scope.destination = obj.destination;
+                $scope.notes = obj.notes;
+                $scope.appeal = obj.appeal;
+                $scope.thanked = obj.thanked;
+                $scope.supporter_id = obj.supporter_id;
+                $scope.last_name = obj.last_name;
+                $scope.first_name = obj.first_name;
+                $scope.contrib_date = new Date(obj.contrib_date);
+
+                sessionStorage.setItem("contribution_object", JSON.stringify(obj));
+            });
+        }
+        ////////////////////////////////// FUNCTIONS FOR FORM SUBMISSION ///////////////////////////////////////
+
         /**
          * submitContribution(ContributionForm.$valid)
          * Function to submit the data from a form page to be packaged into JSON format for back-end to store the data.
@@ -138,41 +221,77 @@
          * and performs a one-time submission to save the entry.
          */
         $scope.submitContribution = function(isValid) {
-            let cached_donor_id = sessionStorage.getItem('entityID');
-            let newContribution = {
-                donor_id: cached_donor_id,
-                contrib_date: $scope.contrib_date,
-                item_name: $scope.contrib_name,
-                is_event_item: $scope.is_event.choice,
-                contrib_type: $scope.contrib_type,
-                amount: $filter('number')($scope.contrib_amount, 2),
-                payment_method: $scope.contrib_payment_method,
-                destination: $scope.contrib_destination,
-                notes: $scope.contrib_notes,
-                appeal: $scope.contrib_appeal,
-                thanked: false
-            };
 
-            if (newContribution.contrib_type !== 'money') {
-                newContribution.amount = null;
-                newContribution.payment_method = null;
-            }
-
-            // Verify if the entire form is valid or not; if so, run through the procedures of stringifying JSON
-            //  data, sending it to the back-end, notifying the user of entry being saved, and then re-route to
-            //  main view of Contributions.
-            if (isValid)
+            //let contribution_object = sessionStorage.getItem('contribution_object');
+            // If this entry is for modifying existing entry,
+            if (is_modify === 'true')
             {
-                // Package the data into JSON format
-                let submit_data = JSON.stringify(newContribution);
+                let modifiedContribution = {
+                    donor_id: $scope.supporter_id,
+                    contrib_date: $scope.contrib_date,
+                    item_name: $scope.item_name,
+                    is_event_item: $scope.is_event_item,
+                    contrib_type: $scope.contrib_type,
+                    amount: $scope.amount,
+                    payment_method: $scope.pay_method,
+                    destination: $scope.destination,
+                    notes: $scope.notes,
+                    appeal: $scope.appeal,
+                    thanked: $scope.thanked
+                };
 
-                $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res)=>
-                {
-                    console.log(res);
+                console.log("Modified contribution:");
+                console.log(modifiedContribution);
+
+                if (isValid) {
+                    // Package the data into JSON format
+                    let submit_data = JSON.stringify(modifiedContribution);
+
+                    $http.put('http://127.0.0.1:8081/contributions/' + modifiedContribution.donor_id, submit_data).then((res) => {
+                        console.log(res);
+                    });
+
                     $window.alert("Entry saved!");
-                });
-                // Re-route user back to main contributions page
-                $window.location.href="../pages/all_contributions.html";
+                    // Re-route user back to main contributions page
+                    $window.location.href = "../pages/all_contributions.html";
+                }
+            }
+            else
+            {
+                let cached_donor_id = sessionStorage.getItem('entityID');
+                let newContribution = {
+                    donor_id: cached_donor_id,
+                    contrib_date: $scope.contrib_date,
+                    item_name: $scope.contrib_name,
+                    is_event_item: $scope.is_event_item,
+                    contrib_type: $scope.contrib_type,
+                    amount: $scope.amount,
+                    payment_method: $scope.payment_method,
+                    destination: $scope.destination,
+                    notes: $scope.contrib_notes,
+                    appeal: $scope.contrib_appeal,
+                    thanked: false
+                };
+
+                if (newContribution.contrib_type !== 'money') {
+                    newContribution.amount = null;
+                    newContribution.payment_method = null;
+                }
+
+                // Verify if the entire form is valid or not; if so, run through the procedures of stringifying JSON
+                //  data, sending it to the back-end, notifying the user of entry being saved, and then re-route to
+                //  main view of Contributions.
+                if (isValid) {
+                    // Package the data into JSON format
+                    let submit_data = JSON.stringify(newContribution);
+
+                    $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res) => {
+                        console.log(res);
+                        $window.alert("Entry saved!");
+                    });
+                    // Re-route user back to main contributions page
+                    $window.location.href = "../pages/all_contributions.html";
+                }
             }
         };
 
@@ -188,11 +307,11 @@
                 donor_id: cached_donor_id,
                 contrib_date: $scope.contrib_date,
                 item_name: $scope.contrib_name,
-                is_event_item: $scope.is_event.choice,
+                is_event_item: $scope.is_event_item,
                 contrib_type: $scope.contrib_type,
-                amount: $filter('number')($scope.contrib_amount, 2),
-                payment_method: $scope.contrib_payment_method,
-                destination: $scope.contrib_destination,
+                amount: $scope.amount,
+                payment_method: $scope.payment_method,
+                destination: $scope.destination,
                 notes: $scope.contrib_notes,
                 appeal: $scope.contrib_appeal,
                 thanked: false
@@ -236,41 +355,5 @@
                 }
             }
         };
-    });
-
-    /***
-     * New module and controller for handling the specific view of a contribution entity.
-     * @type {angular.Module}
-     */
-    let contributionSpecific = angular.module("contributionSpecific", []);
-    contributionSpecific.controller("ContributionBasicInfoController", function($scope, $filter, $http) {
-
-        // Retrieve contribution ID from the cache
-        let id = sessionStorage.getItem('contributionID');
-
-        $scope.contributionID = id;
-        console.log(id);
-
-        // Retrieve contribution information using the contribution ID from cache
-        let getString = 'http://127.0.0.1:8081/contributions/' + id;
-        $http.get(getString).then((res)=>
-        {
-            // Grab the first and only item from the returned database object
-            let basic_info = res.data[0];
-            console.log(basic_info);
-
-            // Bind all the retrieved information attributes to local scope to display on contribution-specific view
-            $scope.item_name = basic_info.item_name;
-            $scope.donor_name = basic_info.first_name + " " + basic_info.last_name;
-            $scope.contrib_date = $filter('date')(basic_info.contrib_date, "MM-dd-yyyy");
-            $scope.is_event_item = basic_info.is_event_item;
-            $scope.contrib_type = basic_info.contrib_type;
-            $scope.amount = $filter('number')(basic_info.amount, 2);
-            $scope.pay_method = basic_info.pay_method;
-            $scope.destination = basic_info.destination;
-            $scope.appeal = basic_info.appeal;
-            $scope.thanked = basic_info.thanked;
-            $scope.notes = basic_info.notes;
-        });
     });
 }());

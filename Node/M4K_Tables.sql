@@ -127,7 +127,7 @@ CREATE TABLE `Pledge` (
 `donor_id` int,
 `patient_id` int,
 `pledge_date` DATE,
-`target_amount` DECIMAL,
+`target_amount` DOUBLE,
 `is_behind` BOOL,
 PRIMARY KEY(pledge_id),
 FOREIGN KEY(donor_id) REFERENCES Donor(supporter_id) ON DELETE CASCADE,
@@ -137,7 +137,7 @@ FOREIGN KEY(patient_id) REFERENCES Patient(patient_id) ON DELETE CASCADE
 DROP TABLE IF EXISTS `Installments`;
 CREATE TABLE `Installments` (
 `pledge_id` int,
-`amount` DECIMAL,
+`amount` DOUBLE,
 `installment_date` DATE,
 FOREIGN KEY(pledge_id) REFERENCES Pledge(pledge_id) ON DELETE CASCADE
 );

@@ -96,8 +96,11 @@
                             <div class="panel-body">
                                 <div class="panel panel-info">
                                     <h1 class="page-header" style="padding-left:1ex">{{item_name}} Information </h1>
-                                    <div class="panel-heading">Info Panel</div>
-                                    <div class="panel-body">
+                                    <div class="panel-heading">Info Panel </div>
+                                    <td style="padding-left:1em">
+                                        <button type="button" ng-click="editingContribution()" class="btn btn-default">Modify Entry</button>
+                                    </td>
+                                    <div class="panel-body" ng-model="contribution_specific.items">
                                         <div>{{donor_name}}</div>
                                         <div>{{item_name}}</div>
                                         <div>{{amount}}</div>

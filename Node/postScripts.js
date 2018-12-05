@@ -62,10 +62,10 @@ function addSupporter(newId, body)
 	{
 		var basicObj = {
 			newSupporterId: newId,
-			newLastName: '\'' + body.last_name + '\'',
-			newFirstName: '\'' + body.first_name + '\'',
-			newSalutation: '\'' + body.salutation + '\'',
-			newAlias: '\'' + body.alias + '\''
+			newLastName: '\"' + body.last_name + '\"',
+			newFirstName: '\"' + body.first_name + '\"',
+			newSalutation: '\"' + body.salutation + '\"',
+			newAlias: '\"' + body.alias + '\"'
 		}
 
 		var patchedQuery = postQueries[0].replace(/newSupporterId|newLastName|newFirstName|newSalutation|newAlias|keyword/gi, (matched) =>
@@ -88,7 +88,7 @@ function addSupporter(newId, body)
 			{
 				var emailObj = {
 					newSupporterId: newId,
-					newEmail: '\'' + email.email_address + '\'',
+					newEmail: '\"' + email.email_address + '\"',
 					newIsPrimary: email.is_primary
 				}
 
@@ -115,8 +115,8 @@ function addSupporter(newId, body)
 				{
 					var phoneObj = {
 						newSupporterId: newId,
-						newPhoneType: '\'' + phone.phone_type + '\'',
-						newPhoneNumber: '\'' + phone.phone_number + '\'',
+						newPhoneType: '\"' + phone.phone_type + '\"',
+						newPhoneNumber: '\"' + phone.phone_number + '\"',
 						newIsPrimary: phone.is_primary
 					}
 
@@ -143,12 +143,12 @@ function addSupporter(newId, body)
 					{
 						var addressObj = {
 							newSupporterId: newId,
-							newAddressType: '\'' + address.address_type + '\'',
-							newAddLine1: '\'' + address.address_line_1 + '\'',
-							newAddLine2: '\'' + address.address_line_2 + '\'',
-							newCity: '\'' + address.city + '\'',
-							newState: '\'' + address.state + '\'',
-							newZip: '\'' + address.zip_code + '\'',
+							newAddressType: '\"' + address.address_type + '\"',
+							newAddLine1: '\"' + address.address_line_1 + '\"',
+							newAddLine2: '\"' + address.address_line_2 + '\"',
+							newCity: '\"' + address.city + '\"',
+							newState: '\"' + address.state + '\"',
+							newZip: '\"' + address.zip_code + '\"',
 							newIsPrimary: address.is_primary
 						}
 
@@ -186,8 +186,8 @@ var addDonor = function(body, callback)
 			{
 				var basicObj = {
 					newSupporterId: newId,
-					newDonorType: '\'' + body.donor_type + '\'',
-					newStatus: '\'' + body.donor_status + '\''
+					newDonorType: '\"' + body.donor_type + '\"',
+					newStatus: '\"' + body.donor_status + '\"'
 				}
 
 				var patchedQuery = postQueries[5].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
@@ -210,7 +210,7 @@ var addDonor = function(body, callback)
 					{
 						var companyObj = {
 							newSupporterId: newId,
-							newCompanyName: '\'' + company.company_name + '\'',
+							newCompanyName: '\"' + company.company_name + '\"',
 							newIsPrimary: company.is_primary
 						}
 
@@ -251,8 +251,8 @@ var addStaff = function(body, callback)
 			{
 				var basicObj = {
 					newSupporterId: newId,
-					newStaffType: '\'' + body.staff_type + '\'',
-					newStatus: '\'' + body.staff_status + '\''
+					newStaffType: '\"' + body.staff_type + '\"',
+					newStatus: '\"' + body.staff_status + '\"'
 				}
 
 				var patchedQuery = postQueries[6].replace(/newSupporterId|newStaffType|newStatus/gi, (matched) =>
@@ -323,7 +323,7 @@ var addPatient = function(body, callback)
 				{
 					var basicObj = {
 						newPatientId : newId,
-						newItem : '\'' + need.item + '\''
+						newItem : '\"' + need.item + '\"'
 					}
 			
 					var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
@@ -375,6 +375,7 @@ function getPledgeNewId()
 
 var addPledge = function(body, callback)
 {
+	console.log(body);
 	getPledgeNewId().then((newId) =>
 	{
 		//Add basic Pledge info
@@ -382,11 +383,11 @@ var addPledge = function(body, callback)
 		{
 			var basicObj = {
 				newPledgeId: newId,
-				newDonorId: '\'' + body.donor_id + '\'',
-				newPatientId: '\'' + body.patient_id + '\'',
-				newPledgeDate: '\'' + body.pledge_date + '\'',
-				newTargetAmount: '\'' + body.target_amount + '\'',
-				newIsBehind: '\'' + body.is_behind + '\''
+				newDonorId: '\"' + body.donor_id + '\"',
+				newPatientId: '\"' + body.patient_id + '\"',
+				newPledgeDate: '\"' + body.pledge_date + '\"',
+				newTargetAmount: body.target_amount,
+				newIsBehind: '\"' + body.is_behind + '\"'
 			}
 
 			var patchedQuery = postQueries[9].replace(/newPledgeId|newDonorId|newPatientId|newPledgeDate|newTargetAmount|newIsBehind/gi, (matched) =>
@@ -411,8 +412,8 @@ var addPledge = function(body, callback)
 					{
 						var basicObj = {
 							newPledgeId : newId,
-							newAmount : '\'' + installment.amount + '\'',
-							newInstallmentDate : '\'' + installment.installment_date + '\''
+							newAmount : '\"' + installment.amount + '\"',
+							newInstallmentDate : '\"' + installment.installment_date + '\"'
 						}
 						
 						var patchedQuery = postQueries[10].replace(/newPledgeId|newAmount|newInstallmentDate/gi, (matched) =>
@@ -472,11 +473,11 @@ var addCampaign = function(body, callback)
 		{
 			var basicObj = {
 				newCampaignId: newId,
-				newCampaignName: '\'' + body.campaign_name + '\'',
-				newCampaignTypeId: '\'' + body.campaign_type_id + '\'',
-				newIsEvent: '\'' + body.is_event + '\'',
-				newCampaignDate: '\'' + body.campaign_date + '\'',
-				newTheme: '\'' + body.theme + '\''
+				newCampaignName: '\"' + body.campaign_name + '\"',
+				newCampaignTypeId: '\"' + body.campaign_type_id + '\"',
+				newIsEvent: '\"' + body.is_event + '\"',
+				newCampaignDate: '\"' + body.campaign_date + '\"',
+				newTheme: '\"' + body.theme + '\"'
 			}
 
 			var patchedQuery = postQueries[11].replace(/newCampaignId|newCampaignName|newCampaignTypeId|newIsEvent|newCampaignDate|newTheme/gi, (matched) =>
@@ -615,15 +616,15 @@ var addContribution = function(body, callback)
 			var basicObj = {
 				newContribId: newId,
 				newDonorId: body.donor_id,
-				newContribDate: '\'' + body.contrib_date + '\'',
-				newItemName: '\'' + body.item_name + '\'',
+				newContribDate: '\"' + body.contrib_date + '\"',
+				newItemName: '\"' + body.item_name + '\"',
 				newIsEventItem: body.is_event_item,
-				newContribType: '\'' + body.contrib_type + '\'',
+				newContribType: '\"' + body.contrib_type + '\"',
 				newAmount: body.amount,
-				newPayMethod: '\'' + body.pay_method + '\'',
-				newDestination: '\'' + body.destination + '\'',
-				newNotes: '\'' + body.notes + '\'',
-				newAppeal: '\'' + body.appeal + '\'',
+				newPayMethod: '\"' + body.pay_method + '\"',
+				newDestination: '\"' + body.destination + '\"',
+				newNotes: '\"' + body.notes + '\"',
+				newAppeal: '\"' + body.appeal + '\"',
 				newThanked: body.thanked
 			}
 
@@ -678,7 +679,7 @@ var addCampaignType = function(body, callback)
 		{
 			var campaignTypeObj = {
 				newCampaignTypeId: newId,
-				newCampaignTypeName: '\'' + body.campaign_type_name + '\''
+				newCampaignTypeName: '\"' + body.campaign_type_name + '\"'
 			}
 
 			var patchedQuery = postQueries[16].replace(/newCampaignTypeId|newCampaignTypeName/gi, (matched) =>
