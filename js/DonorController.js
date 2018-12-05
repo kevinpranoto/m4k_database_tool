@@ -186,6 +186,8 @@ donorSpecific.controller('donorBasicInfo', function($scope, $location, $window, 
 var donorEntry = angular.module('donorEntry', []);
 donorEntry.controller('donorForm', function($scope, $http) {
 
+    $scope.isModify = sessionStorage.getItem('isModify');
+
     $scope.salutations = [
         'Mr.', 'Ms.', 'Mrs.', 'Dr.', 
         'Prof.', 'Rev.', 'Lady', 'Sir'
@@ -229,9 +231,8 @@ donorEntry.controller('donorForm', function($scope, $http) {
         $scope.emails.push({email_address: '', is_primary: 'false'});
     };
 
-    var isModify = sessionStorage.getItem('isModify');
 
-    if (isModify === 'true'){
+    if ($scope.isModify === 'true'){
         var modId = sessionStorage.getItem('entityID');
         console.log(modId);
         var getStr = 'http://127.0.0.1:8081/donors/' + modId;
@@ -272,7 +273,7 @@ donorEntry.controller('donorForm', function($scope, $http) {
 
     $scope.submitDonor = function() {
 
-        if (isModify === 'true') {
+        if ($scope.isModify === 'true') {
             var donor = {
                 donor_status: $scope.state,
                 donor_type: $scope.type,
