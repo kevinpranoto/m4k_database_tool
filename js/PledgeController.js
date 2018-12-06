@@ -21,11 +21,12 @@
                     supporter_id: obj.supporter_id,
                     donor_name: obj.first_name + " " + obj.last_name,
                     patient_id: obj.patient_id,
-                    target_amount: $filter('number')(obj.target_amount, 2),
+                    target_amount: "$" + $filter('number')(obj.target_amount, 2),
                     pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy')
                 };
                 $scope.pledges.push(pledge);
             }
+
         });
 
         /**
@@ -111,19 +112,34 @@
          * Function(s) related to gathering data from form pages and packaging them into JSON format
          */
         $scope.submitPledge = function(isValid) {
+
+            let installments_list = [
+                {
+                    amount: null,
+                    installment_date: null
+                }
+            ];
+
+            let donor_temp = $scope.donor_selected;
+            let id_temp = donor_temp.substring(0,1);
+
             let newPledge = {
-                donor_id: $scope.donor_dropdown.id,  ///// THIS NEEDS TO BE THE DONOR ID OF THE DROPDOWN ITEM
+                donor_id: id_temp,
                 patient_id: $scope.pledge_patient_id,
-                pledge_date: $scope.pledge_target_year,
-                target_amount: $filter('number')($scope.pledge_target_amount, 2),
+                pledge_date: $scope.pledge_date,
+                target_amount: $scope.pledge_target_amount,
                 is_behind: false,
-                installments: installments_list,
+                installments: installments_list
             };
+
+            console.log("TARGET AMOUNT::::: " + newPledge.target_amount);
 
             if (isValid)
             {
                 // Package the data into JSON format and send the current data in newContribution to database
                 let submit_data = JSON.stringify(newPledge);
+
+                console.log(submit_data);
 
                 $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
                 {
@@ -137,9 +153,6 @@
         };
 
         $scope.submitPledgeAndNew = function(isValid) {
-            let cached_donor_id = sessionStorage.getItem('entityID');
-            let cached_patient_id = sessionStorage.getItem('patientID');
-
             let installments_list = [
                 {
                     amount: null,
@@ -147,20 +160,26 @@
                 }
             ];
 
+            let donor_temp = $scope.donor_selected;
+            let id_temp = donor_temp.substring(0,1);
+
             let newPledge = {
-                donor_id: $scope.donor_dropdown.id,  ///// THIS NEEDS TO BE THE DONOR ID OF THE DROPDOWN ITEM
+                donor_id: id_temp,
                 patient_id: $scope.pledge_patient_id,
-                pledge_date: $scope.pledge_target_year,
-                target_amount: $filter('number')($scope.pledge_target_amount, 2),
+                pledge_date: $scope.pledge_date,
+                target_amount: $scope.pledge_target_amount,
                 is_behind: false,
-                installments: installments_list,
+                installments: installments_list
                 //date: $filter('date')($scope.pledge_date, "MM-dd-yyyy")     // Date is filtered to remove clock time
             };
+            console.log("new pledge donor id: " + newPledge.donor_id);
             console.log(newPledge);
 
             if (isValid) {
                 // Package the data into JSON format
                 let submit_data = JSON.stringify(newPledge);
+                console.log(submit_data);
+                
 
                 // Send an alert to the user to determine if user intends to add in additional entries
                 let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
@@ -170,7 +189,6 @@
 
                     $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
                     {
-                        console.log(res);
                         $window.alert("Entry saved!");
                     });
                     // Route user to data entry page
@@ -180,7 +198,6 @@
 
                     $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
                     {
-                        console.log(res);
                         $window.alert("Entry saved!");
                     });
                     $window.location.href = "../pages/all_pledges.html";
@@ -205,8 +222,6 @@
                     let obj = res.data[i];
                     let donor = {
                         id: obj.supporter_id,
-                        first_name: obj.first_name,
-                        last_name: obj.last_name,
                         name: obj.first_name + " " + obj.last_name
                     };
 
@@ -239,6 +254,19 @@
                 }
             });
             console.log($scope.temp_patient_list);
+        };
+
+        $scope.getDonorName = function (current_donor_id) {
+            if (current_donor_id !== null) {
+
+                $http.get('http://127.0.0.1:8081/pledges/' + current_donor_id).then((res) => {
+                    console.log("GRABBING A SPECIFIC DONOR DATA FOR PLEDGE FORM...")
+                    console.log(res.data);
+                    let temp_donor_name = res.data.donor.first_name + " " + res.data.donor.last_name;
+                    return temp_donor_name;
+                });
+            }
+            return null;
         };
     });
 
