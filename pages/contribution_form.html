@@ -115,15 +115,13 @@
                                         <tr>
                                             <td>
                                                 <label>Type</label>
-                                                <select name="contribution_type" class="form-control" ng-model="contrib_type" required>
-                                                    <option value="goods"> Goods </option>
-                                                    <option value="service"> Service </option>
-                                                    <option value="money"> Money </option>
+                                                <select class="form-control" ng-model="contrib_type" required>
+                                                    <option ng-repeat= "item in contribTypes">{{item}}</option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
-                                        <tr ng-hide="contrib_type != 'money'">
+                                        <tr>
                                             <td style="padding-top:1ex">
                                                 <label>Enter amount</label>
                                                 <input name="contribution_amount"
@@ -137,21 +135,19 @@
                                                 <div class="entry_error" ng-show="contribution_form.contribution_amount.$invalid && !contribution_form.contribution_amount.$pristine">Amount must only be up to two decimal places.</div>
                                             </td>
                                         </tr>
-                                        <tr ng-hide="contrib_type != 'money'">
+                                        <!-- ng-hide="contrib_type != 'money'"-->
+                                        <tr>
                                             <td style="padding-top:1ex">
                                                 <label>Select payment method</label>
                                                 <select name="pay_method" class="form-control" ng-model="payment_method">
-                                                    <option value="cash">Cash</option>
-                                                    <option value="creditCard">Credit Card</option>
-                                                    <option value="check">Check</option>
-                                                    <option value="stock">Stock</option>
+                                                    <option ng-repeat="item in contribPaymentMethods">{{item}}</option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td style="padding-top:1ex">
                                                 <label>Date Contributed</label>
-                                                <input class="form-control" type="date" value="2011-08-19" ng-model="contrib_date" required>
+                                                <input class="form-control" type="date" ng-model="contrib_date" required>
                                             </td>
                                         </tr>
                                     </table>
@@ -161,25 +157,14 @@
                                     <div class="form-group" style="padding-top:1em">
                                         <label>Appeal</label>
                                         <select class="form-control" ng-model="appeal" required>
-                                            <option>Direct Mail</option>
-                                            <option>Email Campaign</option>
-                                            <option>Radio Advertisement</option>
-                                            <option>Sponsorship</option>
-                                            <option>Fund-a-Need</option>
-                                            <option>Opportunity Ticket</option>
-                                            <option>Silent Auction</option>
-                                            <option>Live Auction</option>
+                                            <option ng-repeat="item in contribAppeals">{{item}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Destination</label>
                                         <select class="form-control" ng-model="destination" required>
-                                            <option>General</option>
-                                            <option>Miracle Manor</option>
-                                            <option>Basket of Miracles</option>
-                                            <option>Grant Program</option>
-                                            <option>Health & Wellness</option>
+                                            <option ng-repeat="item in contribDestinations">{{item}}</option>
                                         </select>
                                     </div>
 
@@ -188,10 +173,10 @@
                                         <table>
                                             <tr>
                                                 <td>
-                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" value="True" checked="checked" ng-model="is_event_item" required> Yes </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="Yes" ng-value="1" checked="checked" ng-model="is_event_item" required>Yes</label>
                                                 </td>
                                                 <td style = "padding-left: 1em">
-                                                    <label> <input type="radio" name="eventItemRadio1" id="No" value="False" ng-model="is_event_item" required> No </label>
+                                                    <label> <input type="radio" name="eventItemRadio1" id="No" ng-value="0" ng-model="is_event_item" required>No</label>
                                                 </td>
                                             </tr>
                                         </table>
