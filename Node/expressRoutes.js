@@ -24,6 +24,39 @@ app.use(cors(corsOptions));
 var jsonParser = bodyParser.json();
 
 
+//HANDLE LOGIN
+app.route('/login').post(jsonParser, (req, res, next) =>
+{
+	postQueries.validateLogin(req.body, (err, data) =>
+	{
+		if (err)
+		{
+			console.log('BAD LOGIN');
+			res.status(401).send(data);
+		}
+		else
+		{
+			console.log('Validated login');
+			res.status(200).send(data);	
+		}
+	});
+});
+
+//FOR KEVIN: LOGIN
+/*
+$http.get('http://127.0.0.1:8081/login', (res) =>
+{
+	if (res.statusCode == 200)
+	{
+		console.log('Success');
+	}
+	else
+	{
+		console.log('Failure');
+	}
+});
+*/
+
 //HANDLE GENERAL DONOR REQUESTS
 app.route('/donors').get((req, res) =>
 {
@@ -342,7 +375,7 @@ app.route('/contributions').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all contributions');
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) =>
 {
