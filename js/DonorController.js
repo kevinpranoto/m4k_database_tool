@@ -194,6 +194,86 @@ donorSpecific.controller('donorBasicInfo', function($scope, $location, $window, 
 });
 
 var donorEntry = angular.module('donorEntry', []);
+donorEntry.directive('phoneInput', function($filter, $browser) {
+    return {
+        require: 'ngModel',
+        link: function($scope, $element, $attrs, ngModelCtrl) {
+            var listener = function() {
+                var value = $element.val().replace(/[^0-9]/g, '');
+                $element.val($filter('tel')(value, false));
+            };
+
+            // This runs when we update the text field
+            ngModelCtrl.$parsers.push(function(viewValue) {
+                return viewValue.replace(/[^0-9]/g, '').slice(0,10);
+            });
+
+            // This runs when the model gets updated on the scope directly and keeps our view in sync
+            ngModelCtrl.$render = function() {
+                $element.val($filter('tel')(ngModelCtrl.$viewValue, false));
+            };
+
+            $element.bind('change', listener);
+            $element.bind('keydown', function(event) {
+                var key = event.keyCode;
+                // If the keys include the CTRL, SHIFT, ALT, or META keys, or the arrow keys, do nothing.
+                // This lets us support copy and paste too
+                if (key == 91 || (15 < key && key < 19) || (37 <= key && key <= 40)){
+                    return;
+                }
+                $browser.defer(listener); // Have to do this or changes don't get picked up properly
+            });
+
+            $element.bind('paste cut', function() {
+                $browser.defer(listener);
+            });
+        }
+
+    };
+});
+donorEntry.filter('tel', function () {
+    return function (tel) {
+        if (!tel) { return ''; }
+
+        var value = tel.toString().trim().replace(/^\+/, '');
+
+        if (value.match(/[^0-9]/)) {
+            return tel;
+        }
+
+        var country, city, number;
+
+        switch (value.length) {
+            case 1:
+            case 2:
+            case 3:
+                city = value;
+                break;
+
+            default:
+                city = value.slice(0, 3);
+                number = value.slice(3);
+        }
+
+        if(number){
+            if(number.length>3){
+                number = number.slice(0, 3) + '-' + number.slice(3,7);
+            }
+            else{
+                number = number;
+            }
+            tel = city + "-" + number;
+            console.log(tel);
+            return ("" + city + "-" + number).trim();
+        }
+        else{
+            tel = city;
+            console.log(tel);
+            return "" + city;
+        }
+
+    };
+});
 donorEntry.controller('donorForm', function($scope, $http) {
     $scope.myMod = {isModify: 'true'};
     $scope.myMod.isModify = sessionStorage.getItem('isModify');
@@ -216,29 +296,29 @@ donorEntry.controller('donorForm', function($scope, $http) {
     ];
     
     $scope.emails = [
-        {email_address: '', is_primary: 0}
+        {email_address: '', is_primary: 1}
     ];
     
     $scope.phones = [
-        {phone_type: '', phone_number: '', is_primary: 0}
+        {phone_type: '', phone_number: '', is_primary: 1}
     ];
 
     $scope.addresses = [
-        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 0}
+        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1}
     ];
 
     $scope.companies = [];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 0});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 1});
 	};
     
 	$scope.addAddress = function() {
-        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 0});
+        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({email_address: '', is_primary: 0});
+        $scope.emails.push({email_address: '', is_primary: 1});
     };
 
     $scope.primaryPhone = function(phone) {
@@ -340,6 +420,15 @@ donorEntry.controller('donorForm', function($scope, $http) {
             $scope.addresses.forEach(element => {
                 donor.addresses.push(element);
             });
+            if (donor.phones.length == 0) {
+                donor.phones.push({phone_number: '', phone_type: '', is_primary: 1});
+            }
+            if (donor.emails.length == 0) {
+                donor.emails.push({email_address: '', is_primary: 1});
+            }
+            if (donor.addresses.length == 0) {
+                donor.address.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
+            }
 
             var putStr = getStr;
             $http.put(putStr, donor).then((res) => {
@@ -351,7 +440,6 @@ donorEntry.controller('donorForm', function($scope, $http) {
             var name = $scope.salutation + " " + $scope.firstName + 
                 " " + $scope.lastName + "\nAlso known as " + $scope.alias;
             console.log(name);
-            console.log($scope.phones[0].number);
             var donor = {
                 donor_status: $scope.state,
                 donor_type: $scope.type,
@@ -378,6 +466,15 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 donor.addresses.push(element);
             });
 
+            if (donor.phones.length == 0) {
+                donor.phones.push({phone_number: '', phone_type: '', is_primary: 1});
+            }
+            if (donor.emails.length == 0) {
+                donor.emails.push({email_address: '', is_primary: 1});
+            }
+            if (donor.addresses.length == 0) {
+                donor.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
+            }
             
             console.log(JSON.stringify(donor));
             $http.post('http://127.0.0.1:8081/donors', donor).then((res) => {

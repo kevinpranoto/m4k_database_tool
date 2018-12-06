@@ -152,7 +152,7 @@
                                                     <option ng-repeat="type in phoneTypes">{{type}}</option>
                                                 </select>
                                             </div>
-                                            <input class="form-control" placeholder="Enter phone number here" ng-model="phone.phone_number">
+                                            <input class="form-control" placeholder="Enter phone number here" ng-model="phone.phone_number" phone-input>
                                             <button ng-click="phones.splice($index, 1)" aria-label="Remove">Remove phone</button>
                                         </div>
                                         <button type="button" ng-click="addPhone()">Add Phone</button>

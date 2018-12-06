@@ -239,23 +239,23 @@ staffEntry.controller('staffForm', function($scope, $http) {
     ];
 
     $scope.emails = [
-        {email_address: '', is_primary: 0}
+        {email_address: '', is_primary: 1}
     ];
     
     $scope.phones = [
-        {phone_type: '', phone_number: '', is_primary: 0}
+        {phone_type: '', phone_number: '', is_primary: 1}
     ];
 
     $scope.addresses = [
-        {address_type: 'home', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 0}
+        {address_type: 'home', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1}
     ];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 0});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 1});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({email_address: '', is_primary: 0});
+        $scope.emails.push({email_address: '', is_primary: 1});
     };
 
     $scope.primaryPhone = function(phone) {
@@ -323,6 +323,15 @@ staffEntry.controller('staffForm', function($scope, $http) {
                     staff.phones[staff.phones.length - 1].phone_number = JSON.parse(JSON.stringify(str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6)));
                 }
             });
+            if (staff.phones.length == 0) {
+                staff.phones.push({phone_number: '', phone_type: '', is_primary: 1});
+            }
+            if (staff.emails.length == 0) {
+                staff.emails.push({email_address: '', is_primary: 1});
+            }
+            if (staff.addresses.length == 0) {
+                staff.address.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
+            }
             $http.put(putStr, staff).then((res) => {
                 console.log(res);
                 window.location.href = '../pages/staff_basic_info.html';
@@ -356,6 +365,15 @@ staffEntry.controller('staffForm', function($scope, $http) {
             $scope.addresses.forEach(element => {
                 staff.addresses.push(element);
             });
+            if (staff.phones.length == 0) {
+                staff.phones.push({phone_number: '', phone_type: '', is_primary: 1});
+            }
+            if (staff.emails.length == 0) {
+                staff.emails.push({email_address: '', is_primary: 1});
+            }
+            if (staff.addresses.length == 0) {
+                staff.address.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
+            }
             console.log(JSON.stringify(staff));
             //send donor here to server
             $http.post('http://127.0.0.1:8081/staff', staff).then((res) => {
