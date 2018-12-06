@@ -113,6 +113,8 @@ donorSpecific.controller('donorContributionsTable', function($scope, $location, 
     });
 
     $scope.redirectToContributionForm = function() {
+        sessionStorage.setItem('isModify', false);
+        sessionStorage.setItem('entityID', id);
         window.location.href = '../pages/contribution_form.html';
     };
 });
