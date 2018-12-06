@@ -30,7 +30,7 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../js/staffEntry.js"></script>
+    <script src="../js/StaffController.js"></script>
 </head>
 
 <body>
@@ -71,10 +71,11 @@
         <!-- /.navbar-top-links -->
     </nav>
 
-    <div id="page-wrapper">
+    <div id="page-wrapper" ng-controller="staffForm">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">New Staff Entry</h1>
+                <h1 class="page-header" ng-hide="myMod.isModify == 'true'">New Staff Entry</h1>
+                <h1 class="page-header" ng-hide="myMod.isModify == 'false'">Edit Staff</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -85,46 +86,56 @@
                     <div class="panel-heading">
                         Staff Information
                     </div>
-                    <div class="panel-body" ng-controller="staffForm">
+                    <div class="panel-body">
                         <div class="row">
                             <form role="form">
                                 <div class="col-lg-6">
                                     <div class="form-group" >
+                                        <label>Type</label>
+                                        <select class="form-control" ng-model="type">
+                                            <option ng-repeat="type in types">{{type}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" >
                                         <label>Status</label>
                                         <select class="form-control" ng-model="state">
-                                            <option ng-repeat="status in statuses" selected="Active">{{status}}</option>
+                                            <option ng-repeat="status in statuses">{{status}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
                                         <label>First name / Middle name</label>
-                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName">
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Last name</label>
-                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName">
+                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName" required>
                                     </div>
 
                                     <div class="form-group">
-                                    <div class="form-group email-group" ng-repeat="email in emails">
-                                        <label>E-mail {{$index + 1}}</label>
-                                        <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.address">
-                                        <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
-                                    </div>
-                                    <button type="button" ng-click="addEmail()">Add email</button>
+                                        <div class="form-group email-group" ng-repeat="email in emails">
+                                            <label>E-mail {{$index + 1}}</label>
+                                            <br>
+                                            <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail"> Primary Email</label>
+                                            <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" required>
+                                            <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
+                                        </div>
+                                        <button type="button" ng-click="addEmail()">Add email</button>
                                     </div>
 
                                     <div class="form-group">
                                         <div class="form-group" ng-repeat="phone in phones">
                                             <label>Phone {{$index + 1}}</label>
+                                            <br>
+                                            <label><input type="radio" ng-click="primaryPhone(phone)" name="isPrimaryPhone" ng-checked="phone.is_primary == 1"> Primary Phone</label>
                                             <div class="dropdown">
-                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.type">
-                                                    <option ng-repeat="type in phoneTypes">{{type}}</option>
+                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type">
+                                                    <option ng-repeat="phoneType in phoneTypes">{{phoneType}}</option>
                                                 </select>
                                             </div>
-                                            <input class="form-control" placeholder="Enter phone number here" ng-model="phone.number">
-                                            <button ng-click="phones.splice($index, 1)" aria-label="Remove">Remove phone</button>
+                                            <input type="tel" class="form-control" placeholder="Enter phone number here" phone-input ng-model="phone.phone_number" required ng-init="phone.phone_number = phone.phone_number|tel">
+                                        <button ng-click="phones.splice($index, 1)" aria-label="Remove">Remove phone</button>
                                         </div>
                                         <button type="button" ng-click="addPhone()">Add Phone</button>
                                     </div>
@@ -133,35 +144,28 @@
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
-                                    <div class="form-group">
+                                    <div class="form-group" ng-repeat="address in addresses">
                                         <div class="form-group" style="padding-top: 1em">
                                             <label style="padding-right: 1em">Address Type:   </label>
-                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.type" ng-value="addressType">{{addressType}}</label>
+                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType">{{addressType}}</label>
                                         </div>
                                             <div class="form-group">
                                             <label>Street</label>
-                                            <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="address.street">
+                                            <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="address.address_line_1" required>
                                         </div>
                                             <div class="form-group">
                                             <label>City</label>
-                                            <input class="form-control" placeholder="Enter city here" ng-model="address.city">
+                                            <input class="form-control" placeholder="Enter city here" ng-model="address.city" required>
                                         </div>
                                             <div class="form-group">
                                             <label>State</label>
-                                            <input class="form-control" placeholder="Enter state here" ng-model="address.state">
+                                            <input class="form-control" placeholder="Enter state here" ng-model="address.state" required>
                                         </div>
                                             <div class="form-group">
                                             <label>Zip Code</label>
-                                            <input class="form-control" placeholder="Enter zip code here" ng-model="address.zip">
+                                            <input class="form-control" placeholder="Enter zip code here" ng-model="address.zip_code" required>
                                         </div>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                            <label>Additional Notes</label>
-                                            <textarea class="form-control" rows="3" ng-model="notes"></textarea>
-                                    </div>
-                                          <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
-                                         to default to the right side of the page -->
                                 </div>
                             </form>
                             <!-- /.col-lg-6 (nested) -->
@@ -169,7 +173,7 @@
                         <div class="form-group" style="position: relative; float: right">
                             <button type="reset" class="btn btn-warning">Reset</button>
                             <button type="submit" class="btn btn-success" ng-click="submitStaff()">Save</button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitStaff()">Save & New</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitStaff()" ng-hide="myMod.isModify == 'true'">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>

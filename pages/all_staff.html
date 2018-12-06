@@ -123,7 +123,7 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <div class="row" >
+            <div class="row" ng-cloak>
                 <div class="col-xs-1" style="padding-bottom:2em; position: relative; float: left">
                     <table>
                         <tr>
@@ -132,7 +132,7 @@
                             </td>-->
                             <script> let isRemove = false; </script>
                             <td>
-                                <button type="button" class="btn btn-success" onclick="location.href='staff_form.html'">Add Entry</button>
+                                <button type="button" class="btn btn-success" ng-click="redirectToStaffForm()">Add Entry</button>
                             </td>
                             <td style="padding-left:1em">
                                 <button type="button" ng-click="isRemove=!isRemove" class="btn btn-warning" >Remove Entries</button>
