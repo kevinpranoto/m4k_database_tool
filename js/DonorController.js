@@ -74,6 +74,16 @@ donorSpecific.controller('donorEventsAttendedTable', function($scope, $location,
     var name = sessionStorage.getItem('entityName');
 
     $scope.entityName = name;
+    $scope.event_items = [];
+
+    var obj = JSON.parse(sessionStorage.getItem('donor_object'));
+});
+
+donorSpecific.controller('donorEventsAttendedTable', function($scope, $location, $window, $http) {
+    var id = sessionStorage.getItem('entityID');
+    var name = sessionStorage.getItem('entityName');
+
+    $scope.entityName = name;
     $scope.events = [];
 
     var obj = JSON.parse(sessionStorage.getItem('donor_object'));
@@ -185,12 +195,12 @@ donorSpecific.controller('donorBasicInfo', function($scope, $location, $window, 
 
 var donorEntry = angular.module('donorEntry', []);
 donorEntry.controller('donorForm', function($scope, $http) {
-
-    $scope.isModify = sessionStorage.getItem('isModify');
+    $scope.myMod = {isModify: 'true'};
+    $scope.myMod.isModify = sessionStorage.getItem('isModify');
 
     $scope.salutations = [
         'Mr.', 'Ms.', 'Mrs.', 'Dr.', 
-        'Prof.', 'Rev.', 'Lady', 'Sir'
+        'Prof.', 'Rev.', 'Lady', 'Sir', 'President'
     ];
      $scope.phoneTypes = [
         'business', 'home', 'mobile'
@@ -206,33 +216,64 @@ donorEntry.controller('donorForm', function($scope, $http) {
     ];
     
     $scope.emails = [
-        {email_address: '', is_primary: 'false'}
+        {email_address: '', is_primary: 0}
     ];
     
     $scope.phones = [
-        {phone_type: '', phone_number: '', is_primary: 'false'}
+        {phone_type: '', phone_number: '', is_primary: 0}
     ];
 
     $scope.addresses = [
-        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 'false'}
+        {address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 0}
     ];
 
     $scope.companies = [];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 'false'});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 0});
 	};
     
 	$scope.addAddress = function() {
-        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 'false'});
+        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 0});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({email_address: '', is_primary: 'false'});
+        $scope.emails.push({email_address: '', is_primary: 0});
+    };
+
+    $scope.primaryPhone = function(phone) {
+        $scope.phones.forEach(element => {
+            if (element == phone) {
+                element.is_primary = 1;
+            }
+            else {
+                element.is_primary = 0;
+            }
+        });
+    };
+    $scope.primaryEmail = function(email) {
+        $scope.emails.forEach(element => {
+            if (element == email) {
+                element.is_primary = 1;
+            }
+            else {
+                element.is_primary = 0;
+            }
+        });
+    };
+    $scope.primaryAddress = function(address) {
+        $scope.addresses.forEach(element => {
+            if (element == address) {
+                element.is_primary = 1;
+            }
+            else {
+                element.is_primary = 0;
+            }
+        });
     };
 
 
-    if ($scope.isModify === 'true'){
+    if ($scope.myMod.isModify === 'true'){
         var modId = sessionStorage.getItem('entityID');
         console.log(modId);
         var getStr = 'http://127.0.0.1:8081/donors/' + modId;
@@ -273,7 +314,7 @@ donorEntry.controller('donorForm', function($scope, $http) {
 
     $scope.submitDonor = function() {
 
-        if ($scope.isModify === 'true') {
+        if ($scope.myMod.isModify === 'true') {
             var donor = {
                 donor_status: $scope.state,
                 donor_type: $scope.type,
@@ -285,26 +326,20 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 phones: [], 
                 addresses: [],
                 companies: [
-                    {company_name: $scope.company, is_primary: 'true'}
+                    {company_name: $scope.company, is_primary: 1}
                 ]
             };
             $scope.phones.forEach(element => {
-                element.is_primary = 'false';
                 donor.phones.push(element);
             });
-            $scope.phones[0].is_primary = 'true';
             
             $scope.emails.forEach(element => {
-                element.is_primary = 'false';
                 donor.emails.push(element);
             });
-            $scope.emails[0].is_primary = 'true';
 
             $scope.addresses.forEach(element => {
-                element.is_primary = 'false';
                 donor.addresses.push(element);
             });
-            $scope.addresses[0].is_primary = 'true';
 
             var putStr = getStr;
             $http.put(putStr, donor).then((res) => {
@@ -334,17 +369,14 @@ donorEntry.controller('donorForm', function($scope, $http) {
             $scope.phones.forEach(element => {
                 donor.phones.push(element);
             });
-            $scope.phones[0].is_primary = 'true';
             
             $scope.emails.forEach(element => {
                 donor.emails.push(element);
             });
-            $scope.emails[0].is_primary = 'true';
 
             $scope.addresses.forEach(element => {
                 donor.addresses.push(element);
             });
-            $scope.addresses[0].is_primary = 'true';
 
             
             console.log(JSON.stringify(donor));

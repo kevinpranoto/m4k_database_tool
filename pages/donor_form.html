@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>New Donor Entry Form</title>
+    <title>Donor Form</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -74,8 +74,8 @@
     <div id="page-wrapper" ng-controller="donorForm" ng-cloak>
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header" ng-hide="isModify == 'false'">New Donor Entry</h1>
-                <h1 class="page-header" ng-hide="isModify == 'true'">Edit Donor</h1>
+                <h1 class="page-header" ng-hide="myMod.isModify == 'true'">New Donor Entry</h1>
+                <h1 class="page-header" ng-hide="myMod.isModify == 'false'">Edit Donor</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -134,6 +134,8 @@
                                     <div class="form-group">
                                     <div class="form-group email-group" ng-repeat="email in emails">
                                         <label>E-mail {{$index + 1}}</label>
+                                        <br>
+                                        <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1"> Primary Email</label>
                                         <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address">
                                         <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
                                     </div>
@@ -143,6 +145,8 @@
                                     <div class="form-group">
                                         <div class="form-group" ng-repeat="phone in phones">
                                             <label>Phone {{$index + 1}}</label>
+                                            <br>
+                                            <label><input type="radio" ng-click="primaryPhone(phone)" name="isPrimaryPhone" ng-checked="phone.is_primary == 1"> Primary Phone</label>
                                             <div class="dropdown">
                                                 <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type">
                                                     <option ng-repeat="type in phoneTypes">{{type}}</option>
@@ -161,6 +165,8 @@
                                     <div class="form-group">
                                     <div class='form-group address-group' ng-repeat="address in addresses" style="padding-bottom: 1em">
                                         <label>Address {{$index + 1}}</label>
+                                        <br>
+                                        <label><input type="radio" ng-click="primaryAddress(address)" name="isPrimaryAddress" ng-checked="address.is_primary == 1"> Primary Address</label>
                                         <div class="form-group" style="padding-top: 1em">
                                             <label style="padding-right: 1em">Address Type:   </label>
                                             <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType">{{addressType}}</label>
@@ -194,7 +200,7 @@
                         <div class="form-group" style="position: relative; float: right">
                             <button type="reset" class="btn btn-warning">Reset</button>
                             <button type="submit" class="btn btn-success" ng-click="submitDonor()">Save</button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitDonor()" ng-hide="isModify == 'true'">Save & New</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitDonor()" ng-hide="myMod.isModify == 'true'">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>
