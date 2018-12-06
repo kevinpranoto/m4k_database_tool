@@ -28,7 +28,7 @@ allPatients.controller('PatientController', function($scope, $location, $window,
     }
 
     $scope.goToPatient = function(patient) {
-        sessionStorage.setItem('patientID', patient.id);
+        sessionStorage.setItem('entityID', patient.id);
         window.location.href = '../pages/patient_basic_info.html';
     };
 
@@ -60,6 +60,11 @@ allPatients.controller('PatientController', function($scope, $location, $window,
         };
     };
 
+    $scope.addNewPatient = function() {
+        sessionStorage.setItem('isModify', false);
+        window.location.href = '../pages/patient_form.html';
+    };
+
     return {
         set: set,
         get: get
@@ -67,13 +72,13 @@ allPatients.controller('PatientController', function($scope, $location, $window,
 });
 
 patientSpecific.controller('patientBasicInfo', ($scope, $location, $window, $http) => {
-    $scope.id = sessionStorage.getItem('patientID');
-    var req = 'http://127.0.0.1:8081/patients/' + sessionStorage.getItem('patientID');
+    var id = sessionStorage.getItem('entityID');
+    var req = 'http://127.0.0.1:8081/patients/' + id;
 
+    $scope.id = id;
     $http.get(req).then((res) => {
         var obj = res.data;
         $scope.needs = [];
-        console.log(obj);
 
         obj.needs.forEach(need => {
             $scope.needs.push(need.item);
@@ -81,10 +86,16 @@ patientSpecific.controller('patientBasicInfo', ($scope, $location, $window, $htt
 
         sessionStorage.setItem('patientItem', JSON.stringify(obj));
     });
+
+    $scope.editingPatient = function() { 
+        sessionStorage.setItem('isModify', true);
+        sessionStorage.setItem('entityID', id);
+        window.location.href = '../pages/patient_form.html';
+    };
 });
 
 patientSpecific.controller('patientPledges', ($scope, $location, $window, $http) => {
-    $scope.id = sessionStorage.getItem('patientID');
+    $scope.id = sessionStorage.getItem('entityID');
     $scope.pledges = [];
     var obj = JSON.parse(sessionStorage.getItem('patientItem'));
     
@@ -95,24 +106,69 @@ patientSpecific.controller('patientPledges', ($scope, $location, $window, $http)
     });
 });
 
-patientEntry.controller('patientForm', function($scope) {
+patientEntry.controller('patientForm', function($scope, $http) {
+    $scope.myMod = {isModify: 'true'};
+    $scope.myMod.isModify = sessionStorage.getItem('isModify');
+
     $scope.needs = [
         {item: ''}
     ];
 
     $scope.addNeed = function() {
         $scope.needs.push({item: ''});
-	};
+    };
+    
+    if ($scope.myMod.isModify === 'true'){
+        var modId = sessionStorage.getItem('entityID');
+        var getStr = 'http://127.0.0.1:8081/patients/' + modId;
+        $http.get(getStr).then((res)=> {
+           var obj = res.data;
+           
+           $scope.needs = [];
+           obj.needs.forEach(need => {
+               $scope.needs.push(need);
+           });
+
+           sessionStorage.setItem('patient_object', JSON.stringify(obj));
+        });
+    }
 
     $scope.submitPatient = function() {
-        var patient = {
-            needs: []
-        };
+        if ($scope.myMod.isModify === 'true') {
+            var patient = {
+                needs: [],
+            };
 
-        $scope.needs.forEach(n => {
-            patient.needs.push(n);
-        });
+            $scope.needs.forEach(need => {
+                patient.needs.push(need);
+            });
+            
+            if (patient.needs.length == 0) {
+                patient.needs.push({item: ''});
+            }
 
-        JSON.stringify(patient)
+            var putStr = getStr;
+            $http.put(putStr, patient).then((res) => {
+                window.location.href = '../pages/patient_basic_info.html';
+            });
+        }
+        else {
+            var patient = {
+                needs: [],
+            };
+
+            $scope.needs.forEach(need => {
+                patient.needs.push(need);
+            });
+            
+            if (patient.needs.length == 0) {
+                patient.needs.push({item: ''});
+            }
+            
+            $http.post('http://127.0.0.1:8081/patients', ).then((res) => {
+                console.log(res);
+                window.location.href = '../pages/all_patients.html';
+            });
+        }
     };	
 });

@@ -1,12 +1,13 @@
-var allStaff = angular.module('allEvents', []);
+var allEvents = angular.module('allEvents', []);
 var eventSpecific = angular.module('eventSpecific', []);
 
-allStaff.controller('EventController', function($scope, $location, $window, $http) {
+allEvents.controller('EventController', function($scope, $location, $window, $http) {
 
     $scope.events = [];
 
     $http.get('http://127.0.0.1:8081/events').then((res) =>
     {
+        console.log(res.data);
         for (var i in res.data)
         {
             var obj = res.data[i];
@@ -16,15 +17,15 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
         }
     });
 
-    let staffID = {};
+    let eventID = {};
 
     function set(data) {
-        staffID = data;
+        eventID = data;
     }
 
     function get() {
         console.log("called");
-        return staffID;
+        return eventID;
     }
 
     /* Function for providing the ability to highlight any given entry in a data table. */
@@ -38,17 +39,6 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
     *  the "Add Entry" button. */
     $scope.redirectToEventForm = function(){
         $window.location.href = '../pages/event_form.html';
-    };
-
-    $scope.removeRow = function(index){
-
-        // Prompt user to confirm deletion; clicking OK returns true, Cancel returns false.
-        let deleteRow = $window.confirm("Are you sure you want to delete this entry?");
-
-        // If user clicked OK, handle the deletion.
-        if (deleteRow) {
-            events.splice(index, 1);     // Just a placeholder, but will need code to update DB via Node.js?
-        }
     };
 
     $scope.goToEvent = function(event) {
@@ -73,6 +63,11 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
         };
     };
 
+    $scope.addNewEvent = function() {
+        sessionStorage.setItem('isModify', false);
+        window.location.href = '../pages/event_form.html';
+    };
+
     return {
         set: set,
         get: get
@@ -80,6 +75,7 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
 });
 
 eventSpecific.controller('eventBasicInfo', ($scope, $location, $window, $http) => {
+     var id = sessionStorage.getItem('entityID');
      var req = 'http://127.0.0.1:8081/events/' + sessionStorage.getItem('entityID');
      
      $http.get(req).then((res)=>{
@@ -94,6 +90,12 @@ eventSpecific.controller('eventBasicInfo', ($scope, $location, $window, $http) =
 
         sessionStorage.setItem('eventItem', JSON.stringify(res.data));
      });
+
+     $scope.editingEvent = function() { 
+        sessionStorage.setItem('isModify', true);
+        sessionStorage.setItem('entityID', id);
+        window.location.href = '../pages/event_form.html';
+    };
 });
 
 eventSpecific.controller('eventAvailableItems', ($scope, $location, $window, $http) => {
@@ -122,4 +124,55 @@ eventSpecific.controller('eventAttendees', ($scope, $location, $window, $http) =
         var attendee = { attendee_name: staff.first_name + ' ' + staff.last_name, attendee_type: 'Staff - ' + staff.staff_type };
         $scope.attendees.push(attendee);
     });
+});
+
+var eventEntry = angular.module('eventEntry', []);
+eventEntry.controller('eventForm', function($scope, $http) {
+    $scope.myMod = {isModify: 'true'};
+    $scope.myMod.isModify = sessionStorage.getItem('isModify');
+
+    if ($scope.myMod.isModify === 'true'){
+        var modId = sessionStorage.getItem('entityID');
+        var getStr = 'http://127.0.0.1:8081/events/' + modId;
+        $http.get(getStr).then((res)=>
+        {
+            var obj = res.data;
+
+            $scope.name = obj.campaign_name;
+            $scope.date = obj.campaign_date;
+            $scope.theme = obj.theme;
+
+            sessionStorage.setItem('event_object', JSON.stringify(obj));
+        });
+    } 
+
+    $scope.submitEvent = function() {
+
+        if ($scope.myMod.isModify === 'true') {
+            var event = {
+                campaign_name: $scope.name,
+                campaign_date: $scope.date,
+                theme: $scope.theme
+            };
+            
+            var putStr = getStr;
+            $http.put(putStr, event).then((res) => {
+                window.location.href = '../pages/event_basic_info.html';
+            });
+        }
+        else {
+            var event = {
+                name: $scope.name,
+                date: $scope.date,
+                theme: $scope.theme
+            };
+            
+            console.log(JSON.stringify(event));
+            $http.post('http://127.0.0.1:8081/events', event).then((res) => {
+                console.log(res);
+                window.location.href = '../pages/all_events.html';
+            });
+            //send event here to server
+        }
+    };	
 });
