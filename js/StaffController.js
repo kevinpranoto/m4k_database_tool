@@ -330,7 +330,7 @@ staffEntry.controller('staffForm', function($scope, $http) {
                 staff.emails.push({email_address: '', is_primary: 1});
             }
             if (staff.addresses.length == 0) {
-                staff.address.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
+                staff.address.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1 });
             }
             $http.put(putStr, staff).then((res) => {
                 console.log(res);
