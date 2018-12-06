@@ -31,6 +31,30 @@ var postQueries =
 /*queryNum = 16: POST(ADD) CampaignType*/ "INSERT INTO CampaignType (campaign_type_id, campaign_type_name) VALUES (newCampaignTypeId, newCampaignTypeName)"
 ];
 
+var validateLogin = function(body, callback)
+{
+	var testCon = mysql.createConnection({
+		host:"m4k-database.c947krbzy1fm.us-west-1.rds.amazonaws.com",
+		user: body.username,
+		password: body.password,
+		database: "m4k_database"
+	});
+
+	testCon.connect((err) =>
+	{
+		if (err)
+		{
+			console.log('Failed to connect');
+			callback(err);
+		}
+		else
+		{
+				console.log('Connected');
+			callback();
+		}
+	});
+
+}
 
 function getSupporterNewId()
 {
@@ -700,6 +724,7 @@ var addCampaignType = function(body, callback)
 	});
 }
 
+exports.validateLogin = validateLogin;
 exports.addDonor = addDonor;
 exports.addStaff = addStaff;
 exports.addPatient = addPatient;
