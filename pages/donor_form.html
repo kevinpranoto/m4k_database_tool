@@ -169,6 +169,7 @@
                                         <label><input type="radio" ng-click="primaryAddress(address)" name="isPrimaryAddress" ng-checked="address.is_primary == 1"> Primary Address</label>
                                         <div class="form-group" style="padding-top: 1em">
                                             <label style="padding-right: 1em">Address Type:   </label>
+                                            <br>
                                             <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType">{{addressType}}</label>
                                         </div>
                                             <div class="form-group">
