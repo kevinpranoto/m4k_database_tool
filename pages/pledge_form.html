@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="allPledges">
+<html lang="en" ng-app="pledgeEntry">
 
 <head>
 
@@ -35,7 +35,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
 </head>
 
-<body class="ng-cloak" ng-controller="PledgeController">
+<body class="ng-cloak" ng-controller="PledgeFormController">
 
 <div id="wrapper">
     <!-- Navigation -->
@@ -101,10 +101,11 @@
                                         <select class="form-control"
                                                 ng-init="getDropdownDonors()"
                                                 name="name"
+                                                ng-disabled="is_modify_form === 'true'"
                                                 ng-model="donor_selected"
                                                 required>
                                             <!-- name dropdown not working anymore...-->
-                                            <option ng-repeat="donor in temp_donor_list">{{donor.id + " : " + donor.name}}</option>
+                                            <option ng-repeat="donor in temp_donor_list" ng-value="donor.id">{{donor.id + " : " + donor.name}}</option>
                                         </select>
                                         <div class="entry_error" ng-show="pledge_form.name.$invalid && !pledge_form.name.$pristine">Please select a donor to associate with pledge.</div>
                                     </div>
@@ -114,9 +115,10 @@
                                         <select class="form-control"
                                                ng-init="getDropdownPatients()"
                                                name="id"
+                                               ng-disabled="is_modify_form === 'true'"
                                                ng-model="pledge_patient_id"
                                                required>
-                                            <option ng-repeat="item in temp_patient_list | unique:'id'" value="{{item.id}}">{{item.id}}</option>
+                                            <option ng-repeat="item in temp_patient_list | unique:'patient_id'">{{item.patient_id}}</option>
                                         </select>
                                         <div class="entry_error" ng-show="pledge_form.id.$invalid && !pledge_form.id.$pristine">Please select a patient ID to associate with pledge.</div>
                                     </div>
@@ -129,6 +131,7 @@
                                                name="target_amount"
                                                type="number"
                                                ng-model="pledge_target_amount"
+                                               ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
                                                placeholder="Enter pledge amount here (e.g. 1000 or 1000.00)"
                                                required>
                                         <div class="entry_error" ng-show="pledge_form.target_amount.$invalid && !pledge_form.target_amount.$pristine">Amount must only be up to two decimal places.</div>
@@ -149,7 +152,7 @@
                                     <div class="form-group" style="position: relative; float: right">
                                         <button type="reset" class="btn btn-warning">Reset</button>
                                         <button type="submit" class="btn btn-success" ng-disabled="pledge_form.$invalid" ng-click="submitPledge(pledge_form.$valid)">Save</button>
-                                        <button type="submit" class="btn btn-primary" ng-disabled="pledge_form.$invalid" ng-click="submitPledgeAndNew(pledge_form.$valid)">Save & New</button>
+                                        <button type="submit" class="btn btn-primary" ng-disabled="pledge_form.$invalid" ng-hide="is_modify_form === 'true'" ng-click="submitPledgeAndNew(pledge_form.$valid)">Save & New</button>
                                     </div>
                                 </div>
                             </form>

@@ -122,7 +122,7 @@
                                         </tr>
                                         <!-- View will hide Money-specific fields until the Money dropdown option is selected-->
                                         <tr>
-                                            <td style="padding-top:1ex">
+                                            <td style="padding-top:1ex" ng-hide="contrib_type != 'Money'">
                                                 <label>Enter amount</label>
                                                 <input name="contribution_amount"
                                                        type="number"
@@ -137,9 +137,9 @@
                                         </tr>
                                         <!-- ng-hide="contrib_type != 'money'"-->
                                         <tr>
-                                            <td style="padding-top:1ex">
+                                            <td style="padding-top:1ex" ng-hide="contrib_type != 'Money'">
                                                 <label>Select payment method</label>
-                                                <select name="pay_method" class="form-control" ng-model="payment_method">
+                                                <select  name="pay_method" class="form-control" ng-model="payment_method">
                                                     <option ng-repeat="item in contribPaymentMethods">{{item}}</option>
                                                 </select>
                                             </td>
@@ -194,8 +194,10 @@
 
                                         <!-- Buttons are inaccessible/"greyed out" until the entirety of the form is considered valid.
                                               Validation occurs when submitContribution(AndNew) function(s) are invoked -->
-                                        <button type="submit" class="btn btn-success" ng-disabled="contribution_form.$invalid" ng-click="submitContribution(contribution_form.$valid)">Save</button>
-                                        <button type="submit" class="btn btn-primary" ng-disabled="contribution_form.$invalid" ng-click="submitContributionAndNew(contribution_form.$valid)">Save & Add New</button>
+                                        <button type="submit" class="btn btn-success" ng-disabled="contribution_form.$invalid" ng-click="submitContribution(contribution_form.$valid, '')">Save</button>
+                                        <button type="submit" class="btn btn-primary" ng-hide="is_modify_form === 'true'"
+                                                ng-disabled="contribution_form.$invalid"
+                                                ng-click="submitContribution(contribution_form.$valid, 'toForm')">Save & Add New</button>
                                     </div>
                                 </div>
                             </form>
