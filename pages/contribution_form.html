@@ -78,7 +78,8 @@
     <div id="page-wrapper" >
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">New Contribution Entry</h1>
+                <h1 class="page-header" ng-hide="is_modify_form == 'true'">New Contribution Entry</h1>
+                <h1 class="page-header" ng-hide="is_modify_form == 'false'">Edit Contribution</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>

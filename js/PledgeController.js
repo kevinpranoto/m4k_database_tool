@@ -129,6 +129,7 @@
         let getString = 'http://127.0.0.1:8081/pledges/' + id;
         $http.get(getString).then((res)=>
         {
+            console.log(res);
             // Grab the first and only item from the returned database object
             let general_info = res.data.basic_info[0];
             let patient_id = res.data.patient_id;
@@ -174,6 +175,17 @@
 
         // Retrieve isModify value to determine whether certain fields should be disabled or not during modify
         $scope.is_modify_form = sessionStorage.getItem('isModify');
+
+        $scope.temp_installments = [
+            {
+                amount: '',
+                date: ''
+            }
+        ];
+
+        $scope.addInstallment = function() {
+            $scope.temp_installments.push({amount: '', date: '',});
+        };
 
         /***
          * getDropdownDonors()
@@ -233,6 +245,7 @@
                     console.log("GRABBING A SPECIFIC DONOR DATA FOR PLEDGE FORM...");
                     console.log(res.data);
                     let donor_name = res.data.donor.first_name + " " + res.data.donor.last_name;
+
                     return donor_name;
                 });
             }
@@ -264,7 +277,8 @@
                 let patient_id = res.data.patient_id;
                 let donor_info = res.data.donor[0];
                 let temp_installments_list = res.data.installments;
-                let name = donor_info.first_name + " " + donor_info.last_name;
+                let pledge_donor_name = donor_info.first_name + " " + donor_info.last_name;
+                $scope.pledge_donor_name_for_basic_info = pledge_donor_name;
 
                 // Bind all the retrieved information attributes to local scope to display on pledge modification view
                 /***
@@ -272,13 +286,14 @@
                  * Make sure the LHS has matching ng-model name in the form html file
                  * Make sure the RHS has matching attribute name from database
                  */
-                $scope.donor_selected = don_id + " : " + name;
+
+                $scope.donor_selected = don_id;
                 $scope.pledge_patient_id = pat_id;
                 $scope.pledge_target_amount = general_info.target_amount;
                 $scope.pledge_date = new Date(general_info.pledge_date);
 
-                console.log($scope.donor_selected);
-                console.log($scope.pledge_patient_id);
+                console.log("dnr slctd:" + $scope.donor_selected);
+                console.log("pldg pat id:" + $scope.pledge_patient_id);
 
                 // Need to get the list of installments from the DB retrieval!!
 
@@ -290,19 +305,18 @@
         /**
          * Function(s) related to gathering data from form pages and packaging them into JSON format
          */
-        $scope.submitPledge = function(isValid) {
+        $scope.submitPledge = function(isValid, saveAndNew) {
 
             let temp_pledge_id = sessionStorage.getItem('pledgeID');
-            // Extract the donor ID from the selected donor drop-down selection string
 
             // Check if the data is an existing entry to be modified
             if (is_modify == "true")
             {
                 let modifiedPledge = {
+                    donor_selected: $scope.donor_selected,
                     pledge_date: $scope.pledge_date,
                     target_amount: $scope.pledge_target_amount,
                     is_behind: false,
-
                     // NEED TO RETRIEVE THE LIST OF INSTALLMENTS FROM THE DB RETRIEVAL
                     // installments: $scope.installments_list
                 };
@@ -323,7 +337,7 @@
                     $window.alert("Entry saved!");
 
                     // Re-route user back to main pledges page
-                    $window.location.href = "../pages/all_pledges.html";
+                    $window.location.href = "../pages/pledge_basic_info.html";
                 }
             }
             else // this is a new entry, so begin new data form submission
@@ -357,11 +371,18 @@
                     $window.alert("Entry saved!");
 
                     // Re-route user back to main pledges page
-                    $window.location.href = "../pages/all_pledges.html";
+                    if (saveAndNew == 'toForm') {
+                        sessionStorage.setItem('isModify', false);
+                        $window.location.href = "../pages/pledge_form.html";
+                    }
+                    else {
+                        $window.location.href = "../pages/all_pledges.html";
+                    }
                 }
             }
         };
 
+        /**
         $scope.submitPledgeAndNew = function(isValid) {
             let installments_list = [
                 {
@@ -412,5 +433,6 @@
                 }
             }
         };
+         */
     });
 }());
