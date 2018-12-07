@@ -324,51 +324,52 @@ function getPatientNewId()
 
 var addPatient = function(body, callback)
 {
-	getPatientNewId().then((newId) =>
+	console.log(body);
+	// Add basic Patient info
+	return new Promise((resolve, reject) =>
 	{
-		// Add basic Patient info
+		var patchedQuery = postQueries[7].replace("newPatientId", body.patient_id);
+
+		console.log(patchedQuery);
+		con.query(patchedQuery, (err, rows) =>
+		{
+			if (err) {
+				throw err;
+			}
+			resolve(rows);
+		});
+	}).then((res) =>
+	{
+		//Add Patient needs info
 		return new Promise((resolve, reject) =>
 		{
-			var patchedQuery = postQueries[7].replace("newPatientId", newId);
-
-			con.query(patchedQuery, (err, rows) =>
+			console.log(body.needs);
+			body.needs.forEach((need) =>
 			{
-				if (err) {
-					throw (error);
+				console.log(need);
+				var basicObj = {
+					newPatientId : body.patient_id,
+					newItem : '\"' + need.item + '\"'
 				}
-				resolve (rows);
+			
+				var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
+				{
+					return basicObj[matched];
+				});
+					
+				con.query(patchedQuery, (err, rows) =>
+				{
+					if (err) {
+						throw (err);
+					}
+					resolve (rows);
+				});
 			});
+
+			resolve();
 		}).then((res) =>
 		{
-			//Add Patient needs info
-			return new Promise((resolve, reject) =>
-			{
-				body.needs.forEach((need) =>
-				{
-					var basicObj = {
-						newPatientId : newId,
-						newItem : '\"' + need.item + '\"'
-					}
-			
-					var patchedQuery = postQueries[8].replace(/newPatientId|newItem/gi, (matched) =>
-					{
-						return basicObj[matched];
-					});
-					
-					con.query(patchedQuery, (err, rows) =>
-					{
-						if (err) {
-							throw (err);
-						}
-						resolve (rows);
-					});
-				});
-
-				resolve();
-			}).then((res) =>
-			{
-				callback(res);
-			});
+			callback(res);
 		});
 	});
 }
@@ -490,6 +491,7 @@ function getCampaignNewId()
 
 var addCampaign = function(body, callback)
 {
+	console.log(body);
 	getCampaignNewId().then((newId) =>
 	{
 		//Add basic Campaign info

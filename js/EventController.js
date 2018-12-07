@@ -152,27 +152,41 @@ eventEntry.controller('eventForm', function($scope, $http) {
             var event = {
                 campaign_name: $scope.name,
                 campaign_date: $scope.date,
-                theme: $scope.theme
+                theme: $scope.theme,
+                is_event: 1,
+                campaign_type_id: '',
+                donors: [],
+                staff: [],
+                contributions: []
             };
             
-            var putStr = getStr;
+            var putStr = 'http://127.0.0.1:8081/campaigns/' + modId;
             $http.put(putStr, event).then((res) => {
                 window.location.href = '../pages/event_basic_info.html';
             });
         }
         else {
             var event = {
-                name: $scope.name,
-                date: $scope.date,
-                theme: $scope.theme
+                campaign_name: $scope.name,
+                campaign_date: $scope.date,
+                theme: $scope.theme,
+                is_event: 1,
+                campaign_type_id: 1,
+                donors: [],
+                staff: [],
+                contributions: []
             };
-            
-            console.log(JSON.stringify(event));
-            $http.post('http://127.0.0.1:8081/events', event).then((res) => {
-                console.log(res);
+
+            JSON.stringify(event);
+            $http.post('http://127.0.0.1:8081/campaigns', event).then((res) => {
                 window.location.href = '../pages/all_events.html';
             });
             //send event here to server
+
+            $http.post('http://127.0.0.1:8081/donors', donor).then((res) => {
+                console.log(res);
+                window.location.href = '../pages/all_donors.html';
+            });
         }
     };	
 });

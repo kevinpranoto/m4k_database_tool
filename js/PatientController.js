@@ -139,6 +139,7 @@ patientEntry.controller('patientForm', function($scope, $http) {
                 needs: [],
             };
 
+            console.log('put');
             $scope.needs.forEach(need => {
                 patient.needs.push(need);
             });
@@ -154,19 +155,20 @@ patientEntry.controller('patientForm', function($scope, $http) {
         }
         else {
             var patient = {
-                needs: [],
+                patient_id: $scope.pid,
+                needs: []
             };
 
             $scope.needs.forEach(need => {
-                patient.needs.push(need);
+                patient.needs.push({ item: need.item });
             });
             
             if (patient.needs.length == 0) {
                 patient.needs.push({item: ''});
             }
             
-            $http.post('http://127.0.0.1:8081/patients', ).then((res) => {
-                console.log(res);
+            console.log(patient);
+            $http.post('http://127.0.0.1:8081/patients', patient).then((res) => {
                 window.location.href = '../pages/all_patients.html';
             });
         }
