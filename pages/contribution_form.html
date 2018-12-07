@@ -116,9 +116,10 @@
                                         <tr>
                                             <td>
                                                 <label>Type</label>
-                                                <select class="form-control" ng-model="contrib_type" required>
+                                                <select class="form-control" name="type" ng-model="contrib_type" required>
                                                     <option ng-repeat= "item in contribTypes">{{item}}</option>
                                                 </select>
+                                                <div class="entry_error" ng-show="contribution_form.type.$invalid && !contribution_form.type.$pristine">Contribution type is required.</div>
                                             </td>
                                         </tr>
                                         <!-- View will hide Money-specific fields until the Money dropdown option is selected-->

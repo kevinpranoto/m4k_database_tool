@@ -452,3 +452,9 @@ table.dataTable thead .sorting:after {
 .invalid {
   border:1px solid #f00;
 }
+
+#fixedbutton {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+}
