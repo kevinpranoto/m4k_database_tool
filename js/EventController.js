@@ -116,6 +116,7 @@ eventSpecific.controller('eventAttendees', ($scope, $location, $window, $http) =
 
     var obj = JSON.parse(sessionStorage.getItem('eventItem'));
 
+
     obj.donors.forEach(donor => {
         var attendee = { attendee_name: donor.first_name + ' ' + donor.last_name, attendee_type: 'Donor'};
         $scope.attendees.push(attendee);
@@ -125,6 +126,11 @@ eventSpecific.controller('eventAttendees', ($scope, $location, $window, $http) =
         var attendee = { attendee_name: staff.first_name + ' ' + staff.last_name, attendee_type: 'Staff - ' + staff.staff_type };
         $scope.attendees.push(attendee);
     });
+
+    $scope.redirectToAttendeeForm() = function() {
+        sessionStorage.setItem('entityID', obj.basic[0].campaign_id);
+        $window.location.href = "../pages/event_attendance_form.html";
+    };
 });
 
 var eventEntry = angular.module('eventEntry', []);
