@@ -137,7 +137,7 @@ eventAttendance.controller('EventAttendanceForm', function($scope, $location, $w
 
         console.log(objToSubmit);
         $http.put('http://127.0.0.1:8081/campaigns/' + $scope.eventObj.basic[0].campaign_id, objToSubmit).then((res) => {
-            $window.location.href="../pages/event_attendees.html";
+            $window.location.href="../pages/all_events.html";
             console.log(res);
         });
     };
@@ -241,7 +241,7 @@ eventAttendance.controller('EventItemsForm', function($scope, $location, $window
         console.log(objToSubmit);
         $http.put('http://127.0.0.1:8081/campaigns/' + $scope.eventObj.basic[0].campaign_id, objToSubmit).then((res) => {
             console.log(res);
-            $window.location.href="../pages/event_available_items.html";
+            $window.location.href="../pages/all_events.html";
         });
     };
 
