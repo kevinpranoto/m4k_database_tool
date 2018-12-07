@@ -12,7 +12,7 @@ allEvents.controller('EventController', function($scope, $location, $window, $ht
         {
             var obj = res.data[i];
             var dt = new Date(obj.campaign_date);
-            var event = { id: obj.campaign_id, name: obj.campaign_name, date: dt.toDateString(), theme: obj.theme}
+            var event = { id: obj.campaign_id, name: obj.campaign_name, date: dt.toDateString(), theme: obj.theme, campaign_type_name: obj.campaign_type_name};
             $scope.events.push(event);
         }
     });
@@ -141,8 +141,9 @@ eventEntry.controller('eventForm', function($scope, $http) {
     $scope.myMod = {isModify: 'true'};
     $scope.myMod.isModify = sessionStorage.getItem('isModify');
 
-    $http.get('http://127.0.0.1:8081/campaigntype').then((res)=>{
-        $scope.campaigns = res.data;
+    $http.get('http://127.0.0.1:8081/campaigntype').then((res)=>{    
+        var obj = res.data;
+        $scope.campaigns = obj;
     });
 
     if ($scope.myMod.isModify === 'true'){
@@ -156,26 +157,28 @@ eventEntry.controller('eventForm', function($scope, $http) {
             $scope.date = new Date(obj.campaign_date);
             $scope.theme = obj.theme;
             $scope.campaign_type_id = obj.campaign_type_id;
+            $scope.campaign_name = obj.campaign_type_name;
 
             sessionStorage.setItem('event_object', JSON.stringify(obj));
         });
-    } 
+    }
 
     $scope.submitEvent = function() {
-
+        
         if ($scope.myMod.isModify === 'true') {
             var event = {
                 campaign_name: $scope.name,
                 campaign_date: $scope.date,
                 theme: $scope.theme,
                 is_event: 1,
-                campaign_type_id: 1,
+                campaign_type_id: $scope.campaign_info,
                 donors: [],
                 staff: [],
                 contributions: []
             };
             
             var putStr = 'http://127.0.0.1:8081/campaigns/' + modId;
+            console.log(event);
             $http.put(putStr, event).then((res) => {
                 window.location.href = '../pages/event_basic_info.html';
             });
@@ -186,22 +189,18 @@ eventEntry.controller('eventForm', function($scope, $http) {
                 campaign_date: $scope.date,
                 theme: $scope.theme,
                 is_event: 1,
-                campaign_type_id: 1,
+                campaign_type_id: $scope.campaign_info,
                 donors: [],
                 staff: [],
                 contributions: []
             };
+            console.log($scope.campaign_info);
 
-            JSON.stringify(event);
+            console.log(JSON.stringify(event));
             $http.post('http://127.0.0.1:8081/campaigns', event).then((res) => {
                 window.location.href = '../pages/all_events.html';
             });
             //send event here to server
-
-            $http.post('http://127.0.0.1:8081/donors', donor).then((res) => {
-                console.log(res);
-                window.location.href = '../pages/all_donors.html';
-            });
         }
     };	
 });
