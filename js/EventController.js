@@ -110,7 +110,7 @@ eventSpecific.controller('eventAvailableItems', ($scope, $location, $window, $ht
     });
     $scope.redirectToEventItemsForm = function() {
         sessionStorage.setItem('entityID', obj.basic[0].campaign_id);
-        $window.loaction.href = "../pages/event_available_items_form.html";
+        $window.location.href = "../pages/event_available_items_form.html";
     };
 });
 
