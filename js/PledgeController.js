@@ -22,9 +22,13 @@
                     donor_name: obj.first_name + " " + obj.last_name,
                     patient_id: obj.patient_id,
                     target_amount: "$" + $filter('number')(obj.target_amount, 2),
-                    pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy')
+                    pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy'),
+                    installments: obj.installments
                 };
                 $scope.pledges.push(pledge);
+
+                console.log("GETTING INSTALLMENTS FROM DB:");
+                console.log(pledge.installments);
             }
 
         });
@@ -139,26 +143,23 @@
             console.log(general_info);
             console.log("Patient ID " + patient_id);
             console.log(donor_info);
+            console.log("temp installments list: ");
             console.log(temp_installments_list);
 
             // Bind all the retrieved information attributes to local scope to display on pledge-specific view
             $scope.donor_name = donor_info.first_name + " " + donor_info.last_name;
             $scope.alias = donor_info.alias;
             $scope.patient_id = patient_id;
-            $scope.pledge_date = $filter('date')(general_info.pledge_date, 'MM-dd-yyyy');
+            $scope.pledge_date = $filter('date')(general_info.pledge_date, 'MM/dd/yyyy');
             $scope.target_amount = $filter('number')(general_info.target_amount, 2);
             $scope.is_behind = general_info.is_behind;
+            $scope.installments_list = temp_installments_list;
 
-            $scope.installments_list = [];
-
-            // Modularized to store donor's multiple pledge installment dates
-            for (let i = 0; i < temp_installments_list.length; i++)
-            {
-                $scope.installments_list.push(temp_installments_list[i]);
-
-                // Converts the date into MM-dd-yyyy format
-                $scope.installments_list[i].installment_date = $filter('date')( $scope.installments_list[i].installment_date, 'MM-dd-yyyy')
-            }
+            // Loop through all the installment entries and format the amounts and dates
+            $scope.installments_list.forEach((item) =>{
+                item.amount = $filter('number')(item.amount, 2);
+                item.installment_date = $filter('date')(item.installment_date, "MM/dd/yyyy");
+            });
         });
 
         $scope.editingPledge = function() {
@@ -278,6 +279,11 @@
                 let donor_info = res.data.donor[0];
                 let temp_installments_list = res.data.installments;
                 let pledge_donor_name = donor_info.first_name + " " + donor_info.last_name;
+
+                console.log("XXXXXXXXXXXXXXXXXXX");
+                console.log(temp_installments_list);
+
+                // Use for form pages when donor name is needed
                 $scope.pledge_donor_name_for_basic_info = pledge_donor_name;
 
                 // Bind all the retrieved information attributes to local scope to display on pledge modification view
@@ -286,17 +292,19 @@
                  * Make sure the LHS has matching ng-model name in the form html file
                  * Make sure the RHS has matching attribute name from database
                  */
-
                 $scope.donor_selected = don_id;
                 $scope.pledge_patient_id = pat_id;
                 $scope.pledge_target_amount = general_info.target_amount;
                 $scope.pledge_date = new Date(general_info.pledge_date);
 
-                console.log("dnr slctd:" + $scope.donor_selected);
-                console.log("pldg pat id:" + $scope.pledge_patient_id);
+                $scope.temp_installments = [];
 
-                // Need to get the list of installments from the DB retrieval!!
-
+                temp_installments_list.forEach(installment => {
+                    //installment.amount = $filter('number')(installment.amount, 2);
+                    $scope.inst_amount = installment.amount;
+                    $scope.inst_date = new Date(installment.installment_date);
+                    $scope.temp_installments.push(installment);
+                });
 
                 sessionStorage.setItem("modified_pledge_object", JSON.stringify(res));
             });
@@ -317,8 +325,7 @@
                     pledge_date: $scope.pledge_date,
                     target_amount: $scope.pledge_target_amount,
                     is_behind: false,
-                    // NEED TO RETRIEVE THE LIST OF INSTALLMENTS FROM THE DB RETRIEVAL
-                    // installments: $scope.installments_list
+                    installments: $scope.temp_installments
                 };
 
                 console.log("Modified pledge:");
@@ -337,25 +344,18 @@
                     $window.alert("Entry saved!");
 
                     // Re-route user back to main pledges page
-                    $window.location.href = "../pages/pledge_basic_info.html";
+                    //window.location.href = "../pages/pledge_basic_info.html";
                 }
             }
             else // this is a new entry, so begin new data form submission
             {
-                let installments_list = [
-                    {
-                        amount: null,
-                        installment_date: null
-                    }
-                ];
-
                 let newPledge = {
                     donor_id: $scope.donor_selected,
                     patient_id: $scope.pledge_patient_id,
                     pledge_date: $scope.pledge_date,
                     target_amount: $scope.pledge_target_amount,
                     is_behind: false,
-                    installments: installments_list
+                    installments: $scope.temp_installments
                 };
 
                 if (isValid) {
@@ -373,10 +373,10 @@
                     // Re-route user back to main pledges page
                     if (saveAndNew == 'toForm') {
                         sessionStorage.setItem('isModify', false);
-                        $window.location.href = "../pages/pledge_form.html";
+                        //$window.location.href = "../pages/pledge_form.html";
                     }
                     else {
-                        $window.location.href = "../pages/all_pledges.html";
+                        //$window.location.href = "../pages/all_pledges.html";
                     }
                 }
             }

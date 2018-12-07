@@ -110,14 +110,14 @@
                                     <div>Pledged to Patient #: {{patient_id}}</div>
                                     <div>Target Year for Pledge Completion: {{pledge_date}}</div>
                                     <div>Target amount for Pledge: {{target_amount}}</div>
-                                    <div>Behind in Pledge Goal? : {{is_behind ? 'True' : 'False' }}</div>
+                                    <div>Behind in Pledge Goal? : {{is_behind ? 'Yes' : 'No' }}</div>
                                 </div>
 
                                 <div class="panel-heading">
-                                    Pledge Installments for {{donor_name}}
+                                    Pledge Installments
                                 </div>
                                 <div class="panel-body" ng-repeat="item in installments_list">
-                                    <span>{{'$' + item.amount + " by " + item.installment_date}}</span>
+                                    <div ng-hide="">{{'$' + item.amount + " on " + item.installment_date}}</div>
                                 </div>
 
                             </div>
