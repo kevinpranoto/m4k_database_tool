@@ -137,6 +137,10 @@ eventEntry.controller('eventForm', function($scope, $http) {
     $scope.myMod = {isModify: 'true'};
     $scope.myMod.isModify = sessionStorage.getItem('isModify');
 
+    $http.get('http://127.0.0.1:8081/campaigntype').then((res)=>{
+        $scope.campaigns = res.data;
+    });
+
     if ($scope.myMod.isModify === 'true'){
         var modId = sessionStorage.getItem('entityID');
         var getStr = 'http://127.0.0.1:8081/events/' + modId;
@@ -147,6 +151,7 @@ eventEntry.controller('eventForm', function($scope, $http) {
             $scope.name = obj.campaign_name;
             $scope.date = new Date(obj.campaign_date);
             $scope.theme = obj.theme;
+            $scope.campaign_type_id = obj.campaign_type_id;
 
             sessionStorage.setItem('event_object', JSON.stringify(obj));
         });
