@@ -54,7 +54,8 @@ allEvents.controller('EventController', function($scope, $location, $window, $ht
                 var deletePrompt = $window.confirm("Delete " + ev.name + "? (Deletion cannot be reverted)");
                 if (deletePrompt) {
                     something_deleted = true;
-                    $http.delete('http://127.0.0.1:8081/events/' + ev.id);
+                    console.log('http://127.0.0.1:8081/campaigns/' + ev.id);
+                    $http.delete('http://127.0.0.1:8081/campaigns/' + ev.id);
                 };
             };
         });
@@ -136,10 +137,10 @@ eventEntry.controller('eventForm', function($scope, $http) {
         var getStr = 'http://127.0.0.1:8081/events/' + modId;
         $http.get(getStr).then((res)=>
         {
-            var obj = res.data;
-
+            var obj = res.data.basic[0];
+            console.log(obj);
             $scope.name = obj.campaign_name;
-            $scope.date = obj.campaign_date;
+            $scope.date = new Date(obj.campaign_date);
             $scope.theme = obj.theme;
 
             sessionStorage.setItem('event_object', JSON.stringify(obj));
@@ -154,7 +155,7 @@ eventEntry.controller('eventForm', function($scope, $http) {
                 campaign_date: $scope.date,
                 theme: $scope.theme,
                 is_event: 1,
-                campaign_type_id: '',
+                campaign_type_id: 1,
                 donors: [],
                 staff: [],
                 contributions: []

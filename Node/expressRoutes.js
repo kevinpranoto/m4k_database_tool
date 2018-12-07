@@ -65,7 +65,7 @@ app.route('/donors').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all donors');
-		res.json(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) =>
 {
@@ -84,8 +84,6 @@ app.route('/donors/:id').get((req, res) =>
 	getQueries.getIndividualDonor(donor_id, (data) =>
 	{
 		console.log('Retrieved donor with id: ' + donor_id);
-		//Send prettified JSON response for debugging
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).put(jsonParser, (req, res) =>
@@ -115,7 +113,7 @@ app.route('/staff').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all staff');
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) =>
 {
@@ -134,7 +132,6 @@ app.route('/staff/:id').get((req, res) =>
 	getQueries.getIndividualStaff(staff_id, (data) =>
 	{
 		console.log('Retrieved staff with id: ' + staff_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).put(jsonParser, (req, res) =>
@@ -164,7 +161,7 @@ app.route('/patients').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all patients');
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) => {
 	postQueries.addPatient(req.body, (data) =>
@@ -182,7 +179,6 @@ app.route('/patients/:id').get((req, res) =>
 	getQueries.getIndividualPatient(patient_id, (data) =>
 	{
 		console.log('Retrieved patient with id: ' + patient_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).put(jsonParser, (req, res) =>
@@ -212,7 +208,7 @@ app.route('/pledges').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all pledges');
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) =>
 {
@@ -231,7 +227,6 @@ app.route('/pledges/:id').get((req, res) =>
 	getQueries.getIndividualPledge(pledge_id, (data) =>
 	{
 		console.log('Retrieved pledge with id: ' + pledge_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).put(jsonParser, (req, res) =>
@@ -260,7 +255,7 @@ app.route('/campaigntype').get((req, res) =>
 		if (err)
 			throw err;
 		console.log("Retrieved all campaign types");
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) =>
 {
@@ -300,7 +295,7 @@ app.route('/campaigns').get((req, res) =>
 		if (err)
 			throw err;
 		console.log("Retrieved all campaigns");
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).post(jsonParser, (req, res) =>
 {
@@ -319,7 +314,6 @@ app.route('/campaigns/:id').get((req, res) =>
 	getQueries.getIndividualCampaign(campaign_id, (data) =>
 	{
 		console.log('Retrieved campaign with id: ' + campaign_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).put(jsonParser, (req, res) =>
@@ -349,7 +343,7 @@ app.route('/events').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all events');
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 });
 
@@ -361,7 +355,6 @@ app.route('/events/:id').get((req, res) =>
 	getQueries.getIndividualEvent(event_id, (data) =>
 	{
 		console.log('Retrieved event with id: ' + event_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 });
@@ -394,7 +387,6 @@ app.route('/contributions/:id').get((req, res) =>
 	getQueries.getIndividualContribution(contrib_id, (data) =>
 	{
 		console.log('Retrieved event item with id: ' + contrib_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 }).put(jsonParser, (req, res) =>
@@ -424,7 +416,7 @@ app.route('/eventitems').get((req, res) =>
 		if (err)
 			throw err;
 		console.log('Retrieved all event items');
-		res.send(data);
+		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 });
 
@@ -436,7 +428,6 @@ app.route('/eventitems/:id').get((req, res) =>
 	getQueries.getIndividualEventItem(event_item_id, (data) =>
 	{
 		console.log('Retrieved event item with id: ' + event_item_id);
-		//res.json(data);
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
 	});
 });

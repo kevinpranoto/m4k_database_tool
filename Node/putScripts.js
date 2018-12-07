@@ -442,7 +442,7 @@ var updateIndividualCampaign = function(id, body, callback)
 				var donorObj = {
 					newDonorId: donor,
 					newCampaignId: id
-				}
+				}	
 
 				var patchedQuery = postQueries[9].replace(/newDonorId|newCampaignId/gi, (matched) =>
 				{

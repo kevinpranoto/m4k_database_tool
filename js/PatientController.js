@@ -87,7 +87,7 @@ patientSpecific.controller('patientBasicInfo', ($scope, $location, $window, $htt
         sessionStorage.setItem('patientItem', JSON.stringify(obj));
     });
 
-    $scope.editingPatient = function() { 
+    $scope.editingPatients = function() { 
         sessionStorage.setItem('isModify', true);
         sessionStorage.setItem('entityID', id);
         window.location.href = '../pages/patient_form.html';
@@ -123,10 +123,12 @@ patientEntry.controller('patientForm', function($scope, $http) {
         var getStr = 'http://127.0.0.1:8081/patients/' + modId;
         $http.get(getStr).then((res)=> {
            var obj = res.data;
-           
+
+           console.log(obj);
+           $scope.pid = obj.patient_id;
            $scope.needs = [];
            obj.needs.forEach(need => {
-               $scope.needs.push(need);
+               $scope.needs.push({ item: need.item });
            });
 
            sessionStorage.setItem('patient_object', JSON.stringify(obj));
@@ -136,12 +138,12 @@ patientEntry.controller('patientForm', function($scope, $http) {
     $scope.submitPatient = function() {
         if ($scope.myMod.isModify === 'true') {
             var patient = {
-                needs: [],
+                patient_id: $scope.pid,
+                needs: []
             };
 
-            console.log('put');
             $scope.needs.forEach(need => {
-                patient.needs.push(need);
+                patient.needs.push({ item: need.item });
             });
             
             if (patient.needs.length == 0) {
