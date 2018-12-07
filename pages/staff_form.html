@@ -117,7 +117,7 @@
                                         <div class="form-group email-group" ng-repeat="email in emails">
                                             <label>E-mail {{$index + 1}}</label>
                                             <br>
-                                            <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail"> Primary Email</label>
+                                            <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1"> Primary Email</label>
                                             <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" required>
                                             <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
                                         </div>

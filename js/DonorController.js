@@ -312,15 +312,15 @@ donorEntry.controller('donorForm', function($scope, $http) {
     $scope.companies = [];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 1});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 0});
 	};
     
 	$scope.addAddress = function() {
-        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1});
+        $scope.addresses.push({address_type: '', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 0});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({email_address: '', is_primary: 1});
+        $scope.emails.push({email_address: '', is_primary: 0});
     };
 
     $scope.primaryPhone = function(phone) {

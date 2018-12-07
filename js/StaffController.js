@@ -251,11 +251,11 @@ staffEntry.controller('staffForm', function($scope, $http) {
     ];
 
 	$scope.addPhone = function() {
-        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 1});
+        $scope.phones.push({phone_type: '', phone_number: '', is_primary: 0});
 	};
     
 	$scope.addEmail = function() {
-        $scope.emails.push({email_address: '', is_primary: 1});
+        $scope.emails.push({email_address: '', is_primary: 0});
     };
 
     $scope.primaryPhone = function(phone) {
