@@ -108,6 +108,10 @@ eventSpecific.controller('eventAvailableItems', ($scope, $location, $window, $ht
         var item = { item_name: contribution.item_name, item_type: contribution.contrib_type, amount: contribution.amount };
         $scope.items.push(item);
     });
+    $scope.redirectToEventItemsForm = function() {
+        sessionStorage.setItem('entityID', obj.basic[0].campaign_id);
+        $window.loaction.href = "../pages/event_available_items_form.html";
+    };
 });
 
 eventSpecific.controller('eventAttendees', ($scope, $location, $window, $http) => {
