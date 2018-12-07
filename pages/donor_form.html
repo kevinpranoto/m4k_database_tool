@@ -11,6 +11,11 @@
 
     <title>Donor Form</title>
 
+    <style>
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none;
+        }
+    </style>
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
 
@@ -199,9 +204,9 @@
                             <!-- /.col-lg-6 (nested) -->
                         </div>
                         <div class="form-group" style="position: relative; float: right">
-                            <button type="reset" class="btn btn-warning">Reset</button>
-                            <button type="submit" class="btn btn-success" ng-click="submitDonor()">Save</button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitDonor()" ng-hide="myMod.isModify == 'true'">Save & New</button>
+                            <button type="reset" class="btn btn-warning" ng-hide="myMod.isModify == 'true'">Reset</button>
+                            <button type="submit" class="btn btn-success" ng-click="submitDonor('')">Save</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitDonor('toForm')" ng-hide="myMod.isModify == 'true'">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>

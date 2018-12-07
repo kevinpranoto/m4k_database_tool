@@ -301,7 +301,7 @@ staffEntry.controller('staffForm', function($scope, $http) {
             $scope.addresses = obj.addresses;
         });
     }
-    $scope.submitStaff = function() {
+    $scope.submitStaff = function(v) {
 
         if ($scope.myMod.isModify === 'true') {
             var staff= {
@@ -378,7 +378,13 @@ staffEntry.controller('staffForm', function($scope, $http) {
             //send donor here to server
             $http.post('http://127.0.0.1:8081/staff', staff).then((res) => {
                 console.log(res);
-                window.location.href = '../pages/all_staff.html';
+                if (v == 'toForm') {
+                    sessionStorage.setItem('isModify', false);
+                    window.location.href = '../pages/staff_form.html';
+                }
+                else {
+                    window.location.href = '../pages/all_staff.html';
+                }
             });
         }
 

@@ -405,6 +405,7 @@ var updateIndividualPledge = function(id, body, callback)
 //CAMPAIGN
 var updateIndividualCampaign = function(id, body, callback)
 {
+	console.log(body);
 	return new Promise((resolve, reject) =>
 	{
 		var basicObj = {
@@ -422,6 +423,7 @@ var updateIndividualCampaign = function(id, body, callback)
 			return basicObj[matched];
 		});
 		
+		console.log(patchedQuery);
 		//Update basic information
 		con.query(patchedQuery, (err, rows) =>
 		{
@@ -449,6 +451,7 @@ var updateIndividualCampaign = function(id, body, callback)
 					return donorObj[matched];
 				});
 
+				console.log(patchedQuery);
 				con.query(patchedQuery, (err, rows) =>
 				{
 					if (err)
@@ -481,6 +484,7 @@ var updateIndividualCampaign = function(id, body, callback)
 						return staffObj[matched];
 					});
 
+		console.log(patchedQuery);
 					con.query(patchedQuery, (err, rows) =>
 					{
 						if (err)
@@ -513,6 +517,7 @@ var updateIndividualCampaign = function(id, body, callback)
 							return contribObj[matched];
 						});
 
+		console.log(patchedQuery);
 						con.query(patchedQuery, (err, rows) =>
 						{
 							if (err)

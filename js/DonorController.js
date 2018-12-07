@@ -394,7 +394,7 @@ donorEntry.controller('donorForm', function($scope, $http) {
     }
         
 
-    $scope.submitDonor = function() {
+    $scope.submitDonor = function(v) {
 
         if ($scope.myMod.isModify === 'true') {
             var donor = {
@@ -412,7 +412,11 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 ]
             };
             $scope.phones.forEach(element => {
-                donor.phones.push(element);
+                var str = element.phone_number;
+                donor.phones.push(JSON.parse(JSON.stringify(element)));
+                if (str.length == 10) {
+                    donor.phones[donor.phones.length - 1].phone_number = JSON.parse(JSON.stringify(str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6)));
+                }
             });
             
             $scope.emails.forEach(element => {
@@ -457,7 +461,11 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 ]
             }
             $scope.phones.forEach(element => {
-                donor.phones.push(element);
+                var str = element.phone_number;
+                donor.phones.push(JSON.parse(JSON.stringify(element)));
+                if (str.length == 10) {
+                    donor.phones[donor.phones.length - 1].phone_number = JSON.parse(JSON.stringify(str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6)));
+                }
             });
             
             $scope.emails.forEach(element => {
@@ -481,7 +489,13 @@ donorEntry.controller('donorForm', function($scope, $http) {
             console.log(JSON.stringify(donor));
             $http.post('http://127.0.0.1:8081/donors', donor).then((res) => {
                 console.log(res);
-                window.location.href = '../pages/all_donors.html';
+                if (v == 'toForm') {
+                    sessionStorage.setItem('isModify', false);
+                    window.location.href = '../pages/donor_form.html';
+                }
+                else {
+                    window.location.href = '../pages/all_donors.html';
+                }
             });
             //send donor here to server
         }
