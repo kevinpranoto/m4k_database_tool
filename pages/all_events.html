@@ -157,6 +157,7 @@
                                         <th>Name</th>
                                         <th>Date</th>
                                         <th>Theme</th>
+                                        <th>Campaign</th>
                                         <th ng-hide="!isRemove">Delete</th>
                                     </tr>
                                 </thead>
@@ -165,6 +166,7 @@
                                         <td ng-dblClick="goToEvent(event)">{{event.name}}</td>
                                         <td ng-dblClick="goToEvent(event)">{{event.date}}</td>
                                         <td ng-dblClick="goToEvent(event)">{{event.theme}}</td>
+                                        <td ng-dblClick="goToEvent(event)">{{event.campaign_type_name}}</td>
                                         <td class="text-center"><input type="checkbox" name="checkbox-inline" ng-hide="!isRemove" ng-model="event.to_remove" ng-init="event.to_remove = isRemove"></td>
                                     </tr>
                                 </tbody>

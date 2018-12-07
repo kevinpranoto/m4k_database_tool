@@ -108,9 +108,9 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Campaign Name</label>
+                                        <label>Campaign Type</label>
                                         <select class="form-control" ng-model="campaign_info">
-                                                <option ng-repeat="campaign in campaigns" ng-model="campaign_info">{{campaign.campaign_name}}</option>
+                                                <option ng-repeat="campaign in campaigns" ng-value="campaign.campaign_type_id">{{campaign.campaign_type_name}}</option>
                                         </select>
                                     </div>
                                 </div>
