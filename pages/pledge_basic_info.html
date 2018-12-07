@@ -92,7 +92,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header" style="padding-left:auto">Pledge Information for {{donor_name}}</h1>
+                    <h1 class="page-header ng-cloak" style="padding-left:auto">Pledge Information for {{donor_name}}</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -103,6 +103,7 @@
                         <div class="panel-body">
                             <div class="panel panel-info">
                                 <div class="panel-heading">Info Panel</div>
+                                <button type="button" ng-click="editingPledge()" class="btn btn-default">Modify Entry</button>
                                 <div class="panel-body">
                                     <div>Name : {{donor_name}}</div>
                                     <div>Alias: {{alias}}</div>

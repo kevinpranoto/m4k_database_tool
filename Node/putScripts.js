@@ -73,6 +73,7 @@ function updateSupporterData(id, body, queryNum)
 		});
 		
 		//Update basic information
+		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)

@@ -60,6 +60,7 @@
          * when the "Add Entry" button is clicked on the main Contribution view.
          */
         $scope.redirectToContributionForm = function() {
+            sessionStorage.setItem('isModify', 'false');
             $window.location.href = "../pages/contribution_form.html";
         };
 
@@ -74,6 +75,7 @@
         $scope.goToContribution = function(contribution) {
             // Save contribution ID in cache
             sessionStorage.setItem('contributionID', contribution.contrib_id);
+            sessionStorage.setItem('entityID', contribution.supporter_id);
 
             console.log("click " + sessionStorage.getItem('contributionID'));
 
@@ -155,6 +157,9 @@
     let contributionEntry = angular.module("contributionEntry", []);
     contributionEntry.controller("ContributionFormController", function($scope, $http, $filter, $window) {
 
+        // Retrieve isModify value for certain fields or buttons to be disabled during modification
+        $scope.is_modify_form = sessionStorage.getItem('isModify');
+
         /**
          * Fields and function specific to retrieving data from the input form fields to be packaged into JSON format
          */
@@ -169,7 +174,7 @@
         ];
 
         $scope.contribAppeals = [
-            'Direct Mail', 'Email Campaign', 'Radio Advertisement', 'Sponsorship',
+            'Direct Mail', 'Email Campaign', 'Radio Ad', 'Sponsorship',
             'Fund-a-Need', 'Opportunity Ticket', 'Silent Auction', 'Live Auction'
         ];
 
@@ -192,7 +197,6 @@
             let don_id = sessionStorage.getItem('entityID');
             console.log("mod_id: " + mod_id);
             console.log("don_id: " + don_id);
-
 
             let temp_URL = "http://127.0.0.1:8081/contributions/" + mod_id;
             $http.get(temp_URL).then((res)=> {
@@ -219,7 +223,7 @@
                 $scope.first_name = obj.first_name;
                 $scope.contrib_date = new Date(obj.contrib_date);
 
-                sessionStorage.setItem("contribution_object", JSON.stringify(obj));
+                sessionStorage.setItem("modified_contribution_object", JSON.stringify(obj));
             });
         }
         ////////////////////////////////// FUNCTIONS FOR FORM SUBMISSION ///////////////////////////////////////
@@ -230,31 +234,35 @@
          * Initializes all the fields with the fields that a new pledge should have when entering the data into the database,
          * and performs a one-time submission to save the entry.
          */
-        $scope.submitContribution = function(isValid) {
+        $scope.submitContribution = function(isValid, saveAndNew) {
 
             //let contribution_object = sessionStorage.getItem('contribution_object');
             // If this entry is for modifying existing entry,
 
+            let temp_contribution_id = sessionStorage.getItem('contributionID');
             let temp_supporter_id = sessionStorage.getItem('entityID');
 
             // Check if the data is an existing entry to be modified
             if (is_modify === 'true')
             {
+                console.log("is_modify:" + is_modify);
                 let modifiedContribution = {
                     donor_id: temp_supporter_id,
                     contrib_date: $scope.contrib_date,
                     item_name: $scope.item_name,
                     is_event_item: $scope.is_event_item,
                     contrib_type: $scope.contrib_type,
+                    amount: $scope.amount,
+                    pay_method: $scope.payment_method,
                     destination: $scope.destination,
                     notes: $scope.notes,
                     appeal: $scope.appeal,
                     thanked: $scope.thanked
                 };
 
-                if (modifiedContribution.contrib_type !== 'money') {
+                if (modifiedContribution.contrib_type !== 'Money') {
                     modifiedContribution.amount = null;
-                    modifiedContribution.payment_method = null;
+                    modifiedContribution.pay_method = null;
                 }
 
                 console.log("Modified contribution:");
@@ -264,8 +272,8 @@
                     // Package the data into JSON format
                     let submit_data = JSON.stringify(modifiedContribution);
 
-                    let temp_URL = 'http://127.0.0.1:8081/contributions/' + modifiedContribution.donor_id;
-                    $http.put(temp_URL, submit_data).then((res) => {
+                    let temp_URL = 'http://127.0.0.1:8081/contributions/' + temp_contribution_id;
+                    $http.put(temp_URL, modifiedContribution).then((res) => {
                         console.log(res);
                     });
 
@@ -280,21 +288,24 @@
             }
             else // this is a new entry, so begin new data form submission
             {
+                console.log("is_modify:" + is_modify);
                 let newContribution = {
                     donor_id: temp_supporter_id,
                     contrib_date: $scope.contrib_date,
                     item_name: $scope.item_name,
                     is_event_item: $scope.is_event_item,
                     contrib_type: $scope.contrib_type,
+                    amount: $scope.amount,
+                    pay_method: $scope.payment_method,
                     destination: $scope.destination,
                     notes: $scope.notes,
                     appeal: $scope.appeal,
-                    thanked: false
+                    thanked: 'false'
                 };
 
-                if (newContribution.contrib_type !== 'money') {
+                if (newContribution.contrib_type !== 'Money') {
                     newContribution.amount = null;
-                    newContribution.payment_method = null;
+                    newContribution.pay_method = null;
                 }
 
                 console.log("New contribution:");
@@ -309,143 +320,23 @@
 
                     $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res) => {
                         console.log(res);
-                        $window.alert("Entry saved!");
                     });
+
+                    $window.alert("Entry saved!");
 
                     console.log("Data being submitted:");
                     console.log(submit_data);
 
                     // Re-route user back to main contributions page
-                    $window.location.href = "../pages/all_contributions.html";
-                }
-            }
-        };
-
-        /**
-         * submitContributionAndNew(ContributionForm.$valid)
-         * Function to submit the data from a form page to be packaged into JSON format for back-end to store the data.
-         * Initializes all the fields with the fields that a new pledge should have when entering the data into the database,
-         * and asks user if additional entries need to be submitted in addition to the initial entry being saved.
-         */
-        $scope.submitContributionAndNew = function(isValid) {
-
-            // Check if this is about to modify and existing entry
-            if (is_modify === 'true')
-            {
-                let cached_donor_id = sessionStorage.getItem('entityID');
-                let modifiedContribution = {
-                    donor_id: cached_donor_id,
-                    contrib_date: $scope.contrib_date,
-                    item_name: $scope.item_name,
-                    is_event_item: $scope.is_event_item,
-                    contrib_type: $scope.contrib_type,
-                    destination: $scope.destination,
-                    notes: $scope.notes,
-                    appeal: $scope.appeal,
-                    thanked: false
-                };
-
-                if (modifiedContribution.contrib_type !== 'money') {
-                    modifiedContribution.amount = null;
-                    modifiedContribution.payment_method = null;
-                }
-
-                if (isValid) {
-                    // Package the data into JSON format
-                    //let submit_data = JSON.stringify(modifiedContribution);
-                    var submit_data = modifiedContribution;
-                    // Send an alert to the user to determine if user intends to add in additional entries
-                    // NOTE: May need custom confirmation to say "yes, save and add new" or "no, save and take me back"
-                    let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
-
-                    // If user wants to add in a new entry
-                    if (newEntryPrompt) {
-                        // Send newContribution in JSON format to back-end and confirm saved entry
-                        $http.put('http://127.0.0.1:8081/contributions', submit_data).then((res) => {
-                            console.log(res);
-                        });
-
-                        $window.alert("Entry saved!");
-
-                        console.log("Data being submitted:");
-                        console.log(submit_data);
-
-                        // Route user to data entry page
-                        $window.location.href = "../pages/contribution_basic_info.html";
-
-                    }
-                    else {
-                        // Send newContribution in JSON format to back-end and confirm saved entry
-                        $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res) => {
-                            console.log(res);
-                            $window.alert("Entry saved!");
-                        });
-
-                        console.log("Data being submitted:");
-                        console.log(submit_data);
-
-                        $window.location.href = "../pages/all_contributions.html";
-                    }
-                }
-            }
-            else
-            {
-                let cached_donor_id = sessionStorage.getItem('entityID');
-                let newContribution = {
-                    donor_id: cached_donor_id,
-                    contrib_date: $scope.contrib_date,
-                    item_name: $scope.item_name,
-                    is_event_item: $scope.is_event_item,
-                    contrib_type: $scope.contrib_type,
-                    destination: $scope.destination,
-                    notes: $scope.notes,
-                    appeal: $scope.appeal,
-                    thanked: false
-                };
-
-                if (newContribution.contrib_type !== 'money') {
-                    newContribution.amount = null;
-                    newContribution.payment_method = null;
-                }
-
-                if (isValid) {
-                    // Package the data into JSON format
-                    let submit_data = JSON.stringify(newContribution);
-
-                    // Send an alert to the user to determine if user intends to add in additional entries
-                    // NOTE: May need custom confirmation to say "yes, save and add new" or "no, save and take me back"
-                    let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
-
-                    // If user wants to add in a new entry
-                    if (newEntryPrompt) {
-                        // Send newContribution in JSON format to back-end and confirm saved entry
-                        $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res) => {
-                            console.log(res);
-                            $window.alert("Entry saved!");
-                        });
-
-                        console.log("Data being submitted:");
-                        console.log(submit_data);
-
-                        // Route user to data entry page
+                    if (saveAndNew =='toForm') {
+                        sessionStorage.setItem('isModify', false);
                         $window.location.href = "../pages/contribution_form.html";
-
                     }
                     else {
-                        // Send newContribution in JSON format to back-end and confirm saved entry
-                        $http.post('http://127.0.0.1:8081/contributions', submit_data).then((res) => {
-                            console.log(res);
-                            $window.alert("Entry saved!");
-                        });
-
-                        console.log("Data being submitted:");
-                        console.log(submit_data);
-
                         $window.location.href = "../pages/all_contributions.html";
                     }
                 }
             }
-
         };
     });
 }());
