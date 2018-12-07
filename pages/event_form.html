@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>New Event Entry Form</title>
+    <title>Event Form</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -32,7 +32,7 @@
     <![endif]-->
 
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../js/m4ktest.js"></script>
+    <script src="../js/EventController.js"></script>
 </head>
 
 <body>
@@ -47,7 +47,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="all_donors.html">Back</a>
+            <a class="navbar-brand" onclick="location.href='all_events.html'" type="button">Back</a>
         </div>
         <!-- /.navbar-header -->
 
@@ -73,10 +73,11 @@
         <!-- /.navbar-top-links -->
     </nav>
 
-    <div id="page-wrapper">
+    <div id="page-wrapper" ng-controller="eventForm" ng-cloak>
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">New Event Entry Form</h1>
+                <h1 class="page-header" ng-hide="myMod.isModify == 'true'">New Event Entry</h1>
+                <h1 class="page-header" ng-hide="myMod.isModify == 'false'">Edit Event</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -87,13 +88,13 @@
                     <div class="panel-heading">
                         Event Information
                     </div>
-                    <div class="panel-body" ng-controller="eventForm">
+                    <div class="panel-body">
                         <div class="row">
                             <form role="form">
                                 <div class="col-xs-5" style="position:center">
                                     <div class="form-group" style="padding-top: 1em">
-                                        <label>Campaign name *** Preferably a dropdown list of all the campaigns ***</label>
-                                        <input class="form-control" placeholder="Enter campaign name here" ng-model="campaign" required>
+                                        <label>Event Name</label>
+                                        <input class="form-control" placeholder="Enter event name here" ng-model="name" required>
                                     </div>
                                     
                                     <div class="form-group">
@@ -102,20 +103,22 @@
                                     </div>
 
                                     <div class="form-group" style="padding-top: 1em">
-                                        <label>Event theme</label>
-                                        <input class="form-control" placeholder="Enter event theme here" ng-modoel="theme" required>
+                                        <label>Event Theme</label>
+                                        <input class="form-control" placeholder="Enter event theme here" ng-model="theme" required>
                                     </div>
 
-                                    <div style="padding-top: 1em">
-                                        <div class="form-group" style="position: relative; padding-right: auto; float: right">
-                                            <button type="reset" class="btn btn-warning">Reset</button>
-                                            <button type="submit" class="btn btn-success" ng-click="submitEvent()">Save</button>
-                                            <button type="submit" class="btn btn-primary">Save & New</button>
-                                        </div>
+                                    <div class="form-group">
+                                        <label>Campaign Name</label>
+                                        <input class="form-group">
                                     </div>
                                 </div>
                             </form>
                             <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <div class="form-group" style="position: relative; float: right">
+                            <button type="reset" class="btn btn-warning">Reset</button>
+                            <button type="submit" class="btn btn-success" ng-click="submitEvent()">Save</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitEvent()" ng-hide="myMod.isModify == 'true'">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>

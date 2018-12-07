@@ -1,12 +1,13 @@
-var allStaff = angular.module('allEvents', []);
+var allEvents = angular.module('allEvents', []);
 var eventSpecific = angular.module('eventSpecific', []);
 
-allStaff.controller('EventController', function($scope, $location, $window, $http) {
+allEvents.controller('EventController', function($scope, $location, $window, $http) {
 
     $scope.events = [];
 
     $http.get('http://127.0.0.1:8081/events').then((res) =>
     {
+        console.log(res.data);
         for (var i in res.data)
         {
             var obj = res.data[i];
@@ -16,15 +17,15 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
         }
     });
 
-    let staffID = {};
+    let eventID = {};
 
     function set(data) {
-        staffID = data;
+        eventID = data;
     }
 
     function get() {
         console.log("called");
-        return staffID;
+        return eventID;
     }
 
     /* Function for providing the ability to highlight any given entry in a data table. */
@@ -40,17 +41,6 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
         $window.location.href = '../pages/event_form.html';
     };
 
-    $scope.removeRow = function(index){
-
-        // Prompt user to confirm deletion; clicking OK returns true, Cancel returns false.
-        let deleteRow = $window.confirm("Are you sure you want to delete this entry?");
-
-        // If user clicked OK, handle the deletion.
-        if (deleteRow) {
-            events.splice(index, 1);     // Just a placeholder, but will need code to update DB via Node.js?
-        }
-    };
-
     $scope.goToEvent = function(event) {
         $window.location.href = '../pages/event_basic_info.html';
         sessionStorage.setItem('entityID', event.id);
@@ -64,13 +54,19 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
                 var deletePrompt = $window.confirm("Delete " + ev.name + "? (Deletion cannot be reverted)");
                 if (deletePrompt) {
                     something_deleted = true;
-                    $http.delete('http://127.0.0.1:8081/events/' + ev.id);
+                    console.log('http://127.0.0.1:8081/campaigns/' + ev.id);
+                    $http.delete('http://127.0.0.1:8081/campaigns/' + ev.id);
                 };
             };
         });
         if (something_deleted) {
             window.location.href = '../pages/all_events.html';
         };
+    };
+
+    $scope.addNewEvent = function() {
+        sessionStorage.setItem('isModify', false);
+        window.location.href = '../pages/event_form.html';
     };
 
     return {
@@ -80,6 +76,7 @@ allStaff.controller('EventController', function($scope, $location, $window, $htt
 });
 
 eventSpecific.controller('eventBasicInfo', ($scope, $location, $window, $http) => {
+     var id = sessionStorage.getItem('entityID');
      var req = 'http://127.0.0.1:8081/events/' + sessionStorage.getItem('entityID');
      
      $http.get(req).then((res)=>{
@@ -94,6 +91,12 @@ eventSpecific.controller('eventBasicInfo', ($scope, $location, $window, $http) =
 
         sessionStorage.setItem('eventItem', JSON.stringify(res.data));
      });
+
+     $scope.editingEvent = function() { 
+        sessionStorage.setItem('isModify', true);
+        sessionStorage.setItem('entityID', id);
+        window.location.href = '../pages/event_form.html';
+    };
 });
 
 eventSpecific.controller('eventAvailableItems', ($scope, $location, $window, $http) => {
@@ -113,6 +116,7 @@ eventSpecific.controller('eventAttendees', ($scope, $location, $window, $http) =
 
     var obj = JSON.parse(sessionStorage.getItem('eventItem'));
 
+
     obj.donors.forEach(donor => {
         var attendee = { attendee_name: donor.first_name + ' ' + donor.last_name, attendee_type: 'Donor'};
         $scope.attendees.push(attendee);
@@ -122,4 +126,74 @@ eventSpecific.controller('eventAttendees', ($scope, $location, $window, $http) =
         var attendee = { attendee_name: staff.first_name + ' ' + staff.last_name, attendee_type: 'Staff - ' + staff.staff_type };
         $scope.attendees.push(attendee);
     });
+
+    $scope.redirectToAttendeeForm() = function() {
+        sessionStorage.setItem('entityID', obj.basic[0].campaign_id);
+        $window.location.href = "../pages/event_attendance_form.html";
+    };
+});
+
+var eventEntry = angular.module('eventEntry', []);
+eventEntry.controller('eventForm', function($scope, $http) {
+    $scope.myMod = {isModify: 'true'};
+    $scope.myMod.isModify = sessionStorage.getItem('isModify');
+
+    if ($scope.myMod.isModify === 'true'){
+        var modId = sessionStorage.getItem('entityID');
+        var getStr = 'http://127.0.0.1:8081/events/' + modId;
+        $http.get(getStr).then((res)=>
+        {
+            var obj = res.data.basic[0];
+            console.log(obj);
+            $scope.name = obj.campaign_name;
+            $scope.date = new Date(obj.campaign_date);
+            $scope.theme = obj.theme;
+
+            sessionStorage.setItem('event_object', JSON.stringify(obj));
+        });
+    } 
+
+    $scope.submitEvent = function() {
+
+        if ($scope.myMod.isModify === 'true') {
+            var event = {
+                campaign_name: $scope.name,
+                campaign_date: $scope.date,
+                theme: $scope.theme,
+                is_event: 1,
+                campaign_type_id: 1,
+                donors: [],
+                staff: [],
+                contributions: []
+            };
+            
+            var putStr = 'http://127.0.0.1:8081/campaigns/' + modId;
+            $http.put(putStr, event).then((res) => {
+                window.location.href = '../pages/event_basic_info.html';
+            });
+        }
+        else {
+            var event = {
+                campaign_name: $scope.name,
+                campaign_date: $scope.date,
+                theme: $scope.theme,
+                is_event: 1,
+                campaign_type_id: 1,
+                donors: [],
+                staff: [],
+                contributions: []
+            };
+
+            JSON.stringify(event);
+            $http.post('http://127.0.0.1:8081/campaigns', event).then((res) => {
+                window.location.href = '../pages/all_events.html';
+            });
+            //send event here to server
+
+            $http.post('http://127.0.0.1:8081/donors', donor).then((res) => {
+                console.log(res);
+                window.location.href = '../pages/all_donors.html';
+            });
+        }
+    };	
 });

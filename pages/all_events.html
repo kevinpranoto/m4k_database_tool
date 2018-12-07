@@ -11,9 +11,9 @@
 
     <title>Main View</title>
     <style>
-            [ng\:cloak], [ng-cloak], .ng-cloak {
-                display: none;
-            }
+        [ng\:cloak], [ng-cloak], .ng-cloak {
+            display: none;
+        }
     </style>
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../js/EventController.js"></script>
@@ -130,15 +130,15 @@
                 <div class="col-xs-1" style="padding-bottom: 2em; position: relative; float: left">
                     <table>
                         <tr>
-                            <script> let isRemove = false; </script>
+                            <script> let isRemove = false; </script> 
                             <td>
-                                <button type="button" class="btn btn-success" onclick="location.href='event_form.html'">Add Entry</button>
+                                <button type="button" class="btn btn-success" ng-click="addNewEvent()" >Add Entry</button>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-warning" ng-Click="isRemove=!isRemove">Remove Entries</button>
+                                <button type="button" class="btn btn-warning" ng-click="isRemove=!isRemove">Remove Entries</button>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-danger" ng-Click=removeEntries() ng-hide="!isRemove">Delete Entries</button>
+                                <button type="button" class="btn btn-danger" ng-click=removeEntries() ng-hide="!isRemove">Delete Entries</button>
                             </td>
                         </tr>    
                     </table>
