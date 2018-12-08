@@ -93,59 +93,66 @@
             <!-- /.navbar-static-side -->
         </nav>
 
-        <div id="page-wrapper">
+        <div id="page-wrapper" ng-cloak>
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header ng-cloak" style="padding-left:auto">Pledge Information for {{donor_name}}</h1>
                 </div>
-                <!-- /.col-lg-12 -->
             </div>
+
+            <!-- /.col-lg-12 -->
+            <div class="row" ng-cloak>
+                <div class="col-xs-1" style="position:relative; float:left">
+                    <table>
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-success" ng-click="editingPledge()">Modify Pledge</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <br>
             <!-- /.row -->
-            <div class="row">
+            <div class="row" ng-cloak>
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="panel panel-info">
-
-                                <!-- Field for displaying the pledge details gathered from the database entry -->
-                                <div class="panel-heading">Pledge Details</div>
-                                <button type="button" style="position:absolute; top:70px; right:45px" ng-click="editingPledge()" class="btn btn-default">Modify Entry</button>
-                                <div class="panel-body">
-                                    <div>
-                                        <strong>Donor name:</strong> {{donor_name}}
-                                    </div><br>
-                                    <div>
-                                        <strong>Alias:</strong> {{alias === null ? "None" : alias}}
-                                    </div><br>
-                                    <div>
-                                        <strong>Pledged to Patient #:</strong> {{patient_id}}
-                                    </div><br>
-                                    <div>
-                                        <strong>Target Year for Pledge Completion:</strong> {{pledge_date}}
-                                    </div><br>
-                                    <div>
-                                        <strong>Target amount for Pledge:</strong> {{target_amount}}
-                                    </div><br>
-                                    <div>
-                                        <strong>Behind in Pledge Goal?:</strong> {{is_behind ? 'Yes' : 'No' }}
-                                    </div>
+                        <div class="panel panel-info">
+                            <!-- Field for displaying the pledge details gathered from the database entry -->
+                            <div class="panel-heading">Pledge Details</div>
+                            <div class="panel-body">
+                                <div>
+                                    <strong>Donor name:</strong> {{donor_name}}
+                                </div><br>
+                                <div>
+                                    <strong>Alias:</strong> {{alias === null ? "None" : alias}}
+                                </div><br>
+                                <div>
+                                    <strong>Pledged to Patient #:</strong> {{patient_id}}
+                                </div><br>
+                                <div>
+                                    <strong>Target Year for Pledge Completion:</strong> {{pledge_date}}
+                                </div><br>
+                                <div>
+                                    <strong>Target amount for Pledge:</strong> {{target_amount}}
+                                </div><br>
+                                <div>
+                                    <strong>Behind in Pledge Goal?:</strong> {{is_behind ? 'Yes' : 'No' }}
                                 </div>
-
-                                <div class="panel-heading">Pledge Installments</div>
-                                <div class="panel-body" ng-repeat="item in basic_info_installments_list">
-                                    <div ng-hide="">{{'$' + item.amount + " on " + item.installment_date}}</div>
-                                </div>
-
                             </div>
-                            <!-- /.table-responsive -->
+
+                            <div class="panel-heading">Pledge Installments</div>
+                            <div class="panel-body" ng-repeat="item in basic_info_installments_list">
+                                <div ng-hide="">{{'$' + item.amount + " on " + item.installment_date}}</div>
+                            </div>
+
                         </div>
-                        <!-- /.panel-body -->
+                        <!-- /.table-responsive -->
                     </div>
                     <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-
         </div>
     <!-- /#wrapper -->
 

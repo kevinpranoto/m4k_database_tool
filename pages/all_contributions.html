@@ -141,7 +141,7 @@
                 </div>
             </div>
             <!-- /.row -->
-            <div class="row">
+            <div class="row" ng-cloak>
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <!-- /.panel-heading -->
@@ -160,8 +160,8 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="item in contributions"
-                                        class="ng-cloak"
-                                        ng-class="{'selected':$index == selectedRow}">
+                                        ng-class="{'selected':$index == selectedRow}"
+                                        ng-cloak>
 
                                         <!-- Each table cell is explicitly allowed to re-direct the user to the
                                              entity's specific page except for the delete box cell. This is to address
