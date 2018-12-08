@@ -1,11 +1,17 @@
 (function (){
+    /**
+     *  Controller for handling overall Pledge-related operations.
+     *  @module_name: allPledges
+     *  @controller_name: PledgeController
+     *  @dependencies:
+     *      ui.directives, ui.filters - For filtering unique ID's in drop-down displays for pledge forms
+     **/
     let allPledges = angular.module('allPledges', ['ui.directives', 'ui.filters']);
     allPledges.controller('PledgeController', function($scope, $location, $window, $filter, $http) {
 
-        ///////////////////////// RETRIEVAL AND SUBMISSION CODE TO DATABASE //////////////////////////////////
         /**
          * Retrieving data from the database to display onto the main view of a pledge
-         * */
+         **/
         $scope.pledges = [];
 
         console.log('Retrieving data for Pledges main view...');
@@ -15,6 +21,8 @@
             for (let i in res.data)
             {
                 let obj = res.data[i];
+
+                // Create instance of a newly retrieved pledge entry from the database.
                 let pledge =
                 {
                     pledge_id : obj.pledge_id,
@@ -25,12 +33,13 @@
                     pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy'),
                     installments: obj.installments
                 };
+
+                // For each pledge entry retrieved from the database, push them onto a master list of pledges
+                //  to be displayed on the main view for Pledges.
                 $scope.pledges.push(pledge);
 
-                console.log("GETTING INSTALLMENTS FROM DB:");
                 console.log(pledge.installments);
             }
-
         });
 
         /**
@@ -46,6 +55,7 @@
 
         /**
          * redirectToPledgeForm()
+         * @params: N/A
          * Function for re-routing current page to the pledge_form page; this function is invoked
          * when the "Add Entry" button is clicked on the main Pledges view.
          */
@@ -56,6 +66,7 @@
 
         /**
          * calendarList()
+         * @params: N/A
          * Function to dynamically display a dynamic list of calendar years based off current year.
          * Returns a list of year to be parsed through and displayed as an option item in a selection list.
          */
@@ -75,7 +86,8 @@
 
         /**
          * goToPledge(pledge)
-         * @param pledge: Specific entry related to the Pledge main view table
+         * @params:
+         *          pledge - Specific entry related to the Pledge main view table
          * Function for pulling up the detailed information page of a selected Pledge entry on the data table
          * displayed in the main Pledge view.
          *
@@ -94,14 +106,20 @@
 
         /**
          * removeEntries()
+         * @params: N/A
          * Sends delete requests to the backend server with a list of object ID's to be deleted.
          * Also refreshes main page if anything gets deleted; if not, remains on same page.
          */
         $scope.removeEntries = function() {
             let something_deleted = false;
+
+            // Go through every entry in master list of pledges to check for whether the entry was marked for deletion.
             $scope.pledges.forEach(pled => {
                 if (pled.to_remove === true) {
+                    // Confirm with user FOR EACH ENTRY MARKED FOR DELETION if deletion is intended.
                     let deletePrompt = $window.confirm("Delete " + pled.donor_name + "'s pledge? (Deletion cannot be reverted)");
+
+                    // If user confirmed the delete, remove entry from the database.
                     if (deletePrompt) {
                         something_deleted = true;
                         console.log("Deleting " + pled.pledge_id);
@@ -109,6 +127,7 @@
                     }
                 }
             });
+            // If deletion occurred, refresh the page; otherwise, do nothing and remain on the current view.
             if (something_deleted) {
                 window.location.href = '../pages/all_pledges.html';
             }
@@ -116,10 +135,12 @@
     });
 
 
-    /***
-     * New module and controller for handling the specific view of a pledge entity.
-     * @type {angular.Module}
-     */
+    /**
+     *  Controller for handling specific Pledge view related operations.
+     *  @module_name: pledgeSpecific
+     *  @controller_name: PledgeBasicInfoController
+     *  @dependencies: N/A
+     **/
     let pledgeSpecific = angular.module("pledgeSpecific", []);
     pledgeSpecific.controller("PledgeBasicInfoController", function($scope, $filter, $http, $window) {
 
@@ -134,34 +155,38 @@
         $http.get(getString).then((res)=>
         {
             console.log(res);
+
             // Grab the first and only item from the returned database object
             let general_info = res.data.basic_info[0];
             let patient_id = res.data.patient_id;
             let donor_info = res.data.donor[0];
             let temp_installments_list = res.data.installments;
 
-            console.log(general_info);
-            console.log("Patient ID " + patient_id);
-            console.log(donor_info);
-            console.log("temp installments list: ");
-            console.log(temp_installments_list);
-
             // Bind all the retrieved information attributes to local scope to display on pledge-specific view
             $scope.donor_name = donor_info.first_name + " " + donor_info.last_name;
             $scope.alias = donor_info.alias;
             $scope.patient_id = patient_id;
             $scope.pledge_date = $filter('date')(general_info.pledge_date, 'MM/dd/yyyy');
-            $scope.target_amount = $filter('number')(general_info.target_amount, 2);
+            $scope.target_amount = "$" + $filter('number')(general_info.target_amount, 2);
             $scope.is_behind = general_info.is_behind;
-            $scope.installments_list = temp_installments_list;
+            $scope.basic_info_installments_list = temp_installments_list;
 
             // Loop through all the installment entries and format the amounts and dates
-            $scope.installments_list.forEach((item) =>{
+            $scope.basic_info_installments_list.forEach((item) =>{
                 item.amount = $filter('number')(item.amount, 2);
                 item.installment_date = $filter('date')(item.installment_date, "MM/dd/yyyy");
             });
+
+            console.log($scope.basic_info_installments_list);
         });
 
+        /***
+         * editingPledge()
+         * @params: N/A
+         * Function for storing critical uniqueID values into cache between current view and handling modification for
+         * existing entries in the database. The 'isModify' flag is toggled to 'true' to indicate that the re-routing
+         * to a pledge form is for modifying an existing entry instead of creating a new entry.
+         */
         $scope.editingPledge = function() {
             sessionStorage.setItem('isModify', true);
             sessionStorage.setItem('pledgeID', id);
@@ -171,35 +196,47 @@
         };
     });
 
+    /**
+     *  Controller for handling Pledge entry related operations.
+     *  @module_name: pledgeEntry
+     *  @controller_name: PledgeFormController
+     *  @dependencies:
+     *      ui.directives, ui.filters - For filtering unique ID's in drop-down displays for pledge forms
+     **/
     let pledgeEntry = angular.module("pledgeEntry", ['ui.directives', 'ui.filters']);
     pledgeEntry.controller("PledgeFormController", function($scope, $http, $filter, $window) {
 
         // Retrieve isModify value to determine whether certain fields should be disabled or not during modify
         $scope.is_modify_form = sessionStorage.getItem('isModify');
 
-        $scope.temp_installments = [
-            {
-                amount: '',
-                date: ''
-            }
-        ];
-
+        /***
+         * addInstallment()
+         * @params: N/A
+         * Helper function to create a new installments list for when user clicks on "Add Installment" button on the
+         * entry form page for both new and existing entries.
+         */
         $scope.addInstallment = function() {
-            $scope.temp_installments.push({amount: '', date: '',});
+            $scope.temp_installments = [];
+            $scope.temp_installments.push({amount: '', date: ''});
         };
 
         /***
          * getDropdownDonors()
+         * @params: N/A
          * Helper function to retrieve all the donor names from the database for populating the dropdown menu
          * for creating a new pledge. Prevents user from manually entering names and avoids redundancies or
          * mismatching in the database when associating donors and patients with pledges.
          */
         $scope.getDropdownDonors = function(){
+            // Create temporary list to store donors from the database.
             $scope.temp_donor_list = [];
+
+            // Retrieve all donors from the database.
             $http.get('http://127.0.0.1:8081/donors').then((res)=>
             {
-                console.log("GRABBING DONORS DATA FOR PLEDGE FORM...")
                 console.log(res.data);
+
+                // Populate the temporary donor list with all the donors from the database.
                 for (let i in res.data)
                 {
                     let obj = res.data[i];
@@ -216,16 +253,21 @@
 
         /***
          * getDropdownPatients()
-         * Helper function to retrieve all the patient IDs from the database for populating the dropdown menu
+         * @params: N/A
+         * Helper function to retrieve all the patient IDs from the database for populating the drop-down menu
          * for creating a new pledge. Prevents user from manually entering patient IDs and avoids redundancies or
          * mismatching in the database when associating donors and patients with pledges.
          */
         $scope.getDropdownPatients = function(){
+            // Create temporary list to store all patients from database.
             $scope.temp_patient_list = [];
+
+            // Get all patients from the database.
             $http.get('http://127.0.0.1:8081/patients').then((res)=>
             {
-                console.log("GRABBING PATIENT ID's FOR PLEDGE FORM...")
                 console.log(res.data);
+
+                // Store all patients from the database into temporary list of patients.
                 for (let i in res.data)
                 {
                     let obj = res.data[i];
@@ -239,11 +281,15 @@
             console.log($scope.temp_patient_list);
         };
 
+        /***
+         * getDonorName()
+         * @params:
+         *          current_donor_id - Donor ID of the current specific pledge page
+         * Helper function to retrieve a specific donor name.
+         */
         $scope.getDonorName = function (current_donor_id) {
             if (current_donor_id !== null) {
-
                 $http.get('http://127.0.0.1:8081/pledges/' + current_donor_id).then((res) => {
-                    console.log("GRABBING A SPECIFIC DONOR DATA FOR PLEDGE FORM...");
                     console.log(res.data);
                     let donor_name = res.data.donor.first_name + " " + res.data.donor.last_name;
 
@@ -259,8 +305,11 @@
          * an existing Pledge entry.
          */
         let is_modify = sessionStorage.getItem('isModify');
+
+        // If the flag for modifying an existing entry is true...
         if (is_modify === "true")
         {
+            // Grab all the required uniqueID's to populate a form page with existing entry's datas.
             let mod_id = sessionStorage.getItem('pledgeID');
             let don_id = sessionStorage.getItem('temp_pledge_donorID');
             let pat_id = sessionStorage.getItem('patientID');
@@ -268,6 +317,7 @@
             console.log("mod_id: " + mod_id);
             console.log("don_id: " + don_id);
 
+            // Retrieve the information specific to the pledge ID from the database.
             let temp_URL = "http://127.0.0.1:8081/pledges/" + mod_id;
             $http.get(temp_URL).then((res)=> {
                 console.log("Attempting to modify:");
@@ -280,7 +330,6 @@
                 let temp_installments_list = res.data.installments;
                 let pledge_donor_name = donor_info.first_name + " " + donor_info.last_name;
 
-                console.log("XXXXXXXXXXXXXXXXXXX");
                 console.log(temp_installments_list);
 
                 // Use for form pages when donor name is needed
@@ -288,6 +337,7 @@
 
                 // Bind all the retrieved information attributes to local scope to display on pledge modification view
                 /***
+                 * SPECIAL NOTES:
                  * LHS (ng-model) = RHS (the returned object from server)
                  * Make sure the LHS has matching ng-model name in the form html file
                  * Make sure the RHS has matching attribute name from database
@@ -299,10 +349,8 @@
 
                 $scope.temp_installments = [];
 
-                temp_installments_list.forEach(installment => {
-                    //installment.amount = $filter('number')(installment.amount, 2);
-                    $scope.inst_amount = installment.amount;
-                    $scope.inst_date = new Date(installment.installment_date);
+                temp_installments_list.forEach((installment) => {
+                    installment.installment_date = new Date(installment.installment_date);
                     $scope.temp_installments.push(installment);
                 });
 
@@ -310,8 +358,15 @@
             });
         }
 
-        /**
-         * Function(s) related to gathering data from form pages and packaging them into JSON format
+        /***
+         * submitPledge()
+         * @params:
+         *          isValid - Boolean flag specific for whether an entry page's fields have been correctly filled out
+         *                    for all required fields.
+         *          saveAndNew - String to behave as a flag for whether user clicked on "Save" or "Save And New" button
+         *                       when submitting data through the entry page.
+         *
+         * Function to handle submitting new or modified data from the entry form page to the database.
          */
         $scope.submitPledge = function(isValid, saveAndNew) {
 
@@ -320,6 +375,7 @@
             // Check if the data is an existing entry to be modified
             if (is_modify == "true")
             {
+                // Create an instance of the existing entry and populate the form fields with their values.
                 let modifiedPledge = {
                     donor_selected: $scope.donor_selected,
                     pledge_date: $scope.pledge_date,
@@ -331,12 +387,14 @@
                 console.log("Modified pledge:");
                 console.log(modifiedPledge);
 
+                // Check if user has correctly filled out all the data fields.
                 if (isValid) {
                     // Package the data into JSON format and update the existing entry in database
                     let submit_data = JSON.stringify(modifiedPledge);
 
                     console.log(submit_data);
 
+                    // Update database with modified fields for currently existing entry.
                     $http.put('http://127.0.0.1:8081/pledges/' + temp_pledge_id, submit_data).then((res) => {
                         console.log(res);
                     });
@@ -344,11 +402,12 @@
                     $window.alert("Entry saved!");
 
                     // Re-route user back to main pledges page
-                    //window.location.href = "../pages/pledge_basic_info.html";
+                    window.location.href = "../pages/pledge_basic_info.html";
                 }
             }
             else // this is a new entry, so begin new data form submission
             {
+                // Create new instance of entry and populate its attributes with the input values from the input fields.
                 let newPledge = {
                     donor_id: $scope.donor_selected,
                     patient_id: $scope.pledge_patient_id,
@@ -358,81 +417,33 @@
                     installments: $scope.temp_installments
                 };
 
+                console.log(newPledge.installments);
+
+                // Check if user entered all required fields.
                 if (isValid) {
                     // Package the data into JSON format and send the current data in newPledge to database
                     let submit_data = JSON.stringify(newPledge);
 
                     console.log(submit_data);
 
+                    // Send new entry to the database to be saved.
                     $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res) => {
                         console.log(res);
                     });
 
                     $window.alert("Entry saved!");
 
-                    // Re-route user back to main pledges page
+                    // Re-route user back to new clean entry form or to the main page depending on which save button
+                    //  is clicked.
                     if (saveAndNew == 'toForm') {
                         sessionStorage.setItem('isModify', false);
-                        //$window.location.href = "../pages/pledge_form.html";
+                        $window.location.href = "../pages/pledge_form.html";
                     }
                     else {
-                        //$window.location.href = "../pages/all_pledges.html";
+                        $window.location.href = "../pages/all_pledges.html";
                     }
                 }
             }
         };
-
-        /**
-        $scope.submitPledgeAndNew = function(isValid) {
-            let installments_list = [
-                {
-                    amount: null,
-                    installment_date: null
-                }
-            ];
-
-            let newPledge = {
-                donor_id: $scope.donor_selected,
-                patient_id: $scope.pledge_patient_id,
-                pledge_date: $scope.pledge_date,
-                target_amount: $scope.pledge_target_amount,
-                is_behind: false,
-                installments: installments_list
-                //date: $filter('date')($scope.pledge_date, "MM-dd-yyyy")     // Date is filtered to remove clock time
-            };
-            console.log("new pledge donor id: " + newPledge.donor_id);
-            console.log(newPledge);
-
-            if (isValid) {
-                // Package the data into JSON format
-                let submit_data = JSON.stringify(newPledge);
-                console.log(submit_data);
-
-                // Send an alert to the user to determine if user intends to add in additional entries
-                let newEntryPrompt = $window.confirm("Save current data and create blank entry?");
-
-                // If user wants to add in a new entry
-                if (newEntryPrompt) {
-
-                    $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
-                    {
-                        console.log(res);
-                        $window.alert("Entry saved!");
-                    });
-                    // Route user to data entry page
-                    $window.location.href = "../pages/pledge_form.html";
-                }
-                else {
-
-                    $http.post('http://127.0.0.1:8081/pledges', submit_data).then((res)=>
-                    {
-                        console.log(res);
-                        $window.alert("Entry saved!");
-                    });
-                    $window.location.href = "../pages/all_pledges.html";
-                }
-            }
-        };
-         */
     });
 }());

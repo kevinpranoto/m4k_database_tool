@@ -96,25 +96,44 @@
                             <div class="panel-body">
                                 <div class="panel panel-info">
                                     <h1 class="page-header" style="padding-left:1ex">{{item_name}} Information</h1>
-                                    <div class="panel-heading">Info Panel </div>
+                                    <div class="panel-heading">Contribution Details</div>
                                     <td style="padding-left:1em">
-                                        <button type="button" ng-click="editingContribution()" class="btn btn-default">Modify Entry</button>
+                                        <button type="button" style="position:absolute; top:179px; right:45px" ng-click="editingContribution()" class="btn btn-default">Modify Entry</button>
                                     </td>
                                     <div class="panel-body" ng-model="contribution_specific.items">
-                                        <div>{{donor_name}}</div>
-                                        <div>{{item_name}}</div>
-                                        <div>{{amount}}</div>
-                                        <div>{{pay_method}}</div>
-                                        <div>{{contrib_date}}</div>
-                                        <div>{{contrib_type}}</div>
-                                        <div>{{destination}}</div>
-                                        <div>{{appeal}}</div>
-                                        <div>{{is_event_item}}</div>
-                                        <div>{{thanked}}</div>
-                                        <div>{{notes}}</div>
-                                    </div>
-                                    <div class="panel-footer">
-                                        Panel Footer
+                                        <div>
+                                            <strong>Donor name:</strong> {{donor_name}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Contribution name:</strong> {{item_name}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Amount:</strong> {{amount === null ? amount : 'None'}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Payment method:</strong> {{pay_method === null ? pay_method : 'None'}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Contribution date:</strong> {{contrib_date}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Type:</strong> {{contrib_type}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Destination:</strong> {{destination}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Appeal:</strong> {{appeal}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Is this an event item?</strong> {{is_event_item ? 'Yes' : 'No'}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Donor thanked?</strong> {{thanked ? 'Yes' : 'No'}}
+                                        </div><br>
+                                        <div>
+                                            <strong>Notes:</strong> {{notes}}
+                                        </div><br>
                                     </div>
                                 </div>
                                 <!-- /.table-responsive -->
