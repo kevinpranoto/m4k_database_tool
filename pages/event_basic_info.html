@@ -108,7 +108,7 @@
                 <!-- /.col-lg-12 -->
             </div>
             <div class="row" ng-cloak>
-                <div class="col-xs-1" style="padding-bottom: 2em; position:relative; float:left">
+                <div class="col-xs-1" style="padding-bottom: 1em; position:relative; float:left">
                     <table>
                         <tr>
                             <td>
@@ -117,21 +117,29 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-xs-1">
-                </div>
             </div>
             <div class="row">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <h3>Type: {{type}}</h3>
-                                <h3>Theme: {{theme}}</h3>
-                                <h3>Date: {{date}}</h3>
+                <div class="col-lg-12">
+                    <div class="panel-body">
+                        <div class="row" ng-cloak>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div>
+                                        <strong>Type:</strong> {{type}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Theme:</strong> {{theme}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Date:</strong> {{date}}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <!-- /.table-responsive -->
                     </div>
                 </div>
+            </div>
         </div>
         <!-- /#page-wrapper -->
     </div>
