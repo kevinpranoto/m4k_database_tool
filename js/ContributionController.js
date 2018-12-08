@@ -115,6 +115,9 @@
     let contributionSpecific = angular.module("contributionSpecific", []);
     contributionSpecific.controller("ContributionBasicInfoController", function($scope, $filter, $http, $window) {
 
+        /**
+         *
+         **/
         // Retrieve contribution ID from the cache
         let id = sessionStorage.getItem('contributionID');
 
@@ -137,7 +140,7 @@
             $scope.contrib_date = $filter('date')(basic_info.contrib_date, "MM-dd-yyyy");
             $scope.is_event_item = basic_info.is_event_item;
             $scope.contrib_type = basic_info.contrib_type;
-            $scope.amount = $filter('number')(basic_info.amount, 2);
+            $scope.amount = "$" + $filter('number')(basic_info.amount, 2);
             $scope.pay_method = basic_info.pay_method;
             $scope.destination = basic_info.destination;
             $scope.appeal = basic_info.appeal;

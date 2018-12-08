@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Module for handling specific views for Pledge entries. -->
 <html lang="en" ng-app="pledgeSpecific">
 
 <head>
@@ -36,11 +37,13 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- Don't forget to include angular.js scripts and the JS file with controller logic. -->
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../js/PledgeController.js"></script>
 
 </head>
 
+<!-- Use the basic info controller -->
 <body ng-controller="PledgeBasicInfoController" class="ng-cloak">
     <div id="wrapper">
         <!-- Navigation -->
@@ -56,6 +59,7 @@
             </div>
             <!-- /.navbar-header -->
 
+            <!-- Section for login functions/controls -->
             <ul class="nav navbar-top-links navbar-right">
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -102,21 +106,33 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="panel panel-info">
-                                <div class="panel-heading">Info Panel</div>
-                                <button type="button" ng-click="editingPledge()" class="btn btn-default">Modify Entry</button>
+
+                                <!-- Field for displaying the pledge details gathered from the database entry -->
+                                <div class="panel-heading">Pledge Details</div>
+                                <button type="button" style="position:absolute; top:70px; right:45px" ng-click="editingPledge()" class="btn btn-default">Modify Entry</button>
                                 <div class="panel-body">
-                                    <div>Name : {{donor_name}}</div>
-                                    <div>Alias: {{alias}}</div>
-                                    <div>Pledged to Patient #: {{patient_id}}</div>
-                                    <div>Target Year for Pledge Completion: {{pledge_date}}</div>
-                                    <div>Target amount for Pledge: {{target_amount}}</div>
-                                    <div>Behind in Pledge Goal? : {{is_behind ? 'Yes' : 'No' }}</div>
+                                    <div>
+                                        <strong>Donor name:</strong> {{donor_name}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Alias:</strong> {{alias === null ? "None" : alias}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Pledged to Patient #:</strong> {{patient_id}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Target Year for Pledge Completion:</strong> {{pledge_date}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Target amount for Pledge:</strong> {{target_amount}}
+                                    </div><br>
+                                    <div>
+                                        <strong>Behind in Pledge Goal?:</strong> {{is_behind ? 'Yes' : 'No' }}
+                                    </div>
                                 </div>
 
-                                <div class="panel-heading">
-                                    Pledge Installments
-                                </div>
-                                <div class="panel-body" ng-repeat="item in installments_list">
+                                <div class="panel-heading">Pledge Installments</div>
+                                <div class="panel-body" ng-repeat="item in basic_info_installments_list">
                                     <div ng-hide="">{{'$' + item.amount + " on " + item.installment_date}}</div>
                                 </div>
 
