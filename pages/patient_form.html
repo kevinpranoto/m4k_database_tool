@@ -89,10 +89,10 @@
                     </div>
                     <div class="panel-body" >
                         <div class="row">
-                            <form role="form">
+                            <form role="form" name="patient_form" novalidate>
                                 <div class="col-xs-5" style="position:center">
                                     <div class="form-group">
-                                        <input class="form-control" placeholder="Enter Patient ID here" ng-model="pid">
+                                        <input class="form-control" placeholder="Enter Patient ID here" ng-model="pid" name="id" required>
                                     </div>  
                                     <div class="form-group" ng-repeat="need in needs">
                                         <div class="form-group needs-group">
@@ -105,8 +105,8 @@
                                     <div style="padding-top: 1em">
                                         <div class="form-group" style="position: relative; padding-right: auto; float: right">
                                             <button type="reset" class="btn btn-warning">Reset</button>
-                                            <button type="submit" class="btn btn-success" ng-click="submitPatient()">Save</button>
-                                            <button type="submit" class="btn btn-primary" ng-click="submitPatient()" ng-hide="myMod.isModify == 'true'">Save & New</button>
+                                            <button type="submit" class="btn btn-success" ng-click="submitPatient()" ng-disabled="patient_form.$invalid">Save</button>
+                                            <button type="submit" class="btn btn-primary" ng-click="submitPatient()" ng-disabled="patient_form.$invalid" ng-hide="myMod.isModify == 'true'">Save & New</button>
                                         </div>
                                     </div>
                                 </div>

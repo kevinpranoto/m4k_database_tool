@@ -93,17 +93,17 @@
                     </div>
                     <div class="panel-body">
                         <div class="row">
-                            <form role="form">
+                            <form role="form" name="staffFormPage">
                                 <div class="col-lg-6">
                                     <div class="form-group" >
                                         <label>Type</label>
-                                        <select class="form-control" ng-model="type">
+                                        <select class="form-control" ng-model="type" required>
                                             <option ng-repeat="type in types">{{type}}</option>
                                         </select>
                                     </div>
                                     <div class="form-group" >
                                         <label>Status</label>
-                                        <select class="form-control" ng-model="state">
+                                        <select class="form-control" ng-model="state" required>
                                             <option ng-repeat="status in statuses">{{status}}</option>
                                         </select>
                                     </div>
@@ -122,8 +122,8 @@
                                         <div class="form-group email-group" ng-repeat="email in emails">
                                             <label>E-mail {{$index + 1}}</label>
                                             <br>
-                                            <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1"> Primary Email</label>
-                                            <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" required>
+                                            <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1" required> Primary Email</label>
+                                            <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" type="email" required>
                                             <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
                                         </div>
                                         <button type="button" ng-click="addEmail()">Add email</button>
@@ -135,11 +135,11 @@
                                             <br>
                                             <label><input type="radio" ng-click="primaryPhone(phone)" name="isPrimaryPhone" ng-checked="phone.is_primary == 1"> Primary Phone</label>
                                             <div class="dropdown">
-                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type">
+                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type" required>
                                                     <option ng-repeat="phoneType in phoneTypes">{{phoneType}}</option>
                                                 </select>
                                             </div>
-                                            <input type="tel" class="form-control" placeholder="Enter phone number here" phone-input ng-model="phone.phone_number" required ng-init="phone.phone_number = phone.phone_number|tel">
+                                            <input type="tel" class="form-control" placeholder="Enter phone number here" phone-input ng-model="phone.phone_number" ng-init="phone.phone_number = phone.phone_number|tel" required>
                                         <button ng-click="phones.splice($index, 1)" aria-label="Remove">Remove phone</button>
                                         </div>
                                         <button type="button" ng-click="addPhone()">Add Phone</button>
@@ -152,7 +152,7 @@
                                     <div class="form-group" ng-repeat="address in addresses">
                                         <div class="form-group" style="padding-top: 1em">
                                             <label style="padding-right: 1em">Address Type:   </label>
-                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType">{{addressType}}</label>
+                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType" required>{{addressType}}</label>
                                         </div>
                                             <div class="form-group">
                                             <label>Street</label>
@@ -177,8 +177,8 @@
                         </div>
                         <div class="form-group" style="position: relative; float: right">
                             <button type="reset" class="btn btn-warning" ng-hide="myMod.isModify == 'true'">Reset</button>
-                            <button type="submit" class="btn btn-success" ng-click="submitStaff('')">Save</button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitStaff('toForm')" ng-hide="myMod.isModify == 'true'">Save & New</button>
+                            <button type="submit" class="btn btn-success" ng-click="submitStaff('')" ng-disabled="!staffFormPage.$valid">Save</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitStaff('toForm')" ng-hide="myMod.isModify == 'true'" ng-disabled="!staffFormPage.$valid">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>

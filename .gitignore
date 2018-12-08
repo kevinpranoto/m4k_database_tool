@@ -1,6 +1,2 @@
-node_modules/
-bower_components/
-.vscode/
 package.json
 package-lock.json
-package.json

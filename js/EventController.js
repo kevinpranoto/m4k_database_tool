@@ -156,8 +156,8 @@ eventEntry.controller('eventForm', function($scope, $http) {
             $scope.name = obj.campaign_name;
             $scope.date = new Date(obj.campaign_date);
             $scope.theme = obj.theme;
-            $scope.campaign_type_id = obj.campaign_type_id;
-            $scope.campaign_name = obj.campaign_type_name;
+            $scope.campaign_info = { campaign_type_id: obj.campaign_type_id, campaign_type_name: obj.campaign_type_name};
+            console.log($scope.campaign_info);
 
             sessionStorage.setItem('event_object', JSON.stringify(obj));
         });
