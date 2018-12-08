@@ -135,7 +135,7 @@ patientEntry.controller('patientForm', function($scope, $http) {
         });
     }
 
-    $scope.submitPatient = function() {
+    $scope.submitPatient = function(isValid, saveAndNew) {
         if ($scope.myMod.isModify === 'true') {
             var patient = {
                 patient_id: $scope.pid,
