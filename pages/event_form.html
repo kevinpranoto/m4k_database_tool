@@ -90,26 +90,26 @@
                     </div>
                     <div class="panel-body">
                         <div class="row">
-                            <form role="form">
+                            <form role="form" name="event_form" novalidate>
                                 <div class="col-xs-5" style="position:center">
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Event Name</label>
-                                        <input class="form-control" placeholder="Enter event name here" ng-model="name" required>
+                                        <input class="form-control" placeholder="Enter event name here" ng-model="name" name="name" required>
                                     </div>
                                     
-                                    <div class="form-group">
+                                    <div class="form-group" style="padding-top: 1em">
                                         <label class="col-2 col-form-label">Date</label>
-                                        <input class="form-control" type="date" value="2011-08-19" ng-model="date" required>
+                                        <input class="form-control" type="date" value="2011-08-19" ng-model="date" name="date" required>
                                     </div>
 
                                     <div class="form-group" style="padding-top: 1em">
                                         <label>Event Theme</label>
-                                        <input class="form-control" placeholder="Enter event theme here" ng-model="theme" required>
+                                        <input class="form-control" placeholder="Enter event theme here" ng-model="theme" name="theme" required>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div class="form-group" style="padding-top: 1em">
                                         <label>Campaign Type</label>
-                                        <select class="form-control" ng-model="campaign_info">
+                                        <select class="form-control" ng-model="campaign_info" name="campaign_type" required>
                                                 <option ng-repeat="campaign in campaigns" ng-value="campaign.campaign_type_id">{{campaign.campaign_type_name}}</option>
                                         </select>
                                     </div>
@@ -119,8 +119,8 @@
                         </div>
                         <div class="form-group" style="position: relative; float: right">
                             <button type="reset" class="btn btn-warning">Reset</button>
-                            <button type="submit" class="btn btn-success" ng-click="submitEvent()">Save</button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitEvent()" ng-hide="myMod.isModify == 'true'">Save & New</button>
+                            <button type="submit" class="btn btn-success" ng-click="submitEvent()" ng-disabled="event_form.$invalid ">Save</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitEvent()" ng-disabled="event_form.$invalid "ng-hide="myMod.isModify == 'true'">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>

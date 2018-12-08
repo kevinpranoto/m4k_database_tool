@@ -128,19 +128,23 @@
 
                                     <div class="form-group">
                                         <label>Nickname</label>
-                                        <input class="form-control" placeholder="Enter nickname here" ng-model="alias">
+                                        <input class="form-control" placeholder="Enter nickname here" ng-model="alias" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Company</label>
-                                        <input class="form-control" placeholder="Company affiliation" ng-model="company" ng-init="n/a">
+                                        <input class="form-control" placeholder="Company affiliation" ng-model="company" ng-init="n/a" required>
                                     </div>
 
                                     <div class="form-group">
                                     <div class="form-group email-group" ng-repeat="email in emails">
                                         <label>E-mail {{$index + 1}}</label>
                                         <br>
+<<<<<<< HEAD
                                         <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1"> Primary Email</label>
+=======
+                                        <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1" required> Primary Email</label>
+>>>>>>> 5a8f39787f52cc194d1aa5359fe0547d39907764
                                         <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" type="email" required>
                                         <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
                                     </div>
@@ -151,7 +155,7 @@
                                         <div class="form-group" ng-repeat="phone in phones">
                                             <label>Phone {{$index + 1}}</label>
                                             <br>
-                                            <label><input type="radio" ng-click="primaryPhone(phone)" name="isPrimaryPhone" ng-checked="phone.is_primary == 1"> Primary Phone</label>
+                                            <label><input type="radio" ng-click="primaryPhone(phone)" name="isPrimaryPhone" ng-checked="phone.is_primary == 1" required> Primary Phone</label>
                                             <div class="dropdown">
                                                 <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type" required>
                                                     <option ng-repeat="type in phoneTypes">{{type}}</option>
@@ -175,7 +179,7 @@
                                         <div class="form-group" style="padding-top: 1em">
                                             <label style="padding-right: 1em">Address Type:   </label>
                                             <br>
-                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType">{{addressType}}</label>
+                                            <label ng-repeat="addressType in addressTypes" style="padding-right: 1em"> <input type="radio" ng-model="address.address_type" ng-value="addressType" required>{{addressType}}</label>
                                         </div>
                                             <div class="form-group">
                                             <label>Street</label>
