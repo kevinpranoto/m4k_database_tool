@@ -93,18 +93,18 @@
                     </div>
                     <div class="panel-body" >
                         <div class="row">
-                            <form role="form">
+                            <form role="form" name="donorFormPage">
                                 <div class="col-lg-6">
                                     <div class="form-group" >
                                         <label>Donor Status</label>
-                                        <select class="form-control" ng-model="state">
+                                        <select class="form-control" ng-model="state" required>
                                             <option ng-repeat="status in statuses" ng-selected="Active">{{status}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group" >
                                         <label>Donor Type</label>
-                                        <select class="form-control" ng-model="type">
+                                        <select class="form-control" ng-model="type" required>
                                             <option ng-repeat="type in types" ng-selected="Individual">{{type}}</option>
                                         </select>
                                     </div>
@@ -112,18 +112,18 @@
                                     <div class="form-group" style="padding-top: 1em">
                                         <!-- Dropdown menu for choosing a salutation for a donor; option to add more available -->
                                         <label>Salutations</label>
-                                        <select class="form-control" ng-model="salutation">
+                                        <select class="form-control" ng-model="salutation" required>
                                             <option ng-repeat="salute in salutations" ng-model="salutation">{{salute}}</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label>First name / Middle name</label>
-                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName">
+                                        <input class="form-control" placeholder="Enter first name here" ng-model="firstName" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Last name</label>
-                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName">
+                                        <input class="form-control" placeholder="Enter middle name here" ng-model="lastName" required>
                                     </div>
 
                                     <div class="form-group">
@@ -141,7 +141,7 @@
                                         <label>E-mail {{$index + 1}}</label>
                                         <br>
                                         <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1"> Primary Email</label>
-                                        <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address">
+                                        <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" type="email" required>
                                         <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
                                     </div>
                                     <button type="button" ng-click="addEmail()">Add email</button>
@@ -153,11 +153,11 @@
                                             <br>
                                             <label><input type="radio" ng-click="primaryPhone(phone)" name="isPrimaryPhone" ng-checked="phone.is_primary == 1"> Primary Phone</label>
                                             <div class="dropdown">
-                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type">
+                                                <select class="btn btn-default dropdown-toggle" type="button" ng-model="phone.phone_type" required>
                                                     <option ng-repeat="type in phoneTypes">{{type}}</option>
                                                 </select>
                                             </div>
-                                            <input class="form-control" placeholder="Enter phone number here" ng-model="phone.phone_number" phone-input>
+                                            <input class="form-control" placeholder="Enter phone number here" ng-model="phone.phone_number" phone-input required>
                                             <button ng-click="phones.splice($index, 1)" aria-label="Remove">Remove phone</button>
                                         </div>
                                         <button type="button" ng-click="addPhone()">Add Phone</button>
@@ -171,7 +171,7 @@
                                     <div class='form-group address-group' ng-repeat="address in addresses" style="padding-bottom: 1em">
                                         <label>Address {{$index + 1}}</label>
                                         <br>
-                                        <label><input type="radio" ng-click="primaryAddress(address)" name="isPrimaryAddress" ng-checked="address.is_primary == 1"> Primary Address</label>
+                                        <label><input type="radio" ng-click="primaryAddress(address)" name="isPrimaryAddress" ng-checked="address.is_primary == 1" required> Primary Address</label>
                                         <div class="form-group" style="padding-top: 1em">
                                             <label style="padding-right: 1em">Address Type:   </label>
                                             <br>
@@ -179,19 +179,19 @@
                                         </div>
                                             <div class="form-group">
                                             <label>Street</label>
-                                            <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="address.address_line_1">
+                                            <input class="form-control" placeholder="(e.g. 1234 Biz Street)" ng-model="address.address_line_1" required>
                                         </div>
                                             <div class="form-group">
                                             <label>City</label>
-                                            <input class="form-control" placeholder="Enter city here" ng-model="address.city">
+                                            <input class="form-control" placeholder="Enter city here" ng-model="address.city" required>
                                         </div>
                                             <div class="form-group">
                                             <label>State</label>
-                                            <input class="form-control" placeholder="Enter state here" ng-model="address.state">
+                                            <input class="form-control" placeholder="Enter state here" ng-model="address.state" required>
                                         </div>
                                             <div class="form-group">
                                             <label>Zip Code</label>
-                                            <input class="form-control" placeholder="Enter zip code here" ng-model="address.zip_code">
+                                            <input class="form-control" placeholder="Enter zip code here" ng-model="address.zip_code" required>
                                         </div>
                                         <button ng-click="addresses.splice($index, 1)" aria-label="Remove">Remove address</button>
                                     </div>
@@ -205,8 +205,8 @@
                         </div>
                         <div class="form-group" style="position: relative; float: right">
                             <button type="reset" class="btn btn-warning" ng-hide="myMod.isModify == 'true'">Reset</button>
-                            <button type="submit" class="btn btn-success" ng-click="submitDonor('')">Save</button>
-                            <button type="submit" class="btn btn-primary" ng-click="submitDonor('toForm')" ng-hide="myMod.isModify == 'true'">Save & New</button>
+                            <button type="submit" class="btn btn-success" ng-click="submitDonor('')" ng-disabled="!donorFormPage.$valid">Save</button>
+                            <button type="submit" class="btn btn-primary" ng-click="submitDonor('toForm')" ng-hide="myMod.isModify == 'true'" ng-disabled="!donorFormPage.$valid">Save & New</button>
                         </div>
                         <!-- /.row (nested) -->
                     </div>

@@ -11,7 +11,8 @@
     "postman": "^0.2.0",
     "promise": "^8.0.2",
     "scikit-learn": "^0.1.0",
-    "scipy": "^0.1.4"
+    "scipy": "^0.1.4",
+    "ui-select": "^0.19.8"
   },
   "devDependencies": {
     "browser-sync": "^2.13.0",
