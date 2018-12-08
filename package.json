@@ -42,6 +42,8 @@
     "range-parser": "^1.2.0",
     "scikit-learn": "^0.1.0",
     "scipy": "^0.1.4",
+    "select2": "^4.0.6-rc.1",
+    "select2-bootstrap-css": "^1.4.6",
     "send": "^0.16.2",
     "setprototypeof": "^1.1.0",
     "statuses": "^1.5.0",
