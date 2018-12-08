@@ -123,7 +123,7 @@
                                             <label>E-mail {{$index + 1}}</label>
                                             <br>
                                             <label><input type="radio" ng-click="primaryEmail(email)" name="isPrimaryEmail" ng-checked="email.is_primary == 1" required> Primary Email</label>
-                                            <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" required>
+                                            <input class="form-control" placeholder="Enter e-mail address here" ng-model="email.email_address" type="email" required>
                                             <button ng-click="emails.splice($index, 1)" aria-label="Remove">Remove email</button>
                                         </div>
                                         <button type="button" ng-click="addEmail()">Add email</button>
