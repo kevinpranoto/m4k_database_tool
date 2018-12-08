@@ -453,6 +453,12 @@ table.dataTable thead .sorting:after {
   border:1px solid #f00;
 }
 
+
+.body_font {
+  face:helvetica;
+  font-size: 32px;
+}
+
 #fixedbutton {
   position: fixed;
   bottom: 0px;

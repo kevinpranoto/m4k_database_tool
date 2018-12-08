@@ -115,6 +115,9 @@
     let contributionSpecific = angular.module("contributionSpecific", []);
     contributionSpecific.controller("ContributionBasicInfoController", function($scope, $filter, $http, $window) {
 
+        /**
+         *
+         **/
         // Retrieve contribution ID from the cache
         let id = sessionStorage.getItem('contributionID');
 

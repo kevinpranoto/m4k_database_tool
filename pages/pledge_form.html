@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+<!-- Include module responsible for all pledge data entry related elements here -->
 <html lang="en" ng-app="pledgeEntry">
 
 <head>
@@ -29,14 +31,16 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Don't forget to include angular.js scripts and the JS file with controller logic. -->
     <script src="../bower_components/angular/angular.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
-
     <script src="../js/PledgeController.js"></script>
 
 </head>
 
+<!-- Include controller responsible for pledge forms here -->
 <body class="ng-cloak" ng-controller="PledgeFormController">
 
 <div id="wrapper">
@@ -78,8 +82,12 @@
     <div id="page-wrapper" >
         <div class="row">
             <div class="col-lg-12">
+
+                <!-- Display header for form entry page changes depending on whether the form is for modifying an
+                     existing entry or adding a new one. -->
                 <h1 class="page-header" ng-hide="is_modify_form == 'true'">New Pledge Entry</h1>
                 <h1 class="page-header" ng-hide="is_modify_form == 'false'">Edit Pledge</h1>
+
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -87,12 +95,15 @@
         <div class="row">
             <div class="col-lg-12" style="">
                 <div class="panel panel-default">
+
+                    <!-- Data-bound display for showing which donor's pledge's basic information page user is on. -->
                     <div class="panel-heading">
                         Pledge Information for {{pledge_donor_name_for_basic_info}}
                     </div>
                     <div class="panel-body">
                         <div class="row">
-                            <!-- Disables the native validation prompts from the browser to enable custom validation notes -->
+
+                            <!-- Disables the native validation prompts from the browser to enable custom validation notes. -->
                             <form role="form" name="pledge_form" novalidate>
 
                                 <!-- Using PledgeController here to modify display in entry form based on Contribution Type selected -->
@@ -110,21 +121,28 @@
                                                 ng-hide="is_modify_form == 'true'"
                                                 ng-model="donor_selected"
                                                 required>
+                                            <!-- Drop-down options are listed by donors' names sorted by last name ABC order, but their actual
+                                                 values when selected are their donor ID's. -->
                                             <option class="ng-cloak" ng-repeat="donor in temp_donor_list" ng-value="donor.id">{{donor.name}}</option>
                                         </select>
 
-                                        <!-- Dropdown disables choosing a donor when modifying data -->
+                                        <!-- Drop-down disabled for choosing a donor when modifying existing data to prevent users from potentially
+                                             re-mapping donors to the patients they are pledged to. -->
                                         <select class="form-control"
                                                 ng-show="is_modify_form == 'true'"
                                                 ng-disabled="is_modify_form === 'true'">
                                             <option class="ng-cloak">Field disabled to prevent changing donor mapping</option>
+
                                         </select>
-                                        <!-- Display error message if the dropdown is not selected -->
+                                        <!-- Display error message if the drop-down for donor name is not selected. -->
                                         <div class="entry_error" ng-show="pledge_form.name.$invalid && !pledge_form.name.$pristine">Please select a donor to associate with pledge.</div>
                                     </div>
 
                                     <div class="form-group">
                                         <label>Patient ID</label>
+
+                                        <!-- Drop-down options listed by patient ID's in increasing order; drop-down is also disabled
+                                             if user is modifying an existing entry to prevent re-mapping of donor to patient in pledge. -->
                                         <select class="form-control"
                                                ng-init="getDropdownPatients()"
                                                name="id"
@@ -133,28 +151,37 @@
                                                required>
                                             <option class="ng-cloak" ng-repeat="item in temp_patient_list | unique:'patient_id'">{{item.patient_id}}</option>
                                         </select>
+                                        <!-- Display error message if the drop-down for patient ID is not selected. -->
                                         <div class="entry_error" ng-show="pledge_form.id.$invalid && !pledge_form.id.$pristine">Please select a patient ID to associate with pledge.</div>
                                     </div>
 
                                     <div class="form-group">
                                         <div class="form-group">
+                                            <!-- Dynamic input fields for inserting new or deleting current/existing instance of installments to be tied to the
+                                                 pledge entry. Users can add multiple installment entries or none at all, and modify/add more later on with
+                                                 existing entries. -->
                                             <div class='form-group address-group' ng-repeat="installment in temp_installments" style="padding-bottom: 1em">
                                                 <label>Installment {{$index + 1}}</label>
 
                                                 <div class="form-group" style="padding-top: 1em">
+
+                                                    <!-- Field for inserting pledge amount. -->
                                                     <label>Amount</label>
                                                     <input class="form-control"
                                                            type="number"
                                                            name="installment_amount"
                                                            step="0.01"
                                                            ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
-                                                           placeholder="Enter pledge amount here (e.g. 1000 or 1000.00)"
+                                                           placeholder="(e.g. 1000 or 1000.00)"
                                                            ng-model="installment.amount"
                                                            required>
-                                                    <div class="entry_error" ng-show="pledge_form.installment_amount.$invalid && !pledge_form.installment_amount.$pristine">Amount must only be up to two decimal places.</div>
+                                                    <!-- Display error message if user tries to put in values < 0.01 for pledge amounts. -->
+                                                    <div class="entry_error" ng-show="pledge_form.installment_amount.$invalid && !pledge_form.installment_amount.$pristine">Amount must be non-negative and up to two decimal places.</div>
 
                                                 </div>
                                                 <div class="form-group">
+
+                                                    <!-- Field for inserting pledge date. -->
                                                     <label>Date</label>
                                                     <input class="form-control"
                                                            name="installment_date"
@@ -163,8 +190,12 @@
                                                            required>
                                                     <div class="entry_error" ng-show="pledge_form.installment_date.$invalid && !pledge_form.installment_date.$pristine">Please enter the pledge installment date.</div>
                                                 </div>
+
+                                                <!-- Remove button for deleting installment entry fields dynamically. -->
                                                 <button ng-click="temp_installments.splice($index, 1)" aria-label="Remove">Remove installment</button>
                                             </div>
+
+                                            <!-- Add button for adding installment entry fields dynamically. -->
                                             <button type="button" ng-click="addInstallment()">Add installment</button>
                                         </div>
                                     </div>
@@ -173,6 +204,8 @@
                                 <!-- /.col-lg-6 (nested) -->
                                 <div class="col-lg-6">
                                     <div class="form-group" style="padding-top:1em">
+
+                                        <!-- Field for inserting pledge target amount. -->
                                         <label>Target amount</label>
                                         <input class="form-control"
                                                name="target_amount"
@@ -181,21 +214,22 @@
                                                ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
                                                placeholder="Enter pledge amount here (e.g. 1000 or 1000.00)"
                                                required>
+                                        <!-- Display error message if amount is not in #.## format. -->
                                         <div class="entry_error" ng-show="pledge_form.target_amount.$invalid && !pledge_form.target_amount.$pristine">Amount must only be up to two decimal places.</div>
                                     </div>
 
                                     <!-- NOTE: ng-init will invoke a function as soon as the page is initialized -->
                                     <div class="form-group">
                                         <label>Target date</label>
-                                        <!--<select class="form-control" name="year" ng-model="pledge_target_year" ng-init="calendarList()" required>
-                                            <option ng-repeat="year in list_of_years">{{year}}</option>
-                                        </select>-->
+
+                                        <!-- Field for inserting pledge date. -->
                                         <input class="form-control" type="date" ng-model="pledge_date" required>
+                                        <!-- Display error message if date is not entered/selected. -->
                                         <div class="entry_error" ng-show="pledge_form.date.$invalid && !pledge_form.date.$pristine">Please select a target pledge date.</div>
                                     </div>
 
-                                    <!-- Final Submit and Reset buttons for the overall entry form; edited with float style
-                                         to default to the right side of the page -->
+                                    <!-- Final Submit and Reset buttons for the overall entry form; edited with float style to default to the right side of the page -->
+                                    <!-- NOTE: Buttons are disabled until all the required fields of the entry form page are filled out correctly. -->
                                     <div class="form-group" style="float: right">
                                         <button type="reset" class="btn btn-warning">Reset</button>
                                         <button type="submit" class="btn btn-success" ng-disabled="pledge_form.$invalid" ng-click="submitPledge(pledge_form.$valid, '')">Save</button>
