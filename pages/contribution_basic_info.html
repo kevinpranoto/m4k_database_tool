@@ -101,17 +101,17 @@
                                         <button type="button" ng-click="editingContribution()" class="btn btn-default">Modify Entry</button>
                                     </td>
                                     <div class="panel-body" ng-model="contribution_specific.items">
-                                        <div>{{donor_name}}</div>
-                                        <div>{{item_name}}</div>
-                                        <div>{{amount}}</div>
-                                        <div>{{pay_method}}</div>
-                                        <div>{{contrib_date}}</div>
-                                        <div>{{contrib_type}}</div>
-                                        <div>{{destination}}</div>
-                                        <div>{{appeal}}</div>
-                                        <div>{{is_event_item}}</div>
-                                        <div>{{thanked}}</div>
-                                        <div>{{notes}}</div>
+                                        <div>Donor name: {{donor_name}}</div>
+                                        <div>Contribution name: {{item_name}}</div>
+                                        <div>Amount: {{amount === null ? amount : 'None'}}</div>
+                                        <div>Payment method: {{pay_method === null ? pay_method : 'None'}}</div>
+                                        <div>Contribution Date: {{contrib_date}}</div>
+                                        <div>Type: {{contrib_type}}</div>
+                                        <div>Destination: {{destination}}</div>
+                                        <div>Appeal:{{appeal}}</div>
+                                        <div>Is this an event item? {{is_event_item ? 'Yes' : 'No'}}</div>
+                                        <div>Donor thanked? {{thanked ? 'Yes' : 'No'}}</div>
+                                        <div>Notes: {{notes}}</div>
                                     </div>
                                     <div class="panel-footer">
                                         Panel Footer
