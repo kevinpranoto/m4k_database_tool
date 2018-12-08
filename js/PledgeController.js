@@ -216,7 +216,6 @@
          * entry form page for both new and existing entries.
          */
         $scope.addInstallment = function() {
-            $scope.temp_installments = [];
             $scope.temp_installments.push({amount: '', date: ''});
         };
 
