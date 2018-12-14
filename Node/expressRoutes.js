@@ -42,21 +42,6 @@ app.route('/login').post(jsonParser, (req, res, next) =>
 	});
 });
 
-//FOR KEVIN: LOGIN
-/*
-$http.get('http://127.0.0.1:8081/login', (res) =>
-{
-	if (res.statusCode == 200)
-	{
-		console.log('Success');
-	}
-	else
-	{
-		console.log('Failure');
-	}
-});
-*/
-
 //HANDLE GENERAL DONOR REQUESTS
 app.route('/donors').get((req, res) =>
 {
@@ -209,6 +194,13 @@ app.route('/pledges').get((req, res) =>
 			throw err;
 		console.log('Retrieved all pledges');
 		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
+	});
+}).put(jsonParser, (req, res) =>
+{
+	putQueries.checkPledgeDate((data) =>
+	{
+		console.log('Checked pledge due dates, updated accordingly');
+		res.status(200).send(data);
 	});
 }).post(jsonParser, (req, res) =>
 {

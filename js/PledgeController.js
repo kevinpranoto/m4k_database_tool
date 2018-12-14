@@ -31,6 +31,7 @@
                     patient_id: obj.patient_id,
                     target_amount: "$" + $filter('number')(obj.target_amount, 2),
                     pledge_date: $filter('date')(obj.pledge_date, 'MM-dd-yyyy'),
+                    is_behind: obj.is_behind,
                     installments: obj.installments
                 };
 
