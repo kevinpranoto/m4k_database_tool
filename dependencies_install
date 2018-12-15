@@ -1,0 +1,10 @@
+Dependencies
+
+angular-sanitize
+select2-bootstrap-css
+ui-select
+
+express
+cors
+promise
+http-server
