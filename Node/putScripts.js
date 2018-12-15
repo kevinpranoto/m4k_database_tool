@@ -2,6 +2,7 @@
 
 var mysql = require('mysql');
 var Promise = require('promise');
+var moment = require('moment');
 
 var con = mysql.createConnection({
 	host:"m4k-database.c947krbzy1fm.us-west-1.rds.amazonaws.com",
@@ -9,6 +10,11 @@ var con = mysql.createConnection({
 	password: "databoisroxx",
 	database: "m4k_database"
 });
+
+var getQueries = [
+/*queryNum = 0: GET All Pledges*/ "SELECT Pledge.pledge_id, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledge.target_amount, Pledge.pledge_date, Pledge.is_behind FROM Supporter, Patient, Pledge WHERE Pledge.donor_id = Supporter.supporter_id AND Pledge.patient_id = Patient.patient_id ORDER BY Pledge.pledge_id ASC",
+/*queryNum = 1: GET Pledge basic info w/ ID*/ "SELECT Pledge.pledge_date, Pledge.target_amount, Pledge.is_behind FROM Pledge WHERE Pledge.pledge_id = @keyword"
+];
 
 var deleteQueries = [
 /*queryNum = 0: DELETE Supporter w/ ID*/ "DELETE FROM Supporter WHERE Supporter.supporter_id = @keyword",
@@ -49,9 +55,10 @@ var putQueries = [
 /*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
 /*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
 /*queryNum = 3: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET pledge_date = newPledgeDate, target_amount = newTargetAmount, is_behind = newIsBehind WHERE pledge_id = keyword",
-/*queryNum = 4: PUT(UPDATE) Campaign w/ ID*/ "UPDATE Campaign SET campaign_name = newCampaignName, campaign_type_id = newCampaignTypeId, is_event = newIsEvent, campaign_date = newCampaignDate, theme = newTheme WHERE campaign_id = keyword",
-/*queryNum = 5: PUT(UPDATE) Contribution w/ ID*/ "UPDATE Contribution SET Contribution.donor_id = newDonorId, Contribution.contrib_date = newContribDate, Contribution.item_name = newItemName, Contribution.is_event_item = newIsEventItem, Contribution.contrib_type = newContribType, Contribution.amount = newAmount, Contribution.pay_method = newPayMethod, Contribution.destination = newDestination, Contribution.notes = newNotes, Contribution.appeal = newAppeal, Contribution.thanked = newThanked WHERE Contribution.contrib_id = keyword",
-/*queryNum = 6: PUT(UPDATE) CampaignType w/ ID*/ "UPDATE CampaignType SET CampaignType.campaign_type_name = newCampaignTypeName WHERE campaign_type_id = keyword"
+/*queryNum = 4: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET is_behind = 1 WHERE pledge_id = keyword",
+/*queryNum = 5: PUT(UPDATE) Campaign w/ ID*/ "UPDATE Campaign SET campaign_name = newCampaignName, campaign_type_id = newCampaignTypeId, is_event = newIsEvent, campaign_date = newCampaignDate, theme = newTheme WHERE campaign_id = keyword",
+/*queryNum = 6: PUT(UPDATE) Contribution w/ ID*/ "UPDATE Contribution SET Contribution.donor_id = newDonorId, Contribution.contrib_date = newContribDate, Contribution.item_name = newItemName, Contribution.is_event_item = newIsEventItem, Contribution.contrib_type = newContribType, Contribution.amount = newAmount, Contribution.pay_method = newPayMethod, Contribution.destination = newDestination, Contribution.notes = newNotes, Contribution.appeal = newAppeal, Contribution.thanked = newThanked WHERE Contribution.contrib_id = keyword",
+/*queryNum = 7: PUT(UPDATE) CampaignType w/ ID*/ "UPDATE CampaignType SET CampaignType.campaign_type_name = newCampaignTypeName WHERE campaign_type_id = keyword"
 ];
 
 //SUPPORTER
@@ -73,7 +80,6 @@ function updateSupporterData(id, body, queryNum)
 		});
 		
 		//Update basic information
-		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -402,11 +408,67 @@ var updateIndividualPledge = function(id, body, callback)
 	});
 }
 
+function setAsBehind(pledge_id)
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query(putQueries[4].replace('keyword', pledge_id), (err, rows) =>
+		{
+			if (err)
+				throw err;
+			resolve(rows);
+		});
+	}).then((res) =>
+	{
+
+	});
+}
+
+function checkIndividualPledge(pledge_id, behind, p_date)
+{
+	var pledge_date = moment(p_date);
+	var current_date = moment(new Date());
+
+	console.log(pledge_id);
+	console.log(pledge_date);
+	console.log(current_date);
+
+	var diff = pledge_date.diff(current_date);
+	console.log('Diff ' + diff);
+	if (diff < 0)
+	{
+		console.log('Behind\n');
+		setAsBehind(pledge_id);
+	}
+	else
+		console.log('Not behind\n');
+}
+
+var checkPledgeDate = function(callback)
+{
+	return new Promise((resolve, reject) =>
+	{
+		con.query(getQueries[0], (err, rows) =>
+		{
+			if (err)
+				throw err;
+			resolve(rows);
+		});
+	}).then((rows) =>
+	{
+		rows.forEach((row) =>
+		{
+			checkIndividualPledge(row.pledge_id, row.is_behind, row.pledge_date);
+		});
+	}).then((res) =>
+	{
+		callback(res);
+	});
+}
 
 //CAMPAIGN
 var updateIndividualCampaign = function(id, body, callback)
 {
-	console.log(body);
 	return new Promise((resolve, reject) =>
 	{
 		var basicObj = {
@@ -419,12 +481,11 @@ var updateIndividualCampaign = function(id, body, callback)
 			keyword: id
 		};
 		
-		var patchedQuery = putQueries[4].replace(/newCampaignId|newCampaignName|newCampaignTypeId|newIsEvent|newCampaignDate|newTheme|keyword/gi, (matched) =>
+		var patchedQuery = putQueries[5].replace(/newCampaignId|newCampaignName|newCampaignTypeId|newIsEvent|newCampaignDate|newTheme|keyword/gi, (matched) =>
 		{
 			return basicObj[matched];
 		});
 		
-		console.log(patchedQuery);
 		//Update basic information
 		con.query(patchedQuery, (err, rows) =>
 		{
@@ -452,7 +513,6 @@ var updateIndividualCampaign = function(id, body, callback)
 					return donorObj[matched];
 				});
 
-				console.log(patchedQuery);
 				con.query(patchedQuery, (err, rows) =>
 				{
 					if (err)
@@ -485,7 +545,6 @@ var updateIndividualCampaign = function(id, body, callback)
 						return staffObj[matched];
 					});
 
-		console.log(patchedQuery);
 					con.query(patchedQuery, (err, rows) =>
 					{
 						if (err)
@@ -518,7 +577,6 @@ var updateIndividualCampaign = function(id, body, callback)
 							return contribObj[matched];
 						});
 
-		console.log(patchedQuery);
 						con.query(patchedQuery, (err, rows) =>
 						{
 							if (err)
@@ -558,13 +616,12 @@ var updateIndividualContribution = function(id, body, callback)
 			keyword: id
 		};
 		
-		var patchedQuery = putQueries[5].replace(/newDonorId|newContribDate|newItemName|newIsEventItem|newContribType|newAmount|newPayMethod|newDestination|newNotes|newAppeal|newThanked|keyword/gi, (matched) =>
+		var patchedQuery = putQueries[6].replace(/newDonorId|newContribDate|newItemName|newIsEventItem|newContribType|newAmount|newPayMethod|newDestination|newNotes|newAppeal|newThanked|keyword/gi, (matched) =>
 		{
 			return basicObj[matched];
 		});
 
 		//Update basic information
-		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -588,7 +645,7 @@ var updateIndividualCampaignType = function(id, body, callback)
 			keyword: id
 		};
 
-		var patchedQuery = putQueries[6].replace(/newCampaignTypeName|keyword/gi, (matched) =>
+		var patchedQuery = putQueries[7].replace(/newCampaignTypeName|keyword/gi, (matched) =>
 		{
 			return campaignTypeObj[matched];
 		});
@@ -609,6 +666,7 @@ exports.updateIndividualDonor = updateIndividualDonor;
 exports.updateIndividualStaff = updateIndividualStaff;
 exports.updateIndividualPatient = updateIndividualPatient;
 exports.updateIndividualPledge = updateIndividualPledge;
+exports.checkPledgeDate = checkPledgeDate;
 exports.updateIndividualCampaign = updateIndividualCampaign;
 exports.updateIndividualContribution = updateIndividualContribution;
 exports.updateIndividualCampaignType = updateIndividualCampaignType;

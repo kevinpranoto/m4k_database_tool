@@ -148,6 +148,7 @@
                                         <th>Patient ID</th>
                                         <th>Target Amount</th>
                                         <th>Pledge Date</th>
+                                        <th>Is Behind</th>
                                         <th ng-hide="!isRemove">Delete</th>
                                     </tr>
                                 </thead>
@@ -165,6 +166,7 @@
                                         <td ng-dblclick="goToPledge(item)">{{item.patient_id}}</td>
                                         <td ng-dblclick="goToPledge(item)">{{item.target_amount}}</td>
                                         <td ng-dblclick="goToPledge(item)">{{item.pledge_date}}</td>
+                                        <td ng-dblclick="goToPledge(item)">{{item.is_behind}}</td>
                                         <td class="text-center">
                                             <input
                                                     type="checkbox"
