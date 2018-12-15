@@ -8,6 +8,7 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "http-server": "^0.11.1",
+    "moment": "^2.23.0",
     "mysql": "^2.16.0",
     "promise": "^8.0.2",
     "select2-bootstrap-css": "^1.4.6",
@@ -16,7 +17,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node Node/expressRoutes.js"
   },
   "repository": {
     "type": "git",
