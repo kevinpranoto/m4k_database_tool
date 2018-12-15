@@ -90,11 +90,6 @@
                         <li>
                             <a href="donor_events_attended.html"><i class="fa fa-calendar-check-o fa-fw"></i> Events Attended</a>
                         </li>
-                        <!--
-                        <li>
-                            <a href="donor_event_items.html"><i class="fa fa-tags fa-fw"></i> Event Items Purchased</a>
-                        </li>
-                        -->
                         <li>
                             <a href="donor_contributions.html"><i class="fa fa-gift fa-fw"></i> Contributions</a>
                         </li>
@@ -148,6 +143,7 @@
                             <h4 style="padding-left: 1em" ng-repeat="address in addresses" ng-class="{bold: address.is_primary}">
                                 {{address.address_type}}: {{address.address_line_1}}, {{address.city}}, {{address.state}} {{address.zip_code}}
                             </h4>
+                            <h3>Notes:</h3>
                         </div>
                         <!-- /.panel-body -->
                     </div>
