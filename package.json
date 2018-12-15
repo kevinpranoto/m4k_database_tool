@@ -1,0 +1,30 @@
+{
+  "name": "m4k_database_tool",
+  "version": "1.0.0",
+  "description": "Miracles for Kids database tool",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "angular-sanitize": "^1.7.5",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "http-server": "^0.11.1",
+    "mysql": "^2.16.0",
+    "select2-bootstrap-css": "^1.4.6",
+    "ui-select": "^0.19.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinpranoto/m4k_database_tool.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevinpranoto/m4k_database_tool/issues"
+  },
+  "homepage": "https://github.com/kevinpranoto/m4k_database_tool#readme"
+}
