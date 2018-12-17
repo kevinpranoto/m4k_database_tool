@@ -207,7 +207,7 @@ INSERT INTO Needs
 INSERT INTO Pledge
 	(pledge_id,		donor_id,	patient_id,	pledge_date,	target_amount,	is_behind	) VALUES #how does is_behind work?!!!?
 	(1,		1,		1,		'2019-01-01',	9000,		false		),
-	(2,		6,		2,		'2017-10-25',	100000,		false		),
+	(2,		6,		2,		'2017-10-25',	100000,		false		), 	
         (3,		7,		3,		'2016-11-05',	500,		false		),
         (4,		8,		4,		'2018-02-03',	31000,		false		),
         (5,		9,		5,		'2020-03-15',	100000,		false		),

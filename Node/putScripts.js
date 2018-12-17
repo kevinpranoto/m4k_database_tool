@@ -13,7 +13,8 @@ var con = mysql.createConnection({
 
 var getQueries = [
 /*queryNum = 0: GET All Pledges*/ "SELECT Pledge.pledge_id, Supporter.supporter_id, Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledge.target_amount, Pledge.pledge_date, Pledge.is_behind FROM Supporter, Patient, Pledge WHERE Pledge.donor_id = Supporter.supporter_id AND Pledge.patient_id = Patient.patient_id ORDER BY Pledge.pledge_id ASC",
-/*queryNum = 1: GET Pledge basic info w/ ID*/ "SELECT Pledge.pledge_date, Pledge.target_amount, Pledge.is_behind FROM Pledge WHERE Pledge.pledge_id = @keyword"
+/*queryNum = 1: GET Pledge basic info w/ ID*/ "SELECT Pledge.pledge_date, Pledge.target_amount, Pledge.is_behind FROM Pledge WHERE Pledge.pledge_id = @keyword",
+/*queryNum = 2: GET Installment amount w/ pledge id*/ "SELECT I.amount FROM Installments I WHERE I.pledge_id = keyword"
 ];
 
 var deleteQueries = [
@@ -32,7 +33,7 @@ var deleteQueries = [
 /*queryNum = 12: DELETE Pledge Installments w/ ID*/ "DELETE FROM Installments WHERE Installments.pledge_id = @id",
 /*queryNum = 13: DELETE Event Donors w/ ID*/ "DELETE FROM Attends WHERE Attends.campaign_id = @id",
 /*queryNum = 14: DELETE Event Staff w/ ID*/ "DELETE FROM Works WHERE Works.campaign_id = @id",
-/*queryNum = 15: DELETE Event Contributions w/ ID*/ "DELETE FROM PresentedAt WHERE PresentedAt.campaign_id = @id",
+/*queryNum = 15: DELETE Event Contributions w/ ID*/ "DELETE FROM PresentedAt WHERE PresentedAt.campaign_id = @id"
 ];
 
 var postQueries = [
@@ -55,7 +56,7 @@ var putQueries = [
 /*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
 /*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
 /*queryNum = 3: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET pledge_date = newPledgeDate, target_amount = newTargetAmount, is_behind = newIsBehind WHERE pledge_id = keyword",
-/*queryNum = 4: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET is_behind = 1 WHERE pledge_id = keyword",
+/*queryNum = 4: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET is_behind = key1 WHERE pledge_id = key2",
 /*queryNum = 5: PUT(UPDATE) Campaign w/ ID*/ "UPDATE Campaign SET campaign_name = newCampaignName, campaign_type_id = newCampaignTypeId, is_event = newIsEvent, campaign_date = newCampaignDate, theme = newTheme WHERE campaign_id = keyword",
 /*queryNum = 6: PUT(UPDATE) Contribution w/ ID*/ "UPDATE Contribution SET Contribution.donor_id = newDonorId, Contribution.contrib_date = newContribDate, Contribution.item_name = newItemName, Contribution.is_event_item = newIsEventItem, Contribution.contrib_type = newContribType, Contribution.amount = newAmount, Contribution.pay_method = newPayMethod, Contribution.destination = newDestination, Contribution.notes = newNotes, Contribution.appeal = newAppeal, Contribution.thanked = newThanked WHERE Contribution.contrib_id = keyword",
 /*queryNum = 7: PUT(UPDATE) CampaignType w/ ID*/ "UPDATE CampaignType SET CampaignType.campaign_type_name = newCampaignTypeName WHERE campaign_type_id = keyword"
@@ -408,11 +409,22 @@ var updateIndividualPledge = function(id, body, callback)
 	});
 }
 
-function setAsBehind(pledge_id)
+function setBehind(pledge_id, isBehind)
 {
 	return new Promise((resolve, reject) =>
 	{
-		con.query(putQueries[4].replace('keyword', pledge_id), (err, rows) =>
+		var behindObj = {
+			key1: isBehind,
+			key2: pledge_id
+		}
+		
+		var patchedQuery = putQueries[4].replace(/key1|key2/gi, (matched) =>
+		{
+			return behindObj[matched];
+		});
+		
+		console.log(patchedQuery);
+		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
 				throw err;
@@ -424,21 +436,43 @@ function setAsBehind(pledge_id)
 	});
 }
 
-function checkIndividualPledge(pledge_id, behind, p_date)
-{
-	var pledge_date = moment(p_date);
+function checkIndividualPledge(pledge)
+{	
+	var p_date = moment(pledge.pledge_date);
 	var current_date = moment(new Date());
-
-	console.log(pledge_id);
-	console.log(pledge_date);
-	console.log(current_date);
-
-	var diff = pledge_date.diff(current_date);
-	console.log('Diff ' + diff);
-	if (diff < 0)
+	var diff = p_date.diff(current_date);
+	
+	if (diff < 0) // past due date
 	{
-		console.log('Behind\n');
-		setAsBehind(pledge_id);
+		//do promise stuff to fix sync. issues
+		return new Promise((resolve, reject) =>
+		{
+			con.query(getQueries[2].replace('keyword', pledge.pledge_id), (err, rows) =>
+			{
+				if (err)
+					throw err;
+				resolve(rows);
+			});
+		}).then((rows) =>
+		{
+			//get sum of installments
+			var sum = 0;
+			rows.forEach((row) =>
+			{
+				//sum stuff here
+				sum += row.amount;
+			});
+	
+			//check sum of installment amounts here against target amount
+			if(sum < pledge.target_amount)
+			{	
+				console.log('Behind\n');
+				setBehind(pledge.pledge_id, 1);
+			} else {
+				setBehind(pledge.pledge_id, 0);
+				console.log('Not Behind\n');
+			}
+		});
 	}
 	else
 		console.log('Not behind\n');
@@ -458,7 +492,7 @@ var checkPledgeDate = function(callback)
 	{
 		rows.forEach((row) =>
 		{
-			checkIndividualPledge(row.pledge_id, row.is_behind, row.pledge_date);
+			checkIndividualPledge(row);
 		});
 	}).then((res) =>
 	{
