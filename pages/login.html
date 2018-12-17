@@ -47,18 +47,16 @@
                         <form role="form">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="User name" type="text" ng-model="user_name" autofocus>
+                                    <p style="text-align: center; color: red">{{status}}</p>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" type="password" ng-model="password">
+                                    <input class="form-control" placeholder="User name" type="text" ng-model="user_name" ng-keypress="loginClick($event)" autofocus>
                                 </div>
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="remember" type="checkbox" value="Remember Me">Remember Me
-                                    </label>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Password" type="password" ng-model="password" ng-keypress="loginClick($event)">
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <a ng-click="loginClick()" class="btn btn-lg btn-success btn-block">Login</a>
+                                <a ng-click="loginClick('')" class="btn btn-lg btn-success btn-block">Login</a>
                             </fieldset>
                         </form>
                     </div>
