@@ -138,6 +138,35 @@
                             <h4 style="padding-left: 1em" ng-repeat="address in addresses" ng-class="{bold: address.is_primary}">
                                 {{address.address_type}}: {{address.address_line_1}}, {{address.city}}, {{address.state}} {{address.zip_code}}
                             </h4>
+                            <div>
+                                <strong>Staff name:</strong> {{fullName}}
+                            </div><br>
+                            <div>
+                                <strong>Staff type:</strong> {{staff_type}}
+                            </div><br>
+                            <div>
+                                <strong>Staff status:</strong> {{status}}
+                            </div><br>
+                            <div>
+                                <strong>Phone:</strong>
+                            </div>
+                            <div>
+                                <p style="padding-left: 1em" ng-repeat="phone in phones" ng-style="phone.is_primary == '1' && {'font-weight': 'bold'}">{{phone.phone_number}}</p> 
+                            </div>
+                            <div>
+                                <strong>Email:</strong>
+                            </div>
+                            <div>
+                                <p style="padding-left: 1em" ng-repeat="email in emails" ng-style="email.is_primary == '1' && {'font-weight': 'bold'}">{{email.email_address}}</p> 
+                            </div>
+                            <div>
+                                <strong>Address:</strong>
+                            </div>
+                            <div>
+                                <p style="padding-left: 1em" ng-repeat="address in addresses">
+                                    {{address.address_type}}: {{address.address_line_1}}, {{address.city}}, {{address.state}} {{address.zip_code}}
+                                </p> 
+                            </div>
                         </div>
                         <!-- /.panel-body -->
                     </div>

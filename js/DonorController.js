@@ -109,6 +109,7 @@ donorSpecific.controller('donorContributionsTable', function($scope, $location, 
     obj.contributions.forEach(contribution => {
         var date = new Date(contribution.contrib_date);
         contribution.contrib_date= date.toDateString();
+        contribution.thanked = (contribution.thanked == 1) ? "Yes" : "No";
         $scope.contributions.push(contribution);
     });
 
@@ -133,6 +134,7 @@ donorSpecific.controller('donorPledgesTable', function($scope, $location, $windo
         var date = new Date(pledge.pledge_date);
         pledge.pledge_date = date.toDateString();
         pledge.target_amount = (pledge.target_amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');  // 12,345.67
+        pledge.is_behind = (pledge.is_behind == 1) ? "Yes" : "No";
         $scope.pledges.push(pledge);
     });
 });
