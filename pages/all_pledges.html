@@ -166,7 +166,12 @@
                                         <td ng-dblclick="goToPledge(item)">{{item.patient_id}}</td>
                                         <td ng-dblclick="goToPledge(item)">{{item.target_amount}}</td>
                                         <td ng-dblclick="goToPledge(item)">{{item.pledge_date}}</td>
-                                        <td ng-dblclick="goToPledge(item)">{{item.is_behind ? "Yes" : "No"}}</td>
+                                        <td ng-dblclick="goToPledge(item)"
+                                            ng-style="{color: (item.is_behind ? 'red' : '')}">
+
+                                            {{item.is_behind ? "Yes" : "No"}}
+
+                                        </td>
                                         <td class="text-center">
                                             <input
                                                     type="checkbox"
