@@ -26,12 +26,12 @@ WHERE Patient.patient_id = Needs.patient_id;
 SELECT Patient.patient_id, Contribution.item_name
 FROM Requests, Patient, Contribution
 WHERE Requests.contrib_id = Contribution.contrib_id AND Requests.patient_id = Patient.patient_id;
-
+*/
 #5. query all pledges
-SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledge.target_amount, Pledge.pledge_date
+SELECT Supporter.last_name, Supporter.first_name, Patient.patient_id, Pledge.target_amount, Pledge.pledge_date, Pledge.is_behind
 FROM Supporter, Patient, Pledge
 WHERE Pledge.donor_id = Supporter.supporter_id AND Pledge.patient_id = Patient.patient_id;
-
+/*
 #6. query all events
 SELECT Campaign.campaign_id, Campaign.campaign_name, CampaignType.campaign_type_name, Campaign.theme, Campaign.campaign_date
 FROM Campaign, CampaignType

@@ -346,6 +346,7 @@
                 $scope.pledge_patient_id = pat_id;
                 $scope.pledge_target_amount = general_info.target_amount;
                 $scope.pledge_date = new Date(general_info.pledge_date);
+                $scope.pledge_is_behind = general_info.is_behind;
 
                 $scope.temp_installments = [];
 
@@ -380,7 +381,7 @@
                     donor_selected: $scope.donor_selected,
                     pledge_date: $scope.pledge_date,
                     target_amount: $scope.pledge_target_amount,
-                    is_behind: false,
+                    is_behind: $scope.pledge_is_behind,
                     installments: $scope.temp_installments
                 };
 
