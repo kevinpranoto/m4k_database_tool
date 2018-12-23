@@ -134,10 +134,10 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="event in events">
-                                        <td>{{event.campaign_name}}</td>
-                                        <td>{{event.campaign_type_name}}</td>
-                                        <td>{{event.theme}}</td>
-                                        <td>{{event.campaign_date}}</td>
+                                        <td ng-dblClick="goToEvent(event)">{{event.campaign_name}}</td>
+                                        <td ng-dblClick="goToEvent(event)">{{event.campaign_type_name}}</td>
+                                        <td ng-dblClick="goToEvent(event)">{{event.theme}}</td>
+                                        <td ng-dblClick="goToEvent(event)">{{event.campaign_date}}</td>
                                     </tr>
                                 </tbody>
                             </table>
