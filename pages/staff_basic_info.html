@@ -127,25 +127,14 @@
                     <div class="panel panel-default">
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <h3>Full Name: {{fullName}}</h3>
-                            <h3>Type: {{staff_type}}</h3>
-                            <h3>Status: {{status}}</h3>
-                            <h3>Phone:</h3>
-                            <h4 style="padding-left: 1em" ng-repeat="phone in phones" ng-class="{bold: phone.is_primary}">{{phone.phone_number}}</h4>
-                            <h3>Email:</h3>
-                            <h4 style="padding-left: 1em" ng-repeat="email in emails" ng-class="{bold: email.is_primary}">{{email.email_address}}</h4>
-                            <h3>Address:</h3>
-                            <h4 style="padding-left: 1em" ng-repeat="address in addresses" ng-class="{bold: address.is_primary}">
-                                {{address.address_type}}: {{address.address_line_1}}, {{address.city}}, {{address.state}} {{address.zip_code}}
-                            </h4>
                             <div>
-                                <strong>Staff name:</strong> {{fullName}}
+                                <strong>Staff Name:</strong> {{fullName}}
                             </div><br>
                             <div>
-                                <strong>Staff type:</strong> {{staff_type}}
+                                <strong>Staff Type:</strong> {{staff_type}}
                             </div><br>
                             <div>
-                                <strong>Staff status:</strong> {{status}}
+                                <strong>Staff Status:</strong> {{status}}
                             </div><br>
                             <div>
                                 <strong>Phone:</strong>

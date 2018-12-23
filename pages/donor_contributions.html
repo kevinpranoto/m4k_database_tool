@@ -150,14 +150,14 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="contribution in contributions">
-                                        <td>{{contribution.item_name}}</td>
-                                        <td>{{contribution.destination}}</td>
-                                        <td>{{contribution.contrib_type}}</td>
-                                        <td>${{contribution.amount}}</td>
-                                        <td>{{contribution.appeal}}</td>
-                                        <td>{{contribution.pay_method}}</td>
-                                        <td>{{contribution.thanked}}</td>
-                                        <td>{{contribution.notes}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.item_name}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.destination}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.contrib_type}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">${{contribution.amount}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.appeal}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.pay_method}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.thanked}}</td>
+                                        <td ng-dblclick="goToContribution(contribution)">{{contribution.notes}}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -237,17 +237,26 @@ staffEntry.controller('staffForm', function($scope, $http) {
     $scope.statuses = [
         'Active', 'Inactive'
     ];
+    $scope.addressTypes = [
+        'home', 'business'
+    ];
 
     $scope.emails = [
+        /*
         {email_address: '', is_primary: 1}
+        */
     ];
     
     $scope.phones = [
+        /*
         {phone_type: '', phone_number: '', is_primary: 1}
+        */
     ];
 
     $scope.addresses = [
+        /*
         {address_type: 'home', address_line_1: '', address_line_2: '', city: '', state: '', zip_code: '', is_primary: 1}
+        */
     ];
 
 	$scope.addPhone = function() {
@@ -291,7 +300,13 @@ staffEntry.controller('staffForm', function($scope, $http) {
             $scope.state = basic_info.staff_status;
             $scope.type = basic_info.staff_type;
             $scope.firstName = basic_info.first_name;
+            if ($scope.firstName == "null") {
+                $scope.firstName = "";
+            }
             $scope.lastName = basic_info.last_name;
+            if ($scope.lastName == "null") {
+                $scope.lastName = "";
+            }
 
             $scope.emails = obj.emails;
             $scope.phones = [];
