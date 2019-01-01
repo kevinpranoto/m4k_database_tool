@@ -57,8 +57,8 @@ DROP TABLE IF EXISTS `Donor`;
 CREATE TABLE `Donor` (
 `supporter_id` int,
 `donor_type` ENUM('Individual', 'Company', 'Household'),
-#`last_donation` DATE,
 `donor_status` ENUM('Active', 'Lax', 'Lost'),
+`notes` VARCHAR(100),
 PRIMARY KEY(supporter_id),
 FOREIGN KEY(supporter_id) REFERENCES Supporter(supporter_id) ON DELETE CASCADE
 );

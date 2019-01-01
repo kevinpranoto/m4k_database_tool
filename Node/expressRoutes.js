@@ -188,19 +188,18 @@ app.route('/patients/:id').get((req, res) =>
 //HANDLE GENERAL PLEDGE REQUESTS
 app.route('/pledges').get((req, res) =>
 {
-	getQueries.getData(3, (err, data) =>
-	{
-		if (err)
-			throw err;
-		console.log('Retrieved all pledges');
-		res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
-	});
-}).put(jsonParser, (req, res) =>
-{
-	putQueries.checkPledgeDate((data) =>
+	putQueries.checkPledgeDate((info) =>
 	{
 		console.log('Checked pledge due dates, updated accordingly');
-		res.status(200).send(data);
+	}).then((rows) =>
+	{
+		getQueries.getData(3, (err, data) =>
+	    {
+			if (err)
+	    		throw err;
+			console.log('Retrieved all pledges');
+			res.set({'Content-Type': 'application/json; charset=utf-8'}).send(JSON.stringify(data, undefined, ' '));
+	   	});
 	});
 }).post(jsonParser, (req, res) =>
 {

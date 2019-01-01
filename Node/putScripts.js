@@ -423,7 +423,6 @@ function setBehind(pledge_id, isBehind)
 			return behindObj[matched];
 		});
 		
-		console.log(patchedQuery);
 		con.query(patchedQuery, (err, rows) =>
 		{
 			if (err)
@@ -466,16 +465,12 @@ function checkIndividualPledge(pledge)
 			//check sum of installment amounts here against target amount
 			if(sum < pledge.target_amount)
 			{	
-				console.log('Behind\n');
 				setBehind(pledge.pledge_id, 1);
 			} else {
 				setBehind(pledge.pledge_id, 0);
-				console.log('Not Behind\n');
 			}
 		});
 	}
-	else
-		console.log('Not behind\n');
 }
 
 var checkPledgeDate = function(callback)
