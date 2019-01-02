@@ -1,10 +1,12 @@
 //POSTS
+
 DONOR
 {
 	"last_name": lname,
 	"first_name": fname,
 	"salutation": sal,
 	"alias": al,
+	"notes": note,
 	"emails": [
 		{
 			"email_address": email,

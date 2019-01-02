@@ -17,7 +17,7 @@ var postQueries =
 /*queryNum = 2: POST(ADD) Supporter phones*/ "INSERT INTO Phone (supporter_id, phone_type, phone_number, is_primary) VALUES (newSupporterId, newPhoneType, newPhoneNumber, newIsPrimary)",
 /*queryNum = 3: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
 /*queryNum = 4: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
-/*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)",
+/*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status, notes) VALUES (newSupporterId, newDonorType, newStatus, newNotes)",
 /*queryNum = 6: POST(ADD) Staff*/ "INSERT INTO Staff (supporter_id, staff_type, staff_status) VALUES (newSupporterId, newStaffType, newStatus)",
 /*queryNum = 7: POST(ADD) Patient*/ "INSERT INTO Patient (patient_id) VALUES (newPatientId)",
 /*queryNum = 8: POST(ADD) Needs*/ "INSERT INTO Needs (patient_id, item) VALUES (newPatientId, newItem)",
@@ -211,10 +211,11 @@ var addDonor = function(body, callback)
 				var basicObj = {
 					newSupporterId: newId,
 					newDonorType: '\"' + body.donor_type + '\"',
-					newStatus: '\"' + body.donor_status + '\"'
+					newStatus: '\"' + body.donor_status + '\"',
+					newNotes: '\"' + body.notes + '\"'
 				}
 
-				var patchedQuery = postQueries[5].replace(/newSupporterId|newDonorType|newStatus/gi, (matched) =>
+				var patchedQuery = postQueries[5].replace(/newSupporterId|newDonorType|newStatus|newNotes/gi, (matched) =>
 				{
 					return basicObj[matched];
 				});
