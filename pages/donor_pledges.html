@@ -134,10 +134,10 @@
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="pledge in pledges">
-                                        <td>${{pledge.target_amount}}</td>
-                                        <td>{{pledge.patient_id}}</td>
-                                        <td>{{pledge.pledge_date}}</td>
-                                        <td>{{pledge.is_behind}}</td>
+                                        <td ng-dblClick="goToPledge(pledge)">${{pledge.target_amount}}</td>
+                                        <td ng-dblClick="goToPledge(pledge)">{{pledge.patient_id}}</td>
+                                        <td ng-dblClick="goToPledge(pledge)">{{pledge.pledge_date}}</td>
+                                        <td ng-dblClick="goToPledge(pledge)">{{pledge.is_behind}}</td>
                                     </tr>
                                     
                                 </tbody>

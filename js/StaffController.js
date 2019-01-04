@@ -16,6 +16,12 @@ StaffController.controller('staffEventsWorked', function($scope, $location, $win
         event_attended.campaign_date = date.toDateString();
         $scope.events.push(event_attended);
     });
+
+    $scope.goToEvent = function(event) {
+        sessionStorage.setItem('entityID', event.campaign_id);
+        sessionStorage.setItem('entityName', event.campaign_name);
+        $window.location.href = '../pages/event_basic_info.html';
+    };
 });
 
 StaffController.controller('staffBasicInfo', function($scope, $location, $window, $http) {

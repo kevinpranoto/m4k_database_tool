@@ -98,9 +98,9 @@ donorSpecific.controller('donorEventsAttendedTable', function($scope, $location,
     });
 
     $scope.goToEvent = function(event) {
+        sessionStorage.setItem('entityID', event.campaign_id);
+        sessionStorage.setItem('entityName', event.campaign_name);
         $window.location.href = '../pages/event_basic_info.html';
-        sessionStorage.setItem('entityID', event.id);
-        sessionStorage.setItem('entityName', event.name);
     };
 });
 
@@ -156,6 +156,17 @@ donorSpecific.controller('donorPledgesTable', function($scope, $location, $windo
         pledge.target_amount = (pledge.target_amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');  // 12,345.67
         $scope.pledges.push(pledge);
     });
+
+    $scope.goToPledge = function(pledge) {
+        // Save pledge ID in cache
+        sessionStorage.setItem('pledgeID', pledge.pledge_id);
+        sessionStorage.setItem('temp_pledge_donorID', pledge.supporter_id);
+
+        console.log("click " + sessionStorage.getItem('pledgeID'));
+
+        // Re-route to the pledge's specific view with the ID cached for use in PledgeBasicInfoController
+        window.location.href = '../pages/pledge_basic_info.html';
+    };
 });
 
 donorSpecific.controller('donorBasicInfo', function($scope, $location, $window, $http) {
@@ -194,7 +205,7 @@ donorSpecific.controller('donorBasicInfo', function($scope, $location, $window, 
             $scope.company_name = obj.companies[0].company_name;
         }
         $scope.status = basic_info.donor_status;
-
+        $scope.notes = basic_info.notes;
         obj.phones.forEach(phone => {
             $scope.phones.push(phone);
         });
@@ -436,6 +447,8 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 $scope.addresses.push(address);
             });
 
+            $scope.notes = basic_info.notes;
+
 
             sessionStorage.setItem('donor_object', JSON.stringify(obj));
         });        
@@ -457,7 +470,8 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 addresses: [],
                 companies: [
                     {company_name: $scope.company, is_primary: 1}
-                ]
+                ],
+                notes: $scope.notes
             };
             $scope.phones.forEach(element => {
                 var str = element.phone_number;
@@ -506,7 +520,8 @@ donorEntry.controller('donorForm', function($scope, $http) {
                 addresses: [],
                 companies: [
                     {company_name: $scope.company, is_primary: 'true'}
-                ]
+                ],
+                notes: $scope.notes
             }
             $scope.phones.forEach(element => {
                 var str = element.phone_number;
