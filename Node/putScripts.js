@@ -42,7 +42,7 @@ var postQueries = [
 /*queryNum = 2: POST(ADD) Supporter phones*/ "INSERT INTO Phone (supporter_id, phone_type, phone_number, is_primary) VALUES (newSupporterId, newPhoneType, newPhoneNumber, newIsPrimary)",
 /*queryNum = 3: POST(ADD) Supporter addresses*/ "INSERT INTO Address (supporter_id, address_type, address_line_1, address_line_2, city, state, zip_code, is_primary) VALUES (newSupporterId, newAddressType, newAddLine1, newAddLine2, newCity, newState, newZip, newIsPrimary)",
 /*queryNum = 4: POST(ADD) Supporter companies*/ "INSERT INTO Company (supporter_id, company_name, is_primary) VALUES (newSupporterId, newCompanyName, newIsPrimary)",
-/*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status) VALUES (newSupporterId, newDonorType, newStatus)",
+/*queryNum = 5: POST(ADD) Donor*/ "INSERT INTO Donor (supporter_id, donor_type, donor_status, notes) VALUES (newSupporterId, newDonorType, newStatus, newNotes)",
 /*queryNum = 6: POST(ADD) Staff*/ "INSERT INTO Staff (supporter_id, staff_type, staff_status) VALUES (newSupporterId, newStaffType, newStatus)",
 /*queryNum = 7: POST(ADD) Patient Needs*/ "INSERT INTO Needs (patient_id, item) VALUES (newPatientId, newItem)",
 /*queryNum = 8: POST(ADD) Pledge Installments*/ "INSERT INTO Installments (pledge_id, amount, installment_date) VALUES (newPledgeId, newAmount, newInstallmentDate)",
@@ -53,7 +53,7 @@ var postQueries = [
 
 var putQueries = [
 /*queryNum = 0: PUT(UPDATE) Supporter w/ ID*/ "UPDATE Supporter SET last_name = newLastName, first_name = newFirstName, salutation = newSalutation, alias = newAlias WHERE supporter_id = keyword",
-/*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus WHERE Donor.supporter_id = keyword",
+/*queryNum = 1: PUT(UPDATE) Donor w/ ID*/ "UPDATE Donor SET donor_type = newDonorType, donor_status = newStatus, notes = newNotes WHERE Donor.supporter_id = keyword",
 /*queryNum = 2: PUT(UPDATE) Staff w/ ID*/ "UPDATE Staff SET staff_type = newStaffType, staff_status = newStatus WHERE Staff.supporter_id = keyword",
 /*queryNum = 3: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET pledge_date = newPledgeDate, target_amount = newTargetAmount, is_behind = newIsBehind WHERE pledge_id = keyword",
 /*queryNum = 4: PUT(UPDATE) Pledge w/ ID*/ "UPDATE Pledge SET is_behind = key1 WHERE pledge_id = key2",
@@ -206,10 +206,11 @@ function updateDonorData(id, body, queryNum)
 		var fieldObj = {
 			newDonorType: '\"' + body.donor_type + '\"',
 			newStatus: '\"' + body.donor_status + '\"',
+			newNotes: '\"' + body.notes + '\"',
 			keyword: id
 		};
 
-		var patchedQuery = putQueries[1].replace(/newDonorType|newStatus|keyword/gi, (matched) =>
+		var patchedQuery = putQueries[1].replace(/newDonorType|newStatus|newNotes|keyword/gi, (matched) =>
 		{
 			return fieldObj[matched];
 		});
